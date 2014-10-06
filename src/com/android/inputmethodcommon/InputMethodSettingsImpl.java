@@ -30,6 +30,8 @@ import android.view.inputmethod.InputMethodSubtype;
 
 import java.util.List;
 
+import so.brendan.locale.ExtraLocaleUtil;
+
 /* package private */ class InputMethodSettingsImpl implements InputMethodSettingsInterface {
     private Preference mSubtypeEnablerPreference;
     private int mInputMethodSettingsCategoryTitleRes;
@@ -101,8 +103,17 @@ import java.util.List;
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append(subtype.getDisplayName(context, imi.getPackageName(),
-                    imi.getServiceInfo().applicationInfo));
+
+            // TODO clean up this hack if possible.
+            final CharSequence displayName = ExtraLocaleUtil.getDisplayNameForLocaleString(
+                    subtype.getNameResId());
+
+            if (displayName == null) {
+                sb.append(subtype.getDisplayName(context, imi.getPackageName(),
+                        imi.getServiceInfo().applicationInfo));
+            } else {
+                sb.append(displayName);
+            }
         }
         return sb.toString();
     }

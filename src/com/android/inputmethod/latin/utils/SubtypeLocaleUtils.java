@@ -31,6 +31,8 @@ import com.android.inputmethod.latin.R;
 import java.util.HashMap;
 import java.util.Locale;
 
+import so.brendan.locale.ExtraLocaleUtil;
+
 public final class SubtypeLocaleUtils {
     static final String TAG = SubtypeLocaleUtils.class.getSimpleName();
     // This class must be located in the same package as LatinIME.java.
@@ -181,6 +183,8 @@ public final class SubtypeLocaleUtils {
         } else if (NO_LANGUAGE.equals(localeString)) {
             // No language subtype should be displayed in system locale.
             return sResources.getString(R.string.subtype_no_language);
+        } else if (ExtraLocaleUtil.getDisplayNameForLocaleString(localeString) != null) {
+            return ExtraLocaleUtil.getDisplayNameForLocaleString(localeString);
         } else {
             final Locale locale = LocaleUtils.constructLocaleFromString(localeString);
             displayName = locale.getDisplayName(displayLocale);
