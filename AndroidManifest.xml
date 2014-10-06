@@ -109,7 +109,7 @@
             </intent-filter>
         </receiver>
 
-        <receiver android:name="com.android.inputmethod.latin.personalization.DictionaryDecayBroadcastReciever">
+        <receiver android:name="com.android.inputmethod.latin.personalization.DictionaryDecayBroadcastReceiver">
             <intent-filter>
                 <action android:name="com.android.inputmethod.latin.personalization.DICT_DECAY" />
             </intent-filter>

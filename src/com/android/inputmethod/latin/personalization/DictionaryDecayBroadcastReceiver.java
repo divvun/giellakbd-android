@@ -27,7 +27,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * Broadcast receiver for periodically updating decaying dictionaries.
  */
-public class DictionaryDecayBroadcastReciever extends BroadcastReceiver {
+public class DictionaryDecayBroadcastReceiver extends BroadcastReceiver {
     /**
      * The root domain for the personalization.
      */
@@ -48,7 +48,7 @@ public class DictionaryDecayBroadcastReciever extends BroadcastReceiver {
     public static void setUpIntervalAlarmForDictionaryDecaying(Context context) {
         AlarmManager alarmManager = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
         final Intent updateIntent = new Intent(DICTIONARY_DECAY_INTENT_ACTION);
-        updateIntent.setClass(context, DictionaryDecayBroadcastReciever.class);
+        updateIntent.setClass(context, DictionaryDecayBroadcastReceiver.class);
         final long alarmTime =  System.currentTimeMillis() + DICTIONARY_DECAY_INTERVAL;
         final PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0 /* requestCode */,
                 updateIntent, PendingIntent.FLAG_CANCEL_CURRENT);
