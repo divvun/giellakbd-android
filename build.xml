@@ -97,6 +97,7 @@
                     versionname="${version.name}"
                     debug="${build.is.packaging.debug}"
                     manifest="${out.manifest.abs.file}"
+                    manifestpackage="${package.name}"
                     assets="${asset.absolute.dir}"
                     androidjar="${project.target.android.jar}"
                     apkfolder="${out.absolute.dir}"
