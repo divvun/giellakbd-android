@@ -30,6 +30,7 @@ import com.android.inputmethod.latin.R;
 
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.MissingResourceException;
 
 public final class SubtypeLocaleUtils {
     static final String TAG = SubtypeLocaleUtils.class.getSimpleName();
@@ -320,7 +321,7 @@ public final class SubtypeLocaleUtils {
         }
 
         final Locale locale = getSubtypeLocale(subtype);
-        if (localeHasNoDisplayName(locale) && !isGenericSubtype(subtype)) {
+        if (isUnrecognisedLocale(locale) && !isGenericSubtype(subtype)) {
             return sResources.getString(subtype.getNameResId());
         }
 
@@ -334,7 +335,7 @@ public final class SubtypeLocaleUtils {
         }
 
         final Locale locale = getSubtypeLocale(subtype);
-        if (localeHasNoDisplayName(locale) && !isGenericSubtype(subtype)) {
+        if (isUnrecognisedLocale(locale) && !isGenericSubtype(subtype)) {
             return sResources.getString(subtype.getNameResId());
         }
 
@@ -351,7 +352,13 @@ public final class SubtypeLocaleUtils {
         return StringUtils.capitalizeFirstCodePoint(locale.getLanguage(), locale);
     }
 
-    private static boolean localeHasNoDisplayName(Locale locale) {
-        return locale.getDisplayName().equals(locale.getISO3Language());
+    private static boolean isUnrecognisedLocale(Locale locale) {
+        // This will throw an exception if no code is found.
+        try {
+            locale.getISO3Country();
+            return false;
+        } catch (MissingResourceException e) {
+            return true;
+        }
     }
 }
