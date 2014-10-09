@@ -53,8 +53,6 @@ import com.android.inputmethodcommon.InputMethodSettingsFragment;
 
 import java.util.TreeSet;
 
-import so.brendan.locale.ExtraLocaleUtil;
-
 public final class SettingsFragment extends InputMethodSettingsFragment
         implements SharedPreferences.OnSharedPreferenceChangeListener {
     private static final String TAG = SettingsFragment.class.getSimpleName();
@@ -341,14 +339,7 @@ public final class SettingsFragment extends InputMethodSettingsFragment
         for (final InputMethodSubtype subtype : subtypes) {
             if (styles.length() > 0) styles.append(", ");
 
-            // TODO clean up this hack if possible.
-            final CharSequence displayName = ExtraLocaleUtil.getDisplayNameForLocaleString(subtype.getNameResId());
-
-            if (displayName == null) {
-                styles.append(SubtypeLocaleUtils.getSubtypeDisplayNameInSystemLocale(subtype));
-            } else {
-                styles.append(displayName);
-            }
+            styles.append(SubtypeLocaleUtils.getSubtypeDisplayNameInSystemLocale(subtype));
         }
         customInputStyles.setSummary(styles);
     }

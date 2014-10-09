@@ -31,8 +31,6 @@ import com.android.inputmethod.latin.R;
 import java.util.HashMap;
 import java.util.Locale;
 
-import so.brendan.locale.ExtraLocaleUtil;
-
 public final class SubtypeLocaleUtils {
     static final String TAG = SubtypeLocaleUtils.class.getSimpleName();
     // This class must be located in the same package as LatinIME.java.
@@ -183,8 +181,6 @@ public final class SubtypeLocaleUtils {
         } else if (NO_LANGUAGE.equals(localeString)) {
             // No language subtype should be displayed in system locale.
             return sResources.getString(R.string.subtype_no_language);
-        } else if (ExtraLocaleUtil.getDisplayNameForLocaleString(localeString) != null) {
-            return ExtraLocaleUtil.getDisplayNameForLocaleString(localeString);
         } else {
             final Locale locale = LocaleUtils.constructLocaleFromString(localeString);
             displayName = locale.getDisplayName(displayLocale);
@@ -220,6 +216,9 @@ public final class SubtypeLocaleUtils {
 
     public static String getSubtypeDisplayNameInSystemLocale(final InputMethodSubtype subtype) {
         final Locale displayLocale = sResources.getConfiguration().locale;
+        if (!isGenericSubtype(subtype)) {
+            return sResources.getString(subtype.getNameResId());
+        }
         return getSubtypeDisplayNameInternal(subtype, displayLocale);
     }
 
@@ -258,6 +257,10 @@ public final class SubtypeLocaleUtils {
     public static boolean isNoLanguage(final InputMethodSubtype subtype) {
         final String localeString = subtype.getLocale();
         return NO_LANGUAGE.equals(localeString);
+    }
+
+    public static boolean isGenericSubtype(final InputMethodSubtype subtype) {
+        return R.string.subtype_generic == subtype.getNameResId();
     }
 
     public static Locale getSubtypeLocale(final InputMethodSubtype subtype) {
@@ -314,6 +317,9 @@ public final class SubtypeLocaleUtils {
         if (isNoLanguage(subtype)) {
             return getKeyboardLayoutSetDisplayName(subtype);
         }
+        if (!isGenericSubtype(subtype)) {
+            return sResources.getString(subtype.getNameResId());
+        }
         return getSubtypeLocaleDisplayName(subtype.getLocale());
     }
 
@@ -321,6 +327,9 @@ public final class SubtypeLocaleUtils {
     public static String getMiddleDisplayName(final InputMethodSubtype subtype) {
         if (isNoLanguage(subtype)) {
             return getKeyboardLayoutSetDisplayName(subtype);
+        }
+        if (!isGenericSubtype(subtype)) {
+            return sResources.getString(subtype.getNameResId());
         }
         final Locale locale = getSubtypeLocale(subtype);
         return getSubtypeLocaleDisplayName(locale.getLanguage());

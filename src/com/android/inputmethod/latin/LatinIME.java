@@ -111,8 +111,6 @@ import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TreeSet;
 
-import so.brendan.locale.ExtraLocaleUtil;
-
 /**
  * Input method implementation for Qwerty'ish keyboard.
  */
@@ -530,9 +528,6 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     @Override
     public void onCreate() {
-        // TODO this is obviously hacks.
-        ExtraLocaleUtil.init(this);
-
         Settings.init(this);
         LatinImeLogger.init(this);
         RichInputMethodManager.init(this);

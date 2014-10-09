@@ -28,6 +28,8 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
+import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
+
 import java.util.List;
 
 import so.brendan.locale.ExtraLocaleUtil;
@@ -104,16 +106,7 @@ import so.brendan.locale.ExtraLocaleUtil;
                 sb.append(", ");
             }
 
-            // TODO clean up this hack if possible.
-            final CharSequence displayName = ExtraLocaleUtil.getDisplayNameForLocaleString(
-                    subtype.getNameResId());
-
-            if (displayName == null) {
-                sb.append(subtype.getDisplayName(context, imi.getPackageName(),
-                        imi.getServiceInfo().applicationInfo));
-            } else {
-                sb.append(displayName);
-            }
+            sb.append(SubtypeLocaleUtils.getFullDisplayName(subtype));
         }
         return sb.toString();
     }
