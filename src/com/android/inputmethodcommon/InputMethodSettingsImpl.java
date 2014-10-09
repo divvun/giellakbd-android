@@ -32,8 +32,6 @@ import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
 
 import java.util.List;
 
-import so.brendan.locale.ExtraLocaleUtil;
-
 /* package private */ class InputMethodSettingsImpl implements InputMethodSettingsInterface {
     private Preference mSubtypeEnablerPreference;
     private int mInputMethodSettingsCategoryTitleRes;

@@ -690,7 +690,4 @@ Tip: You can download and remove dictionaries by going to &lt;b>Language &amp; i
          This resource is copied from packages/apps/Settings/res/values/strings.xml -->
     <!-- This resource is corresponding to msgid="5433275485499039199" -->
     <string name="user_dict_fast_scroll_alphabet">\u0020ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
-
-    <!-- Test string to see if locale magic is working -->
-    <string name="subtype_sjd">Kildin Sami</string>
 </resources>

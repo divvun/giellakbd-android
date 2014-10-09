@@ -28,12 +28,4 @@
             android:imeSubtypeMode="keyboard"
             android:imeSubtypeExtraValue="KeyboardLayoutSet=qwerty,AsciiCapable,EnabledWhenDefaultIsNotAsciiCapable,EmojiCapable"
     />
-    <!-- XXX test subtype for locale magic testing -->
-    <subtype android:icon="@drawable/ic_ime_switcher_dark"
-        android:label="@string/subtype_sjd"
-        android:subtypeId="0x47000001"
-        android:imeSubtypeLocale="sjd"
-        android:imeSubtypeMode="keyboard"
-        android:imeSubtypeExtraValue="KeyboardLayoutSet=qwerty,AsciiCapable,EmojiCapable"
-        />
 </input-method>
