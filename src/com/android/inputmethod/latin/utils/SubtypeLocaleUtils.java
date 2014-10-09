@@ -210,15 +210,16 @@ public final class SubtypeLocaleUtils {
                 && subtype.containsExtraValueKey(UNTRANSLATABLE_STRING_IN_SUBTYPE_NAME)) {
             return subtype.getExtraValueOf(UNTRANSLATABLE_STRING_IN_SUBTYPE_NAME);
         } else {
+            if (!isGenericSubtype(subtype)) {
+                return sResources.getString(subtype.getNameResId());
+            }
             return getSubtypeLocaleDisplayNameInternal(subtype.getLocale(), displayLocale);
         }
     }
 
     public static String getSubtypeDisplayNameInSystemLocale(final InputMethodSubtype subtype) {
         final Locale displayLocale = sResources.getConfiguration().locale;
-        if (!isGenericSubtype(subtype)) {
-            return sResources.getString(subtype.getNameResId());
-        }
+
         return getSubtypeDisplayNameInternal(subtype, displayLocale);
     }
 
@@ -317,9 +318,12 @@ public final class SubtypeLocaleUtils {
         if (isNoLanguage(subtype)) {
             return getKeyboardLayoutSetDisplayName(subtype);
         }
-        if (!isGenericSubtype(subtype)) {
+
+        final Locale locale = getSubtypeLocale(subtype);
+        if (localeHasNoDisplayName(locale) && !isGenericSubtype(subtype)) {
             return sResources.getString(subtype.getNameResId());
         }
+
         return getSubtypeLocaleDisplayName(subtype.getLocale());
     }
 
@@ -328,10 +332,12 @@ public final class SubtypeLocaleUtils {
         if (isNoLanguage(subtype)) {
             return getKeyboardLayoutSetDisplayName(subtype);
         }
-        if (!isGenericSubtype(subtype)) {
+
+        final Locale locale = getSubtypeLocale(subtype);
+        if (localeHasNoDisplayName(locale) && !isGenericSubtype(subtype)) {
             return sResources.getString(subtype.getNameResId());
         }
-        final Locale locale = getSubtypeLocale(subtype);
+
         return getSubtypeLocaleDisplayName(locale.getLanguage());
     }
 
@@ -340,7 +346,12 @@ public final class SubtypeLocaleUtils {
         if (isNoLanguage(subtype)) {
             return "";
         }
+        
         final Locale locale = getSubtypeLocale(subtype);
         return StringUtils.capitalizeFirstCodePoint(locale.getLanguage(), locale);
+    }
+
+    private static boolean localeHasNoDisplayName(Locale locale) {
+        return locale.getDisplayName().equals(locale.getISO3Language());
     }
 }
