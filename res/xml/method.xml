@@ -16,9 +16,6 @@
  * limitations under the License.
  */
 -->
-<!-- TODO: use <lang>_keyboard icon instead of a common keyboard icon. -->
-<!-- Note: SupportTouchPositionCorrection extra value is obsolete and maintained for backward
-     compatibility. -->
 <!-- If IME doesn't have an applicable subtype, the first subtype will be used as a default
      subtype.-->
 <input-method xmlns:android="http://schemas.android.com/apk/res/android"
@@ -31,4 +28,12 @@
             android:imeSubtypeMode="keyboard"
             android:imeSubtypeExtraValue="KeyboardLayoutSet=qwerty,AsciiCapable,EnabledWhenDefaultIsNotAsciiCapable,EmojiCapable"
     />
+    <!-- XXX test subtype for locale magic testing -->
+    <subtype android:icon="@drawable/ic_ime_switcher_dark"
+        android:label="@string/subtype_sjd"
+        android:subtypeId="0x47000001"
+        android:imeSubtypeLocale="sjd"
+        android:imeSubtypeMode="keyboard"
+        android:imeSubtypeExtraValue="KeyboardLayoutSet=qwerty,AsciiCapable,EmojiCapable"
+        />
 </input-method>

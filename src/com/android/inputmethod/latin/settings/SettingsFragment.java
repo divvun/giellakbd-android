@@ -335,8 +335,10 @@ public final class SettingsFragment extends InputMethodSettingsFragment
         final InputMethodSubtype[] subtypes =
                 AdditionalSubtypeUtils.createAdditionalSubtypesArray(prefSubtype);
         final StringBuilder styles = new StringBuilder();
+
         for (final InputMethodSubtype subtype : subtypes) {
             if (styles.length() > 0) styles.append(", ");
+
             styles.append(SubtypeLocaleUtils.getSubtypeDisplayNameInSystemLocale(subtype));
         }
         customInputStyles.setSummary(styles);

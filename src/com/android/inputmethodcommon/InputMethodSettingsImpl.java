@@ -28,7 +28,11 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
+import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
+
 import java.util.List;
+
+import so.brendan.locale.ExtraLocaleUtil;
 
 /* package private */ class InputMethodSettingsImpl implements InputMethodSettingsInterface {
     private Preference mSubtypeEnablerPreference;
@@ -101,8 +105,8 @@ import java.util.List;
             if (sb.length() > 0) {
                 sb.append(", ");
             }
-            sb.append(subtype.getDisplayName(context, imi.getPackageName(),
-                    imi.getServiceInfo().applicationInfo));
+
+            sb.append(SubtypeLocaleUtils.getFullDisplayName(subtype));
         }
         return sb.toString();
     }
