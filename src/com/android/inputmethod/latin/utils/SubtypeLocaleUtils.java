@@ -321,7 +321,7 @@ public final class SubtypeLocaleUtils {
         }
 
         final Locale locale = getSubtypeLocale(subtype);
-        if (isUnrecognisedLocale(locale) && !isGenericSubtype(subtype)) {
+        if (/*isUnrecognisedLocale(locale) && */!isGenericSubtype(subtype)) {
             return sResources.getString(subtype.getNameResId());
         }
 
@@ -335,7 +335,7 @@ public final class SubtypeLocaleUtils {
         }
 
         final Locale locale = getSubtypeLocale(subtype);
-        if (isUnrecognisedLocale(locale) && !isGenericSubtype(subtype)) {
+        if (/*isUnrecognisedLocale(locale) && */!isGenericSubtype(subtype)) {
             return sResources.getString(subtype.getNameResId());
         }
 
@@ -349,6 +349,10 @@ public final class SubtypeLocaleUtils {
         }
         
         final Locale locale = getSubtypeLocale(subtype);
+        
+        if (/*isUnrecognisedLocale(locale) && */!isGenericSubtype(subtype)) {
+            return sResources.getString(subtype.getNameResId());
+        }
         return StringUtils.capitalizeFirstCodePoint(locale.getLanguage(), locale);
     }
 
