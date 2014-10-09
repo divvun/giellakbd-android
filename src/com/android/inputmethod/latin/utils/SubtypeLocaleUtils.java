@@ -30,7 +30,6 @@ import com.android.inputmethod.latin.R;
 
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.MissingResourceException;
 
 public final class SubtypeLocaleUtils {
     static final String TAG = SubtypeLocaleUtils.class.getSimpleName();
@@ -186,6 +185,7 @@ public final class SubtypeLocaleUtils {
             final Locale locale = LocaleUtils.constructLocaleFromString(localeString);
             displayName = locale.getDisplayName(displayLocale);
         }
+
         return StringUtils.capitalizeFirstCodePoint(displayName, displayLocale);
     }
 
@@ -211,11 +211,22 @@ public final class SubtypeLocaleUtils {
                 && subtype.containsExtraValueKey(UNTRANSLATABLE_STRING_IN_SUBTYPE_NAME)) {
             return subtype.getExtraValueOf(UNTRANSLATABLE_STRING_IN_SUBTYPE_NAME);
         } else {
-            if (!isGenericSubtype(subtype)) {
-                return sResources.getString(subtype.getNameResId());
+            if (isUnrecognisedLocale(displayLocale) && !isGenericSubtype(subtype)) {
+                return getSubtypeDisplayNameInFallbackLocale(subtype);
             }
             return getSubtypeLocaleDisplayNameInternal(subtype.getLocale(), displayLocale);
         }
+    }
+
+    private static String getSubtypeDisplayNameInFallbackLocale(final InputMethodSubtype subtype) {
+        RunInLocale<String> runner = new RunInLocale<String>() {
+            @Override
+            protected String job(Resources res) {
+                return res.getString(subtype.getNameResId());
+            }
+        };
+
+        return runner.runInLocale(sResources, new Locale("zz"));
     }
 
     public static String getSubtypeDisplayNameInSystemLocale(final InputMethodSubtype subtype) {
@@ -239,7 +250,8 @@ public final class SubtypeLocaleUtils {
             @Override
             protected String job(final Resources res) {
                 try {
-                    return res.getString(nameResId, replacementString);
+                    final String o = res.getString(nameResId, replacementString);
+                    return o;
                 } catch (Resources.NotFoundException e) {
                     // TODO: Remove this catch when InputMethodManager.getCurrentInputMethodSubtype
                     // is fixed.
@@ -321,8 +333,9 @@ public final class SubtypeLocaleUtils {
         }
 
         final Locale locale = getSubtypeLocale(subtype);
-        if (/*isUnrecognisedLocale(locale) && */!isGenericSubtype(subtype)) {
-            return sResources.getString(subtype.getNameResId());
+
+        if (noValidNativeDisplayName(locale) && !isGenericSubtype(subtype)) {
+            return getSubtypeDisplayNameInFallbackLocale(subtype);
         }
 
         return getSubtypeLocaleDisplayName(subtype.getLocale());
@@ -335,8 +348,9 @@ public final class SubtypeLocaleUtils {
         }
 
         final Locale locale = getSubtypeLocale(subtype);
-        if (/*isUnrecognisedLocale(locale) && */!isGenericSubtype(subtype)) {
-            return sResources.getString(subtype.getNameResId());
+
+        if (noValidNativeDisplayName(locale) && !isGenericSubtype(subtype)) {
+            return getSubtypeDisplayNameInFallbackLocale(subtype);
         }
 
         return getSubtypeLocaleDisplayName(locale.getLanguage());
@@ -349,20 +363,29 @@ public final class SubtypeLocaleUtils {
         }
         
         final Locale locale = getSubtypeLocale(subtype);
-        
-        if (/*isUnrecognisedLocale(locale) && */!isGenericSubtype(subtype)) {
-            return sResources.getString(subtype.getNameResId());
+
+        if (noValidNativeDisplayName(locale) && !isGenericSubtype(subtype)) {
+            return getSubtypeDisplayNameInFallbackLocale(subtype);
         }
         return StringUtils.capitalizeFirstCodePoint(locale.getLanguage(), locale);
     }
 
     private static boolean isUnrecognisedLocale(Locale locale) {
-        // This will throw an exception if no code is found.
-        try {
-            locale.getISO3Country();
-            return false;
-        } catch (MissingResourceException e) {
+        Log.d(TAG, String.format("%s = %s?", locale.toString(), locale.getDisplayLanguage()));
+        return locale.toString().equals(locale.getDisplayLanguage());
+    }
+
+    private static boolean noValidNativeDisplayName(Locale locale) {
+        // If the locale is not recognised, hilarity.
+        if (isUnrecognisedLocale(locale)) {
             return true;
         }
+
+        // If display name is the same in English, oh boy.
+        final String dn = locale.getDisplayName(new Locale(locale.toString()));
+        final String dn2 = locale.getDisplayName(new Locale("en"));
+        final boolean result = dn.equals(dn2);
+
+        return result;
     }
 }
