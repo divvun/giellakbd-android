@@ -226,7 +226,7 @@ public final class SubtypeLocaleUtils {
             }
         };
 
-        return runner.runInLocale(sResources, new Locale("zz"));
+        return runner.runInLocale(sResources, new Locale(NO_LANGUAGE));
     }
 
     public static String getSubtypeDisplayNameInSystemLocale(final InputMethodSubtype subtype) {
@@ -371,7 +371,6 @@ public final class SubtypeLocaleUtils {
     }
 
     private static boolean isUnrecognisedLocale(Locale locale) {
-        Log.d(TAG, String.format("%s = %s?", locale.toString(), locale.getDisplayLanguage()));
         return locale.toString().equals(locale.getDisplayLanguage());
     }
 
@@ -379,6 +378,11 @@ public final class SubtypeLocaleUtils {
         // If the locale is not recognised, hilarity.
         if (isUnrecognisedLocale(locale)) {
             return true;
+        }
+
+        // English is fallback, therefore always has native name.
+        if (locale.getLanguage().startsWith("en")) {
+            return false;
         }
 
         // If display name is the same in English, oh boy.
