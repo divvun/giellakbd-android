@@ -35,6 +35,7 @@
             android:killAfterRestore="false"
             android:supportsRtl="true">
 
+        <!--
         <service android:name="com.android.inputmethod.latin.LatinIME"
                 android:label="@string/english_ime_name"
                 android:permission="android.permission.BIND_INPUT_METHOD">
@@ -53,6 +54,7 @@
             <meta-data android:name="android.view.textservice.scs"
                     android:resource="@xml/spellchecker" />
         </service>
+        -->
 
         <activity android:name="com.android.inputmethod.latin.setup.SetupActivity"
                 android:label="@string/english_ime_name"
@@ -121,6 +123,7 @@
             </intent-filter>
         </receiver>
 
+        <!--
         <provider android:name="com.android.inputmethod.dictionarypack.DictionaryProvider"
                 android:grantUriPermissions="true"
                 android:exported="false"
@@ -132,6 +135,7 @@
         <service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
                 android:label="@string/dictionary_service_name">
         </service>
+        -->
 
         <receiver android:name="com.android.inputmethod.dictionarypack.EventHandler">
             <intent-filter>
