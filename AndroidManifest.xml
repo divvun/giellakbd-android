@@ -35,7 +35,6 @@
             android:killAfterRestore="false"
             android:supportsRtl="true">
 
-        <!--
         <service android:name="com.android.inputmethod.latin.LatinIME"
                 android:label="@string/english_ime_name"
                 android:permission="android.permission.BIND_INPUT_METHOD">
@@ -45,6 +44,7 @@
             <meta-data android:name="android.view.im" android:resource="@xml/method" />
         </service>
 
+        <!--
         <service android:name="com.android.inputmethod.latin.spellcheck.AndroidSpellCheckerService"
                  android:label="@string/spell_checker_service_name"
                  android:permission="android.permission.BIND_TEXT_SERVICE">
