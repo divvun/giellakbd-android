@@ -309,12 +309,20 @@ public class Key implements Comparable<Key> {
         moreKeys = KeySpecParser.insertAdditionalMoreKeys(moreKeys, additionalMoreKeys);
         if (moreKeys != null) {
             actionFlags |= ACTION_FLAGS_ENABLE_LONG_PRESS;
-            mMoreKeys = new MoreKeySpec[moreKeys.length];
+            MoreKeySpec[] mk = new MoreKeySpec[moreKeys.length];
+
+            int c = 0;
             for (int i = 0; i < moreKeys.length; i++) {
                 if (TypefaceUtils.isGlyphDrawable(moreKeys[i])) {
-                    mMoreKeys[i] = new MoreKeySpec(
+                    mk[c++] = new MoreKeySpec(
                             moreKeys[i], needsToUpperCase, locale, params.mCodesSet);
                 }
+            }
+            if (c != mk.length) {
+                mMoreKeys = new MoreKeySpec[c];
+                System.arraycopy(mk, 0, mMoreKeys, 0, c);
+            } else {
+                mMoreKeys = mk;
             }
         } else {
             mMoreKeys = null;
