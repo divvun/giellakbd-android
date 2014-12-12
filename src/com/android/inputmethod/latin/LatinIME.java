@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008 The Android Open Source Project
+ * Copyright (C) 2015 Brendan Molloy <brendan@bbqsrc.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -92,6 +93,7 @@ import com.android.inputmethod.latin.utils.StatsUtils;
 import com.android.inputmethod.latin.utils.StatsUtilsManager;
 import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
 import com.android.inputmethod.latin.utils.ViewLayoutUtils;
+import com.android.inputmethod.latin.utils.TypefaceUtils;
 
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
@@ -554,6 +556,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         AudioAndHapticFeedbackManager.init(this);
         AccessibilityUtils.init(this);
         mStatsUtilsManager.onCreate(this /* context */, mDictionaryFacilitator);
+        TypefaceUtils.init(this);
         super.onCreate();
 
         mHandler.onCreate();

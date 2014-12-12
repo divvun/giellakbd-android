@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2010 The Android Open Source Project
+ * Copyright (C) 2015 Brendan Molloy <brendan@bbqsrc.net>
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -39,6 +40,7 @@ import com.android.inputmethod.keyboard.internal.MoreKeySpec;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.common.Constants;
 import com.android.inputmethod.latin.common.StringUtils;
+import com.android.inputmethod.latin.utils.TypefaceUtils;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -327,9 +329,22 @@ public class Key implements Comparable<Key> {
         moreKeys = MoreKeySpec.insertAdditionalMoreKeys(moreKeys, additionalMoreKeys);
         if (moreKeys != null) {
             actionFlags |= ACTION_FLAGS_ENABLE_LONG_PRESS;
-            mMoreKeys = new MoreKeySpec[moreKeys.length];
+            MoreKeySpec[] mk = new MoreKeySpec[moreKeys.length];
+
+            int c = 0;
             for (int i = 0; i < moreKeys.length; i++) {
-                mMoreKeys[i] = new MoreKeySpec(moreKeys[i], needsToUpcase, localeForUpcasing);
+                if (TypefaceUtils.isGlyphDrawable(moreKeys[i])) {
+                    mk[c++] = new MoreKeySpec(moreKeys[i], needsToUpcase, localeForUpcasing);
+                }
+            }
+
+            if (c == 0) {
+                mMoreKeys = null;
+            } else if (c != mk.length) {
+                mMoreKeys = new MoreKeySpec[c];
+                System.arraycopy(mk, 0, mMoreKeys, 0, c);
+            } else {
+                mMoreKeys = mk;
             }
         } else {
             mMoreKeys = null;
@@ -359,9 +374,14 @@ public class Key implements Comparable<Key> {
         } else {
             final String hintLabel = style.getString(
                     keyAttr, R.styleable.Keyboard_Key_keyHintLabel);
-            mHintLabel = needsToUpcase
-                    ? StringUtils.toTitleCaseOfKeyLabel(hintLabel, localeForUpcasing)
-                    : hintLabel;
+            if (TypefaceUtils.isGlyphDrawable(hintLabel)) {
+                mHintLabel = needsToUpcase
+                        ? StringUtils.toTitleCaseOfKeyLabel(hintLabel, localeForUpcasing)
+                        : hintLabel;
+            } else {
+                mHintLabel = null;
+            }
+
         }
         String outputText = KeySpecParser.getOutputText(keySpec);
         if (needsToUpcase) {
