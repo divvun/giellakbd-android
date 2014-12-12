@@ -349,13 +349,9 @@ public class Key implements Comparable<Key> {
         } else {
             String hintLabel = KeySpecParser.toUpperCaseOfStringForLocale(style.getString(keyAttr,
                     R.styleable.Keyboard_Key_keyHintLabel), needsToUpperCase, locale);
-            
-            if (hintLabel == null) {
-                mHintLabel = null;
-            } else if (TypefaceUtils.isGlyphDrawable(hintLabel)) {
+
+            if (TypefaceUtils.isGlyphDrawable(hintLabel)) {
                 mHintLabel = hintLabel;
-            } else if (mMoreKeys != null) {
-                mHintLabel = KeySpecParser.toUpperCaseOfStringForLocale(mMoreKeys[0].mLabel, needsToUpperCase, locale);
             } else {
                 mHintLabel = null;
             }

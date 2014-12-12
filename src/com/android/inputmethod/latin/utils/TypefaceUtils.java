@@ -104,6 +104,10 @@ public final class TypefaceUtils {
     }
 
     public static boolean isGlyphDrawable(String glyph) {
+        if (glyph == null) {
+            return false;
+        }
+
         int sdk = Build.VERSION.SDK_INT;
 
         if (!sMissingCodepoints.containsKey(sdk)) {
