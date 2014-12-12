@@ -102,6 +102,7 @@ import com.android.inputmethod.latin.utils.StaticInnerHandlerWrapper;
 import com.android.inputmethod.latin.utils.StringUtils;
 import com.android.inputmethod.latin.utils.TargetPackageInfoGetterTask;
 import com.android.inputmethod.latin.utils.TextRange;
+import com.android.inputmethod.latin.utils.TypefaceUtils;
 import com.android.inputmethod.latin.utils.UserHistoryForgettingCurveUtils;
 import com.android.inputmethod.research.ResearchLogger;
 
@@ -537,6 +538,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         AudioAndHapticFeedbackManager.init(this);
         AccessibilityUtils.init(this);
         PersonalizationDictionarySessionRegister.init(this);
+        TypefaceUtils.init(this);
 
         super.onCreate();
 
@@ -581,6 +583,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         final InputAttributes inputAttributes =
                 new InputAttributes(getCurrentInputEditorInfo(), isFullscreenMode());
         mSettings.loadSettings(locale, inputAttributes);
+
         AudioAndHapticFeedbackManager.getInstance().onSettingsChanged(mSettings.getCurrent());
         // To load the keyboard we need to load all the settings once, but resetting the
         // contacts dictionary should be deferred until after the new layout has been displayed

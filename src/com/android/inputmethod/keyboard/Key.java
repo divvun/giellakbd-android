@@ -42,6 +42,7 @@ import com.android.inputmethod.keyboard.internal.MoreKeySpec;
 import com.android.inputmethod.latin.Constants;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.utils.StringUtils;
+import com.android.inputmethod.latin.utils.TypefaceUtils;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
@@ -310,8 +311,10 @@ public class Key implements Comparable<Key> {
             actionFlags |= ACTION_FLAGS_ENABLE_LONG_PRESS;
             mMoreKeys = new MoreKeySpec[moreKeys.length];
             for (int i = 0; i < moreKeys.length; i++) {
-                mMoreKeys[i] = new MoreKeySpec(
-                        moreKeys[i], needsToUpperCase, locale, params.mCodesSet);
+                if (TypefaceUtils.isGlyphDrawable(moreKeys[i])) {
+                    mMoreKeys[i] = new MoreKeySpec(
+                            moreKeys[i], needsToUpperCase, locale, params.mCodesSet);
+                }
             }
         } else {
             mMoreKeys = null;
