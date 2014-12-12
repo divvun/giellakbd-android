@@ -347,8 +347,15 @@ public class Key implements Comparable<Key> {
         if ((mLabelFlags & LABEL_FLAGS_DISABLE_HINT_LABEL) != 0) {
             mHintLabel = null;
         } else {
-            mHintLabel = KeySpecParser.toUpperCaseOfStringForLocale(style.getString(keyAttr,
+            String hintLabel = KeySpecParser.toUpperCaseOfStringForLocale(style.getString(keyAttr,
                     R.styleable.Keyboard_Key_keyHintLabel), needsToUpperCase, locale);
+            if (TypefaceUtils.isGlyphDrawable(hintLabel)) {
+                mHintLabel = hintLabel;
+            } else if (mMoreKeys != null) {
+                mHintLabel = KeySpecParser.toUpperCaseOfStringForLocale(mMoreKeys[0].mLabel, needsToUpperCase, locale);
+            } else {
+                mHintLabel = null;
+            }
         }
         String outputText = KeySpecParser.toUpperCaseOfStringForLocale(style.getString(keyAttr,
                 R.styleable.Keyboard_Key_keyOutputText), needsToUpperCase, locale);
