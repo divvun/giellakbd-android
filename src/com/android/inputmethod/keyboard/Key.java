@@ -318,7 +318,9 @@ public class Key implements Comparable<Key> {
                             moreKeys[i], needsToUpperCase, locale, params.mCodesSet);
                 }
             }
-            if (c != mk.length) {
+            if (c == 0) {
+                mMoreKeys = null;
+            } else if (c != mk.length) {
                 mMoreKeys = new MoreKeySpec[c];
                 System.arraycopy(mk, 0, mMoreKeys, 0, c);
             } else {
