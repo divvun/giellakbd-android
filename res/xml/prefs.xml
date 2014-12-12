@@ -42,12 +42,15 @@
             android:title="@string/popup_on_keypress"
             android:persistent="true"
             android:defaultValue="@bool/config_default_key_preview_popup" />
+        <!--
         <CheckBoxPreference
             android:key="pref_voice_input_key"
             android:title="@string/voice_input"
             android:persistent="true"
             android:defaultValue="true" />
+            -->
     </PreferenceCategory>
+    <!--
     <PreferenceCategory
         android:title="@string/correction_category"
         android:key="correction_settings">
@@ -99,7 +102,7 @@
             android:summary="@string/gesture_input_summary"
             android:persistent="true"
             android:defaultValue="true" />
-        <!-- TODO: Move these two options to the advanced settings. -->
+        <! TODO: Move these two options to the advanced settings. >
         <CheckBoxPreference
             android:key="pref_gesture_floating_preview_text"
             android:dependency="gesture_input"
@@ -114,31 +117,37 @@
             android:persistent="true"
             android:defaultValue="true" />
     </PreferenceCategory>
+
+    -->
     <PreferenceCategory
         android:title="@string/misc_category"
         android:key="misc_settings">
+        <!--
         <CheckBoxPreference
             android:key="next_word_prediction"
             android:title="@string/bigram_prediction"
             android:summary="@string/bigram_prediction_summary"
             android:persistent="true"
-            android:defaultValue="true" />
+            android:defaultValue="true" />-->
         <PreferenceScreen
             android:key="pref_advanced_settings"
             android:title="@string/advanced_settings"
             android:summary="@string/advanced_settings_summary">
+            <!--
             <CheckBoxPreference
                 android:key="pref_key_use_contacts_dict"
                 android:title="@string/use_contacts_dict"
                 android:summary="@string/use_contacts_dict_summary"
                 android:persistent="true"
                 android:defaultValue="true" />
+                -->
             <CheckBoxPreference
                 android:key="pref_key_use_double_space_period"
                 android:title="@string/use_double_space_period"
                 android:summary="@string/use_double_space_period_summary"
                 android:persistent="true"
                 android:defaultValue="true" />
+            <!--
             <CheckBoxPreference
                 android:key="pref_show_language_switch_key"
                 android:title="@string/show_language_switch_key"
@@ -151,13 +160,14 @@
                 android:summary="@string/include_other_imes_in_language_switch_list_summary"
                 android:persistent="true"
                 android:defaultValue="false" />
-            <!-- Values for popup dismiss delay are added programmatically -->
+            -->
+            <!-- Values for popup dismiss delay are added programmatically
             <CheckBoxPreference
                 android:key="pref_sliding_key_input_preview"
                 android:title="@string/sliding_key_input_preview"
                 android:summary="@string/sliding_key_input_preview_summary"
                 android:persistent="true"
-                android:defaultValue="true" />
+                android:defaultValue="true" />-->
             <ListPreference
                 android:key="pref_keyboard_layout_20110916"
                 android:title="@string/keyboard_color_scheme"
@@ -165,13 +175,14 @@
                 android:entryValues="@array/keyboard_color_schemes_values"
                 android:entries="@array/keyboard_color_schemes"
                 android:defaultValue="@string/config_default_keyboard_theme_index" />
+            <!--
             <PreferenceScreen
                 android:fragment="com.android.inputmethod.latin.settings.AdditionalSubtypeSettings"
                 android:key="custom_input_styles"
-                android:title="@string/custom_input_styles_title" />
+                android:title="@string/custom_input_styles_title" />-->
             <ListPreference
                 android:key="pref_key_preview_popup_dismiss_delay"
-                android:title="@string/key_preview_popup_dismiss_delay" />
+                android:title="@string/key_preview_popup_dismiss_delay"/>
             <com.android.inputmethod.latin.settings.SeekBarDialogPreference
                 android:key="pref_key_longpress_timeout"
                 android:title="@string/prefs_key_longpress_timeout_settings"

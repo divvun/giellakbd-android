@@ -609,6 +609,11 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     }
 
     private void initSuggest() {
+        final SettingsValues settingsValues = mSettings.getCurrent();
+        if (!settingsValues.mBigramPredictionEnabled) {
+            return;
+        }
+
         final Locale switcherSubtypeLocale = mSubtypeSwitcher.getCurrentSubtypeLocale();
         final String switcherLocaleStr = switcherSubtypeLocale.toString();
         final Locale subtypeLocale;
@@ -630,7 +635,6 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
         final Suggest newSuggest = new Suggest(this /* Context */, subtypeLocale,
                 this /* SuggestInitializationListener */);
-        final SettingsValues settingsValues = mSettings.getCurrent();
         if (settingsValues.mCorrectionEnabled) {
             newSuggest.setAutoCorrectionThreshold(settingsValues.mAutoCorrectionThreshold);
         }

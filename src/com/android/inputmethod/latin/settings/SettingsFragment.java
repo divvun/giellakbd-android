@@ -166,7 +166,7 @@ public final class SettingsFragment extends InputMethodSettingsFragment
 
         final boolean showVoiceKeyOption = res.getBoolean(
                 R.bool.config_enable_show_voice_key_option);
-        if (!showVoiceKeyOption) {
+        if (!showVoiceKeyOption && mVoiceInputKeyPreference != null) {
             generalSettings.removePreference(mVoiceInputKeyPreference);
         }
 
@@ -211,21 +211,24 @@ public final class SettingsFragment extends InputMethodSettingsFragment
                 (PreferenceGroup) findPreference(Settings.PREF_CORRECTION_SETTINGS);
         final PreferenceScreen dictionaryLink =
                 (PreferenceScreen) findPreference(Settings.PREF_CONFIGURE_DICTIONARIES_KEY);
-        final Intent intent = dictionaryLink.getIntent();
-        intent.setClassName(context.getPackageName(), DictionarySettingsActivity.class.getName());
-        final int number = context.getPackageManager().queryIntentActivities(intent, 0).size();
-        if (0 >= number) {
-            textCorrectionGroup.removePreference(dictionaryLink);
-        }
 
-        final Preference editPersonalDictionary =
-                findPreference(Settings.PREF_EDIT_PERSONAL_DICTIONARY);
-        final Intent editPersonalDictionaryIntent = editPersonalDictionary.getIntent();
-        final ResolveInfo ri = USE_INTERNAL_PERSONAL_DICTIONARY_SETTIGS ? null
-                : context.getPackageManager().resolveActivity(
-                        editPersonalDictionaryIntent, PackageManager.MATCH_DEFAULT_ONLY);
-        if (ri == null) {
-            overwriteUserDictionaryPreference(editPersonalDictionary);
+        if (dictionaryLink != null) {
+            final Intent intent = dictionaryLink.getIntent();
+            intent.setClassName(context.getPackageName(), DictionarySettingsActivity.class.getName());
+            final int number = context.getPackageManager().queryIntentActivities(intent, 0).size();
+            if (0 >= number) {
+                textCorrectionGroup.removePreference(dictionaryLink);
+            }
+
+            final Preference editPersonalDictionary =
+                    findPreference(Settings.PREF_EDIT_PERSONAL_DICTIONARY);
+            final Intent editPersonalDictionaryIntent = editPersonalDictionary.getIntent();
+            final ResolveInfo ri = USE_INTERNAL_PERSONAL_DICTIONARY_SETTIGS ? null
+                    : context.getPackageManager().resolveActivity(
+                    editPersonalDictionaryIntent, PackageManager.MATCH_DEFAULT_ONLY);
+            if (ri == null) {
+                overwriteUserDictionaryPreference(editPersonalDictionary);
+            }
         }
 
         if (!Settings.readFromBuildConfigIfGestureInputEnabled(res)) {
@@ -244,7 +247,7 @@ public final class SettingsFragment extends InputMethodSettingsFragment
     public void onResume() {
         super.onResume();
         final boolean isShortcutImeEnabled = SubtypeSwitcher.getInstance().isShortcutImeEnabled();
-        if (!isShortcutImeEnabled) {
+        if (!isShortcutImeEnabled && mVoiceInputKeyPreference != null) {
             getPreferenceScreen().removePreference(mVoiceInputKeyPreference);
         }
         final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
@@ -256,7 +259,7 @@ public final class SettingsFragment extends InputMethodSettingsFragment
         updateShowCorrectionSuggestionsSummary();
         updateKeyPreviewPopupDelaySummary();
         updateColorSchemeSummary(prefs, getResources());
-        updateCustomInputStylesSummary();
+        //updateCustomInputStylesSummary();
     }
 
     @Override
@@ -296,11 +299,24 @@ public final class SettingsFragment extends InputMethodSettingsFragment
     private void ensureConsistencyOfAutoCorrectionSettings() {
         final String autoCorrectionOff = getResources().getString(
                 R.string.auto_correction_threshold_mode_index_off);
-        final String currentSetting = mAutoCorrectionThresholdPreference.getValue();
-        mBigramPrediction.setEnabled(!currentSetting.equals(autoCorrectionOff));
+
+        if (mBigramPrediction == null) {
+            return;
+        }
+
+        if (mAutoCorrectionThresholdPreference != null) {
+            final String currentSetting = mAutoCorrectionThresholdPreference.getValue();
+            mBigramPrediction.setEnabled(!currentSetting.equals(autoCorrectionOff));
+        } else {
+            mBigramPrediction.setEnabled(false);
+        }
     }
 
     private void updateShowCorrectionSuggestionsSummary() {
+        if (mShowCorrectionSuggestionsPreference == null) {
+            return;
+        }
+
         mShowCorrectionSuggestionsPreference.setSummary(
                 getResources().getStringArray(R.array.prefs_suggestion_visibilities)
                 [mShowCorrectionSuggestionsPreference.findIndexOfValue(
