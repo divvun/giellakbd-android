@@ -77,6 +77,7 @@ import java.util.List;
                     }
                 });
         prefScreen.addPreference(mSubtypeEnablerPreference);
+        SubtypeLocaleUtils.init(context);
         updateSubtypeEnabler();
         return true;
     }

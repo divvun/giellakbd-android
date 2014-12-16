@@ -88,6 +88,7 @@ public final class SettingsFragment extends InputMethodSettingsFragment
     @Override
     public void onCreate(final Bundle icicle) {
         super.onCreate(icicle);
+
         setInputMethodSettingsCategoryTitle(R.string.language_selection_title);
         setSubtypeEnablerTitle(R.string.select_language);
         addPreferencesFromResource(R.xml.prefs);
@@ -104,7 +105,6 @@ public final class SettingsFragment extends InputMethodSettingsFragment
         // singleton and utility classes may not have been initialized.  We have to call
         // initialization method of these classes here. See {@link LatinIME#onCreate()}.
         SubtypeSwitcher.init(context);
-        SubtypeLocaleUtils.init(context);
         AudioAndHapticFeedbackManager.init(context);
 
         mVoiceInputKeyPreference =
