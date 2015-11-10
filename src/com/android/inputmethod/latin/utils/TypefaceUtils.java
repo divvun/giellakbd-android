@@ -16,59 +16,25 @@
 
 package com.android.inputmethod.latin.utils;
 
-import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.util.Log;
 import android.util.SparseArray;
 
-import com.android.inputmethod.latin.R;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.BitSet;
-import java.util.HashMap;
-import java.util.Map;
-
 public final class TypefaceUtils {
-    private static final String TAG = TypefaceUtils.class.getSimpleName();
+    private static final char[] KEY_LABEL_REFERENCE_CHAR = { 'M' };
+    private static final char[] KEY_NUMERIC_HINT_LABEL_REFERENCE_CHAR = { '8' };
 
     private TypefaceUtils() {
         // This utility class is not publicly instantiable.
     }
 
-    private static final Map<Integer, BitSet> sMissingCodepoints = new HashMap<Integer, BitSet>();
-
-    private static byte[] getByteBufferForPath(Context context, int resid) {
-        InputStream is = context.getResources().openRawResource(resid);
-
-        byte[] data = new byte[0];
-
-        try {
-            data = new byte[is.available()];
-            is.read(data);
-            is.close();
-        } catch (IOException e) {
-            Log.e(TAG, "failed to read resid " + resid, e);
-        }
-
-        return data;
-    }
-
-    public static void init(Context context) {
-        sMissingCodepoints.put(16, BitSet.valueOf(getByteBufferForPath(context, R.raw.unicode_api16)));
-        sMissingCodepoints.put(19, BitSet.valueOf(getByteBufferForPath(context, R.raw.unicode_api19)));
-        sMissingCodepoints.put(21, BitSet.valueOf(getByteBufferForPath(context, R.raw.unicode_api21)));
-    }
-
     // This sparse array caches key label text height in pixel indexed by key label text size.
-    private static final SparseArray<Float> sTextHeightCache = CollectionUtils.newSparseArray();
+    private static final SparseArray<Float> sTextHeightCache = new SparseArray<>();
     // Working variable for the following method.
     private static final Rect sTextHeightBounds = new Rect();
 
-    public static float getCharHeight(final char[] referenceChar, final Paint paint) {
+    private static float getCharHeight(final char[] referenceChar, final Paint paint) {
         final int key = getCharGeometryCacheKey(referenceChar[0], paint);
         synchronized (sTextHeightCache) {
             final Float cachedValue = sTextHeightCache.get(key);
@@ -84,11 +50,11 @@ public final class TypefaceUtils {
     }
 
     // This sparse array caches key label text width in pixel indexed by key label text size.
-    private static final SparseArray<Float> sTextWidthCache = CollectionUtils.newSparseArray();
+    private static final SparseArray<Float> sTextWidthCache = new SparseArray<>();
     // Working variable for the following method.
     private static final Rect sTextWidthBounds = new Rect();
 
-    public static float getCharWidth(final char[] referenceChar, final Paint paint) {
+    private static float getCharWidth(final char[] referenceChar, final Paint paint) {
         final int key = getCharGeometryCacheKey(referenceChar[0], paint);
         synchronized (sTextWidthCache) {
             final Float cachedValue = sTextWidthCache.get(key);
@@ -101,43 +67,6 @@ public final class TypefaceUtils {
             sTextWidthCache.put(key, width);
             return width;
         }
-    }
-
-    public static boolean isGlyphDrawable(String glyph) {
-        if (glyph == null) {
-            return false;
-        }
-
-        int sdk = Build.VERSION.SDK_INT;
-
-        if (!sMissingCodepoints.containsKey(sdk)) {
-            int fallback = sdk;
-
-            if (sdk > 21 || sdk == 20) {
-                fallback = 21;
-            } else {
-                fallback = 16;
-            }
-
-            Log.w(TAG, String.format("No missing codepoints for API %s; falling back to %s.", sdk, fallback));
-            sdk = fallback;
-        }
-
-        int[] cps = StringUtils.toCodePointArray(glyph);
-        BitSet bs = sMissingCodepoints.get(sdk);
-
-        for (int i = 0; i < cps.length; ++i) {
-            if (!bs.get(cps[i])) {
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    public static float getStringWidth(final String string, final Paint paint) {
-        paint.getTextBounds(string, 0, string.length(), sTextWidthBounds);
-        return sTextWidthBounds.width();
     }
 
     private static int getCharGeometryCacheKey(final char referenceChar, final Paint paint) {
@@ -155,9 +84,25 @@ public final class TypefaceUtils {
         }
     }
 
-    public static float getLabelWidth(final String label, final Paint paint) {
-        final Rect textBounds = new Rect();
-        paint.getTextBounds(label, 0, label.length(), textBounds);
-        return textBounds.width();
+    public static float getReferenceCharHeight(final Paint paint) {
+        return getCharHeight(KEY_LABEL_REFERENCE_CHAR, paint);
+    }
+
+    public static float getReferenceCharWidth(final Paint paint) {
+        return getCharWidth(KEY_LABEL_REFERENCE_CHAR, paint);
+    }
+
+    public static float getReferenceDigitWidth(final Paint paint) {
+        return getCharWidth(KEY_NUMERIC_HINT_LABEL_REFERENCE_CHAR, paint);
+    }
+
+    // Working variable for the following method.
+    private static final Rect sStringWidthBounds = new Rect();
+
+    public static float getStringWidth(final String string, final Paint paint) {
+        synchronized (sStringWidthBounds) {
+            paint.getTextBounds(string, 0, string.length(), sStringWidthBounds);
+            return sStringWidthBounds.width();
+        }
     }
 }

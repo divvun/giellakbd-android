@@ -23,7 +23,6 @@ import android.util.Xml;
 import com.android.inputmethod.keyboard.Key;
 import com.android.inputmethod.keyboard.Keyboard;
 import com.android.inputmethod.latin.R;
-import com.android.inputmethod.latin.utils.CollectionUtils;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 
 import org.xmlpull.v1.XmlPullParser;
@@ -44,8 +43,9 @@ public final class KeyboardRow {
     /** The height of this row. */
     private final int mRowHeight;
 
-    private final ArrayDeque<RowAttributes> mRowAttributesStack = CollectionUtils.newArrayDeque();
+    private final ArrayDeque<RowAttributes> mRowAttributesStack = new ArrayDeque<>();
 
+    // TODO: Add keyActionFlags.
     private static class RowAttributes {
         /** Default width of a key in this row. */
         public final float mDefaultKeyWidth;

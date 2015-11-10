@@ -21,24 +21,35 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <string name="english_ime_input_options" msgid="3909945612939668554">"შეყვანის მეთოდები"</string>
-    <string name="english_ime_research_log" msgid="8492602295696577851">"კვლევის აღრიცხვის ბრძანებები"</string>
     <string name="use_contacts_for_spellchecking_option_title" msgid="5374120998125353898">"კონტაქტებში ძებნა"</string>
     <string name="use_contacts_for_spellchecking_option_summary" msgid="8754413382543307713">"კონტაქტების სიის გამოყენება მართლწერის შემოწმებისას"</string>
     <string name="vibrate_on_keypress" msgid="5258079494276955460">"ვიბრაცია კლავიშზე დაჭერისას"</string>
     <string name="sound_on_keypress" msgid="6093592297198243644">"ხმა კლავიშზე დაჭერისას"</string>
     <string name="popup_on_keypress" msgid="123894815723512944">"გადიდება ღილაკზე დაჭერისას"</string>
-    <string name="general_category" msgid="1859088467017573195">"ძირითადი"</string>
-    <string name="correction_category" msgid="2236750915056607613">"ტექსტის კორექცია"</string>
-    <string name="gesture_typing_category" msgid="497263612130532630">"ჟესტებით წერა"</string>
-    <string name="misc_category" msgid="6894192814868233453">"სხვა პარამეტრები"</string>
-    <string name="advanced_settings" msgid="362895144495591463">"გაფართოებული პარამეტრები"</string>
-    <string name="advanced_settings_summary" msgid="4487980456152830271">"პარამეტრები ექსპერტთათვის"</string>
+    <string name="settings_screen_preferences" msgid="2696713156722014624">"პარამეტრები"</string>
+    <string name="settings_screen_accounts" msgid="2786418968536696670">"ანგარიშები &amp; კონფიდენციალურობა"</string>
+    <string name="settings_screen_appearance" msgid="7358046399111611615">"იერსახე &amp; განლაგებები"</string>
+    <string name="settings_screen_gesture" msgid="8826372746901183556">"ჟესტებით წერა"</string>
+    <string name="settings_screen_correction" msgid="1616818407747682955">"ტექსტის კორექცია"</string>
+    <string name="settings_screen_advanced" msgid="7472408607625972994">"გაფართოებული"</string>
+    <string name="settings_screen_theme" msgid="2137262503543943871">"თემა"</string>
+    <string name="enable_split_keyboard" msgid="4177264923999493614">"გაყოფილი კლავიატურის გააქტიურება"</string>
+    <string name="cloud_sync_title" msgid="8579271074443847055">"Google კლავიატურის სინქრონიზება"</string>
+    <string name="cloud_sync_summary" msgid="7684887161145650857">"სინქრონიზება ჩართულია"</string>
+    <string name="cloud_sync_summary_disabled" msgid="4553338970382825796">"აწარმოეთ თქვენი პერს. ლექსიკონის სინქ. მოწყობილობების მასშტაბით"</string>
+    <string name="sync_now_title" msgid="3088838136743277721">"ახლა სინქრონიზაცია"</string>
+    <string name="clear_sync_data_title" msgid="8582001557037069154">"ღრუბლის მონაცემების წაშლა"</string>
+    <string name="clear_sync_data_summary" msgid="993477139012576584">"წაშლის Google-თან თქვენს სინქრონიზებულს მონაცემებს"</string>
+    <string name="clear_sync_data_confirmation" msgid="2811931135574727678">"თქვენი სინქ. მონაც. წაიშლება ღრუბ. სივრციდან. დარწმუნებული ხართ?"</string>
+    <string name="clear_sync_data_ok" msgid="613104067705915132">"წაშლა"</string>
+    <string name="cloud_sync_cancel" msgid="5877481252150919037">"გაუქმება"</string>
+    <string name="cloud_sync_opt_in_text" msgid="9176039655776298248">"თქვენი პერსონალური ლექსიკონი სინქრონიზდება და შეინახება სარეზერვოდ Google სერვერებზე. ჩვენი პროდუქტების გასაუმჯობესებლად, შეიძლება შეგროვდეს სტატისტიკური ინფორმაცია სიტყვების სიხშირის შესახებ. ნებისმიერი ინფორმაციის შეგროვება და გამოყენება "<a href="https://www.google.com/policies/privacy">"Google-ის კონფიდენციალურობის პოლიტიკასთან"</a>" შესაბამისობაში იქნება."</string>
+    <string name="add_account_to_enable_sync" msgid="7836932571852055265">"ფუნქციის ჩასართავად, გთხოვთ მოწყობილობას Google ანგარიში დაამატოთ"</string>
+    <string name="cloud_sync_summary_disabled_work_profile" msgid="1381770407303129164">"სინქრ. არ არის ხელმისაწვდომი Google Apps for Business ანგ. მქონე მოწყ."</string>
     <string name="include_other_imes_in_language_switch_list" msgid="4533689960308565519">"შეყვანის სხვა მეთოდებზე გადართვა"</string>
     <string name="include_other_imes_in_language_switch_list_summary" msgid="840637129103317635">"ენის გადართვის ღილაკს შეყვანის სხვა მეთოდებსაც შეიცავს"</string>
     <string name="show_language_switch_key" msgid="5915478828318774384">"ენის გადართვის კლავიში"</string>
     <string name="show_language_switch_key_summary" msgid="7343403647474265713">"აჩვენე, როდესაც ჩართულია სხვადასხვა შეყვანის ენა"</string>
-    <string name="sliding_key_input_preview" msgid="6604262359510068370">"გასრიალების ინდიკატ. ჩვენება"</string>
-    <string name="sliding_key_input_preview_summary" msgid="6340524345729093886">"Shift ან Symbol კლავიშებიდან გასრიალებისას ვიზუალური მინიშნების ჩვენება"</string>
     <string name="key_preview_popup_dismiss_delay" msgid="6213164897443068248">"ამომხტ.კლავიშის დაყოვნება"</string>
     <string name="key_preview_popup_dismiss_no_delay" msgid="2096123151571458064">"არ დაყოვნდეს"</string>
     <string name="key_preview_popup_dismiss_default_delay" msgid="2166964333903906734">"ნაგულისხმევი"</string>
@@ -46,6 +57,8 @@
     <string name="settings_system_default" msgid="6268225104743331821">"სისტემის ნაგულისხმევი"</string>
     <string name="use_contacts_dict" msgid="4435317977804180815">"კონტაქტის სახელების შეთავაზება"</string>
     <string name="use_contacts_dict_summary" msgid="6599983334507879959">"კონტაქტებიდან სახელების გამოყენება შეთავაზებებისთვის და კორექციისთვის"</string>
+    <string name="use_personalized_dicts" msgid="5167396352105467626">"პერსონალიზებული შეთავაზებები"</string>
+    <string name="enable_metrics_logging" msgid="5506372337118822837">"<xliff:g id="APPLICATION_NAME">%s</xliff:g>-ის გაუმჯობესება"</string>
     <string name="use_double_space_period" msgid="8781529969425082860">"წერტილი ორმაგი შორისით"</string>
     <string name="use_double_space_period_summary" msgid="6532892187247952799">"შორისზე ორჯერ შეხება დაწერს წერტილს და შორისის სიმბოლოს"</string>
     <string name="auto_cap" msgid="1719746674854628252">"ავტო-კაპიტალიზაცია"</string>
@@ -55,9 +68,6 @@
     <string name="main_dictionary" msgid="4798763781818361168">"მთავარი ლექსიკონი"</string>
     <string name="prefs_show_suggestions" msgid="8026799663445531637">"კორექციის შეთავაზებების ჩვენება"</string>
     <string name="prefs_show_suggestions_summary" msgid="1583132279498502825">"წერისას შეთავაზებული სიტყვების ჩვენება"</string>
-    <string name="prefs_suggestion_visibility_show_name" msgid="3219916594067551303">"ყოველთვის ჩვენება"</string>
-    <string name="prefs_suggestion_visibility_show_only_portrait_name" msgid="3859783767435239118">"პორტრეტის რეჟიმში ჩვენება"</string>
-    <string name="prefs_suggestion_visibility_hide_name" msgid="6309143926422234673">"ყოველთვის დამალვა"</string>
     <string name="prefs_block_potentially_offensive_title" msgid="5078480071057408934">"შეურაცხმყოფელი სიტყვების დაბლოკვა"</string>
     <string name="prefs_block_potentially_offensive_summary" msgid="2371835479734991364">"არ მოხდეს პოტენციურად შეურაცხმყოფელი სიტყვების შეთავაზება"</string>
     <string name="auto_correction" msgid="7630720885194996950">"ავტოკორექცია"</string>
@@ -73,72 +83,37 @@
     <string name="gesture_preview_trail" msgid="3802333369335722221">"ჟესტიკულაციის კუდის ჩვენება"</string>
     <string name="gesture_floating_preview_text" msgid="4443240334739381053">"დინამიურად მოლივლივე გადახედვა"</string>
     <string name="gesture_floating_preview_text_summary" msgid="4472696213996203533">"ჟესტიკულაციისას შეთავაზებული სიტყვის ნახვა"</string>
-    <string name="added_word" msgid="8993883354622484372">"<xliff:g id="WORD">%s</xliff:g> : შეინახა"</string>
-    <string name="spoken_use_headphones" msgid="896961781287283493">"შეაერთეთ ყურსაცვამი, რათა მოისმინოთ აკრეფილი პაროლის კლავიშების სახელები."</string>
-    <string name="spoken_current_text_is" msgid="2485723011272583845">"მიმდინარე ტექსტი არის %s"</string>
-    <string name="spoken_no_text_entered" msgid="7479685225597344496">"ტექსტი არ შეყვანილა"</string>
-    <string name="spoken_auto_correct" msgid="8005997889020109763">"<xliff:g id="KEY">%1$s</xliff:g> შეასწორებს <xliff:g id="ORIGINAL_WORD">%2$s</xliff:g>-ს <xliff:g id="CORRECTED">%3$s</xliff:g>-ად"</string>
-    <string name="spoken_auto_correct_obscured" msgid="6276420476908833791">"<xliff:g id="KEY">%1$s</xliff:g> ასრულებს ავტოკორექციას"</string>
-    <string name="spoken_description_unknown" msgid="3197434010402179157">"კლავიატურის კოდი %d"</string>
-    <string name="spoken_description_shift" msgid="244197883292549308">"Shift"</string>
-    <string name="spoken_description_shift_shifted" msgid="1681877323344195035">"Shift ჩართულია (შეეხეთ გამოსართავად)"</string>
-    <string name="spoken_description_caps_lock" msgid="3276478269526304432">"ჩართულია Caps (შეეხეთ გამოსართავად)"</string>
-    <string name="spoken_description_delete" msgid="8740376944276199801">"Delete"</string>
-    <string name="spoken_description_to_symbol" msgid="5486340107500448969">"სიმბოლოები"</string>
-    <string name="spoken_description_to_alpha" msgid="23129338819771807">"ასოები"</string>
-    <string name="spoken_description_to_numeric" msgid="591752092685161732">"ნომრები"</string>
-    <string name="spoken_description_settings" msgid="4627462689603838099">"პარამეტრები"</string>
-    <string name="spoken_description_tab" msgid="2667716002663482248">"Tab"</string>
-    <string name="spoken_description_space" msgid="2582521050049860859">"შორისი"</string>
-    <string name="spoken_description_mic" msgid="615536748882611950">"ხმოვანი შეყვანა"</string>
-    <string name="spoken_description_smiley" msgid="2256309826200113918">"ღიმილი"</string>
-    <string name="spoken_description_return" msgid="8178083177238315647">"დაბრუნება"</string>
-    <string name="spoken_description_search" msgid="1247236163755920808">"ძიება"</string>
-    <string name="spoken_description_dot" msgid="40711082435231673">"წერტილი"</string>
-    <string name="spoken_description_language_switch" msgid="5507091328222331316">"ენის გადართვა"</string>
-    <string name="spoken_description_action_next" msgid="8636078276664150324">"შემდეგი"</string>
-    <string name="spoken_description_action_previous" msgid="800872415009336208">"წინა"</string>
-    <string name="spoken_description_shiftmode_on" msgid="5700440798609574589">"Shift ჩართულია"</string>
-    <string name="spoken_description_shiftmode_locked" msgid="593175803181701830">"ჩართულია Caps"</string>
-    <string name="spoken_description_shiftmode_off" msgid="657219998449174808">"Shift გამორთულია"</string>
-    <string name="spoken_description_mode_symbol" msgid="7183343879909747642">"სიმბოლოების რეჟიმი"</string>
-    <string name="spoken_description_mode_alpha" msgid="3528307674390156956">"ასოების რეჟიმი"</string>
-    <string name="spoken_description_mode_phone" msgid="6520207943132026264">"ტელეფონის რეჟიმი"</string>
-    <string name="spoken_description_mode_phone_shift" msgid="5499629753962641227">"ტელეფონის სიმბოლოების რეჟიმი"</string>
-    <string name="announce_keyboard_hidden" msgid="8718927835531429807">"კლავიატურა დამალულია"</string>
-    <string name="announce_keyboard_mode" msgid="4729081055438508321">"ნაჩვენებია <xliff:g id="MODE">%s</xliff:g> კლავიატურა"</string>
-    <string name="keyboard_mode_date" msgid="3137520166817128102">"თარიღი"</string>
-    <string name="keyboard_mode_date_time" msgid="339593358488851072">"თარიღი და დრო"</string>
-    <string name="keyboard_mode_email" msgid="6216248078128294262">"ელფოსტა"</string>
-    <string name="keyboard_mode_im" msgid="1137405089766557048">"შეტყობინებები"</string>
-    <string name="keyboard_mode_number" msgid="7991623440699957069">"რიცხვები"</string>
-    <string name="keyboard_mode_phone" msgid="6851627527401433229">"ტელეფონი"</string>
-    <string name="keyboard_mode_text" msgid="6479436687899701619">"ტექსტი"</string>
-    <string name="keyboard_mode_time" msgid="4381856885582143277">"დრო"</string>
-    <string name="keyboard_mode_url" msgid="1519819835514911218">"URL"</string>
+    <string name="gesture_space_aware" msgid="2078291600664682496">"ფრაზის ჟესტი"</string>
+    <string name="gesture_space_aware_summary" msgid="4371385818348528538">"შეიყვანეთ შორისები ჟესტიკულაციისას შორისის კლავიშზე გასრიალებით"</string>
     <string name="voice_input" msgid="3583258583521397548">"ხმოვანი შეყვანის კლავიში"</string>
-    <string name="voice_input_modes_main_keyboard" msgid="3360660341121083174">"მთავარ კლავიატურაზე"</string>
-    <string name="voice_input_modes_symbols_keyboard" msgid="7203213240786084067">"სიმბოლოთა კლავიატურაზე"</string>
-    <string name="voice_input_modes_off" msgid="3745699748218082014">"გამორთვა"</string>
-    <string name="voice_input_modes_summary_main_keyboard" msgid="6586544292900314339">"მიკროფონი მთავარ კლავიატურაზე"</string>
-    <string name="voice_input_modes_summary_symbols_keyboard" msgid="5233725927281932391">"მიკროფონი სიმბოლოთა კლავიატურაზე"</string>
-    <string name="voice_input_modes_summary_off" msgid="63875609591897607">"ხმოვანი შეყვანა გამორთულია"</string>
+    <string name="voice_input_disabled_summary" msgid="8141750303464726129">"ხმოვანი შეყვანის მეთოდები ჩართული არ არის. შეამოწმეთ ენის &amp; შეყვანის პარამეტრები."</string>
     <string name="configure_input_method" msgid="373356270290742459">"შეყვანის მეთოდების კონფიგურაცია"</string>
-    <string name="language_selection_title" msgid="1651299598555326750">"შეყვანის ენები"</string>
-    <string name="send_feedback" msgid="1780431884109392046">"უკუკავშირის გაგზავნა"</string>
-    <string name="select_language" msgid="3693815588777926848">"შეყვანის ენები"</string>
+    <string name="language_selection_title" msgid="3666971864764478269">"ენები"</string>
+    <string name="help_and_feedback" msgid="5328219371839879161">"დახმარება და უკუკავშირი"</string>
+    <string name="select_language" msgid="5709487854987078367">"ენები"</string>
     <string name="hint_add_to_dictionary" msgid="573678656946085380">"შეეხეთ ისევ შესანახად"</string>
+    <string name="hint_add_to_dictionary_without_word" msgid="3040385779511255101">"აქ შეეხეთ, რომ შეინახოს"</string>
     <string name="has_dictionary" msgid="6071847973466625007">"ხელმისაწვდომია ლექსიკონი"</string>
-    <string name="prefs_enable_log" msgid="6620424505072963557">"მომხმარებლის უკუკავშირის ჩართვა"</string>
-    <string name="prefs_description_log" msgid="7525225584555429211">"შეიტანეთ წვლილი შეყვანის ამ მეთოდის გაუმჯობესებაში — გააგზავნეთ მოხმარების სტატისტიკა და ავარიული გათიშვების ანგარიშები"</string>
     <string name="keyboard_layout" msgid="8451164783510487501">"კლავიატურის თემა"</string>
+    <string name="switch_accounts" msgid="3321216593719006162">"ანგარიშების გადართვა"</string>
+    <string name="no_accounts_selected" msgid="2073821619103904330">"ანგარიშები არჩეული არ არის"</string>
+    <string name="account_selected" msgid="2846876462199625974">"ამჟამად გამოიყენება <xliff:g id="EMAIL_ADDRESS">%1$s</xliff:g>"</string>
+    <string name="account_select_ok" msgid="9141195141763227797">"კარგი"</string>
+    <string name="account_select_cancel" msgid="5181012062618504340">"გაუქმება"</string>
+    <string name="account_select_sign_out" msgid="3299651159390187933">"გამოსვლა"</string>
+    <string name="account_select_title" msgid="6279711684772922649">"აირჩიეთ გამოსაყენებელი ანგარიში"</string>
     <string name="subtype_en_GB" msgid="88170601942311355">"ინგლისური (გართ. სამ.)"</string>
     <string name="subtype_en_US" msgid="6160452336634534239">"ინგლისური (აშშ)"</string>
     <string name="subtype_es_US" msgid="5583145191430180200">"ესპანური (აშშ)"</string>
-    <string name="subtype_with_layout_en_GB" msgid="2179097748724725906">"ინგლისური (გაერთ. სამ.) (<xliff:g id="LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_en_US" msgid="1362581347576714579">"ინგლისური (აშშ) (<xliff:g id="LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_es_US" msgid="6261791057007890189">"ესპანური (აშშ) (<xliff:g id="LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_nepali_traditional" msgid="9032247506728040447">"<xliff:g id="LANGUAGE">%s</xliff:g> (ტრადიციული)"</string>
+    <string name="subtype_hi_ZZ" msgid="8860448146262798623">"ჰინგლისური"</string>
+    <string name="subtype_sr_ZZ" msgid="9059219552986034343">"სერბული (ლათინური)"</string>
+    <string name="subtype_with_layout_en_GB" msgid="1931018968641592304">"ინგლისური (გაერთ.სამ.) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
+    <string name="subtype_with_layout_en_US" msgid="8809311287529805422">"ინგლისური (აშშ) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
+    <string name="subtype_with_layout_es_US" msgid="510930471167541338">"ესპანური (აშშ) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
+    <string name="subtype_with_layout_hi_ZZ" msgid="6827402953860547044">"ჰინგლისური (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
+    <string name="subtype_with_layout_sr_ZZ" msgid="2859024772719772407">"სერბული (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
+    <string name="subtype_generic_traditional" msgid="8584594350973800586">"<xliff:g id="LANGUAGE_NAME">%s</xliff:g> (ტრადიციული)"</string>
+    <string name="subtype_generic_compact" msgid="3353673321203202922">"<xliff:g id="LANGUAGE_NAME">%s</xliff:g> (კომპაქტური)"</string>
     <string name="subtype_no_language" msgid="7137390094240139495">"ენის გარეშე (ანბანი)"</string>
     <string name="subtype_no_language_qwerty" msgid="244337630616742604">"ანბანი (QWERTY)"</string>
     <string name="subtype_no_language_qwertz" msgid="443066912507547976">"ანბანი (QWERTZ)"</string>
@@ -147,9 +122,7 @@
     <string name="subtype_no_language_colemak" msgid="5837418400010302623">"ანბანი (Colemak)"</string>
     <string name="subtype_no_language_pcqwerty" msgid="5354918232046200018">"ანბანი (PC)"</string>
     <string name="subtype_emoji" msgid="7483586578074549196">"სიცილაკები"</string>
-    <string name="keyboard_color_scheme" msgid="9192934113872818070">"ფერის სქემა"</string>
-    <string name="keyboard_color_scheme_white" msgid="6684064723850265438">"თეთრი"</string>
-    <string name="keyboard_color_scheme_blue" msgid="2488527224758177593">"ლურჯი"</string>
+    <string name="keyboard_theme" msgid="4909551808526178852">"კლავიატურის თემა"</string>
     <string name="custom_input_styles_title" msgid="8429952441821251512">"შეყვანის სტილების კონფიგურაცია"</string>
     <string name="add_style" msgid="6163126614514489951">"სტილის დამატება"</string>
     <string name="add" msgid="8299699805688017798">"დამატება"</string>
@@ -161,15 +134,11 @@
     <string name="enable" msgid="5031294444630523247">"ჩართვა"</string>
     <string name="not_now" msgid="6172462888202790482">"ახლა არა"</string>
     <string name="custom_input_style_already_exists" msgid="8008728952215449707">"შეყვანის იგივე სტილი უკვე არსებობს: <xliff:g id="INPUT_STYLE_NAME">%s</xliff:g>"</string>
-    <string name="prefs_usability_study_mode" msgid="1261130555134595254">"გამოყენებადობის კვლევის რეჟიმი"</string>
-    <string name="prefs_key_longpress_timeout_settings" msgid="6102240298932897873">"კლავიშზე გრძელი დაჭერის დაყოვნება"</string>
     <string name="prefs_keypress_vibration_duration_settings" msgid="7918341459947439226">"კლავიშზე დაჭერის ვიბრაციის ხანგრძლივობა"</string>
     <string name="prefs_keypress_sound_volume_settings" msgid="6027007337036891623">"კლავიშზე დაჭერის ხმა"</string>
-    <string name="prefs_read_external_dictionary" msgid="2588931418575013067">"გარე ლექსიკონის ფაილის წაკითხვა"</string>
-    <string name="read_external_dictionary_no_files_message" msgid="4947420942224623792">"ჩამოტვირთვების საქაღალდეში ლექსიკონის ფაილები არ არის"</string>
-    <string name="read_external_dictionary_multiple_files_title" msgid="7637749044265808628">"ინსტალაციისათვის აირჩიეთ ლექსიკონის ფაილი"</string>
-    <string name="read_external_dictionary_confirm_install_message" msgid="6898610163768980870">"ნამდვილად გსურთ ამ ფაილის <xliff:g id="LOCALE_NAME">%s</xliff:g>-ისთვის ინსტალაცია?"</string>
-    <string name="error" msgid="8940763624668513648">"წარმოიშვა შეცდომა"</string>
+    <string name="prefs_key_longpress_timeout_settings" msgid="6102240298932897873">"კლავიშზე გრძელი დაჭერის დაყოვნება"</string>
+    <string name="prefs_enable_emoji_alt_physical_key" msgid="5963640002335470112">"სიცილაკები ფიზიკური კლავიატურისთვის"</string>
+    <string name="prefs_enable_emoji_alt_physical_key_summary" msgid="5259484820941627827">"ფიზიკური ღილაკი Alt აჩვენებს სიცილაკების პალიტრას"</string>
     <string name="button_default" msgid="3988017840431881491">"ნაგულისხმევი"</string>
     <string name="setup_welcome_title" msgid="6112821709832031715">"კეთილი იყოს თქვენი მობრძანება <xliff:g id="APPLICATION_NAME">%s</xliff:g>-ში"</string>
     <string name="setup_welcome_additional_description" msgid="8150252008545768953">"ჟესტებით წერით"</string>
@@ -207,18 +176,19 @@
     <string name="check_for_updates_now" msgid="8087688440916388581">"განახლება"</string>
     <string name="last_update" msgid="730467549913588780">"ბოლო განახლება"</string>
     <string name="message_updating" msgid="4457761393932375219">"მიმდინარეობს განახლებების შემოწმება"</string>
-    <string name="message_loading" msgid="8689096636874758814">"იტვირთება…"</string>
+    <string name="message_loading" msgid="5638680861387748936">"იტვირთება..."</string>
     <string name="main_dict_description" msgid="3072821352793492143">"მთავარი ლექსიკონი"</string>
     <string name="cancel" msgid="6830980399865683324">"გაუქმება"</string>
+    <string name="go_to_settings" msgid="3876892339342569259">"პარამეტრები"</string>
     <string name="install_dict" msgid="180852772562189365">"ინსტალაცია"</string>
     <string name="cancel_download_dict" msgid="7843340278507019303">"გაუქმება"</string>
     <string name="delete_dict" msgid="756853268088330054">"წაშლა"</string>
-    <string name="should_download_over_metered_prompt" msgid="2878629598667658845">"თქვენ მიერ მობილურ მოწყობილობაზე არჩეული ენისათვის ხელმისაწვდომია ლექსიკონი.&lt;br/&gt; გირჩევთ, &lt;b&gt;ჩამოტვირთოთ&lt;/b&gt; <xliff:g id="LANGUAGE">%1$s</xliff:g> ლექსიკონი, რათა გაიმარტივოთ ტექსტის შეყვანა.&lt;br/&gt; &lt;br/&gt; ჩამოტვირთვას შესაძლოა დაჭირდეს ერთი ან ორი წუთი 3G სისწრაფეზე. თუ ულიმიტო არ გაქვთ &lt;b&gt; მობილური ინტერნეტის ტარიფი&lt;/b&gt;.&lt;br/&amp;gt, შესაძლოა ჩამოტვირთვა დამატებით გადასახადებთან იყოს დაკავშირებული; თუ არ ხართ დარწმუნებული მობილური ინტერნეტის აქტიური ტარიფის შესახებ, გირჩევთ იპოვოთ Wi-Fi კავშირი და ავტომატურად დაიწყოთ ჩამოტვირთვა.&lt;br/&gt; &lt;br/&gt; რჩევა: ლექსიკონების ჩამოტვირთვა და ამოშლა შესაძლებელია სექციიდან &lt;b&gt;ენა და შეყვანა&lt;/b&gt; სექციიდან, თქვენი მობილური მოწყობილობის &lt;b&gt;პარამეტრების&lt;/b&gt; მენიუში."</string>
+    <string name="should_download_over_metered_prompt" msgid="1583881200688185508">"თქვენ მიერ მობილურ მოწყობილობაზე არჩეული ენისთვის ხელმისაწვდომია ლექსიკონი.&lt;br/&gt; გირჩევთ, &lt;b&gt;ჩამოტვირთოთ&lt;/b&gt; <xliff:g id="LANGUAGE_NAME">%1$s</xliff:g> ლექსიკონი, რათა გაიმარტივოთ ტექსტის შეყვანა.&lt;br/&gt; &lt;br/&gt; ჩამოტვირთვას შესაძლოა დასჭირდეს ერთი ან ორი წუთი 3G სისწრაფეზე. თუ &lt;b&gt; მობილური ინტერნეტის ტარიფი&lt;/b&gt;.&lt;br/&amp;gt ულიმიტო არ გაქვთ, შესაძლოა გადახდა მოგიწიოთ; თუ არ ხართ დარწმუნებული მობილური ინტერნეტის აქტიური ტარიფის შესახებ, გირჩევთ, იპოვოთ Wi-Fi კავშირი და ავტომატურად დაიწყოთ ჩამოტვირთვა.&lt;br/&gt; &lt;br/&gt; რჩევა: ლექსიკონების ჩამოტვირთვა და ამოშლა შეიძლება სექციიდან &lt;b&gt;ენა და შეყვანა&lt;/b&gt; თქვენი მობილური მოწყობილობის &lt;b&gt;პარამეტრების&lt;/b&gt; მენიუში."</string>
     <string name="download_over_metered" msgid="1643065851159409546">"ახლა ჩამოტვირთვა (<xliff:g id="SIZE_IN_MEGABYTES">%1$.1f</xliff:g>მბაიტი)"</string>
     <string name="do_not_download_over_metered" msgid="2176209579313941583">"Wi-Fi კავშირზე ჩამოტვირთვა"</string>
-    <string name="dict_available_notification_title" msgid="6514288591959117288">"<xliff:g id="LANGUAGE">%1$s</xliff:g>-ისთვის ხელმისაწვდომია ლექსიკონი"</string>
+    <string name="dict_available_notification_title" msgid="4583842811218581658">"<xliff:g id="LANGUAGE_NAME">%1$s</xliff:g>-სთვის ხელმისაწვდომია ლექსიკონი"</string>
     <string name="dict_available_notification_description" msgid="1075194169443163487">"დააჭირეთ განხილვას და ჩამოტვირთეთ"</string>
-    <string name="toast_downloading_suggestions" msgid="1313027353588566660">"ჩამოტვირთვა: <xliff:g id="LANGUAGE">%1$s</xliff:g>-ის შემოთავაზებები მალე მომზადდება."</string>
+    <string name="toast_downloading_suggestions" msgid="6128155879830851739">"იტვირთება: <xliff:g id="LANGUAGE_NAME">%1$s</xliff:g>-ის შემოთავაზებები მალე მომზადდება."</string>
     <string name="version_text" msgid="2715354215568469385">"ვერსია <xliff:g id="VERSION_NUMBER">%1$s</xliff:g>"</string>
     <string name="user_dict_settings_add_menu_title" msgid="1254195365689387076">"დამატება"</string>
     <string name="user_dict_settings_add_dialog_title" msgid="4096700390211748168">"ლექსიკონში დამატება"</string>

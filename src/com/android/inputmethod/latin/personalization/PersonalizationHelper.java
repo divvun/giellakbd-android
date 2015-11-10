@@ -16,116 +16,93 @@
 
 package com.android.inputmethod.latin.personalization;
 
-import com.android.inputmethod.latin.utils.CollectionUtils;
-
 import android.content.Context;
-import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.android.inputmethod.latin.common.FileUtils;
+
+import java.io.File;
+import java.io.FilenameFilter;
 import java.lang.ref.SoftReference;
+import java.util.Locale;
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
+/**
+ * Helps handle and manage personalized dictionaries such as {@link UserHistoryDictionary}.
+ */
 public class PersonalizationHelper {
     private static final String TAG = PersonalizationHelper.class.getSimpleName();
     private static final boolean DEBUG = false;
+
     private static final ConcurrentHashMap<String, SoftReference<UserHistoryDictionary>>
-            sLangUserHistoryDictCache = CollectionUtils.newConcurrentHashMap();
+            sLangUserHistoryDictCache = new ConcurrentHashMap<>();
 
-    private static final ConcurrentHashMap<String, SoftReference<PersonalizationDictionary>>
-            sLangPersonalizationDictCache = CollectionUtils.newConcurrentHashMap();
-
-    private static final ConcurrentHashMap<String,
-            SoftReference<PersonalizationPredictionDictionary>>
-                    sLangPersonalizationPredictionDictCache =
-                            CollectionUtils.newConcurrentHashMap();
-
+    @Nonnull
     public static UserHistoryDictionary getUserHistoryDictionary(
-            final Context context, final String locale, final SharedPreferences sp) {
+            final Context context, final Locale locale, @Nullable final String accountName) {
+        String lookupStr = locale.toString();
+        if (accountName != null) {
+            lookupStr += "." + accountName;
+        }
         synchronized (sLangUserHistoryDictCache) {
-            if (sLangUserHistoryDictCache.containsKey(locale)) {
+            if (sLangUserHistoryDictCache.containsKey(lookupStr)) {
                 final SoftReference<UserHistoryDictionary> ref =
-                        sLangUserHistoryDictCache.get(locale);
+                        sLangUserHistoryDictCache.get(lookupStr);
                 final UserHistoryDictionary dict = ref == null ? null : ref.get();
                 if (dict != null) {
                     if (DEBUG) {
-                        Log.w(TAG, "Use cached UserHistoryDictionary for " + locale);
+                        Log.d(TAG, "Use cached UserHistoryDictionary with lookup: " + lookupStr);
                     }
                     dict.reloadDictionaryIfRequired();
                     return dict;
                 }
             }
-            final UserHistoryDictionary dict = new UserHistoryDictionary(context, locale, sp);
-            sLangUserHistoryDictCache.put(locale, new SoftReference<UserHistoryDictionary>(dict));
+            final UserHistoryDictionary dict = new UserHistoryDictionary(
+                    context, locale, accountName);
+            sLangUserHistoryDictCache.put(lookupStr, new SoftReference<>(dict));
             return dict;
         }
     }
 
-    public static void tryDecayingAllOpeningUserHistoryDictionary() {
-        for (final ConcurrentHashMap.Entry<String, SoftReference<UserHistoryDictionary>> entry
-                : sLangUserHistoryDictCache.entrySet()) {
-            if (entry.getValue() != null) {
-                final UserHistoryDictionary dict = entry.getValue().get();
-                if (dict != null) {
-                    dict.decayIfNeeded();
-                }
-            }
-        }
-    }
-
-    public static void registerPersonalizationDictionaryUpdateSession(final Context context,
-            final PersonalizationDictionaryUpdateSession session, String locale) {
-        final PersonalizationPredictionDictionary predictionDictionary =
-                getPersonalizationPredictionDictionary(context, locale,
-                        PreferenceManager.getDefaultSharedPreferences(context));
-        predictionDictionary.registerUpdateSession(session);
-        final PersonalizationDictionary dictionary =
-                getPersonalizationDictionary(context, locale,
-                        PreferenceManager.getDefaultSharedPreferences(context));
-        dictionary.registerUpdateSession(session);
-    }
-
-    public static PersonalizationDictionary getPersonalizationDictionary(
-            final Context context, final String locale, final SharedPreferences sp) {
-        synchronized (sLangPersonalizationDictCache) {
-            if (sLangPersonalizationDictCache.containsKey(locale)) {
-                final SoftReference<PersonalizationDictionary> ref =
-                        sLangPersonalizationDictCache.get(locale);
-                final PersonalizationDictionary dict = ref == null ? null : ref.get();
-                if (dict != null) {
-                    if (DEBUG) {
-                        Log.w(TAG, "Use cached PersonalizationDictCache for " + locale);
+    public static void removeAllUserHistoryDictionaries(final Context context) {
+        synchronized (sLangUserHistoryDictCache) {
+            for (final ConcurrentHashMap.Entry<String, SoftReference<UserHistoryDictionary>> entry
+                    : sLangUserHistoryDictCache.entrySet()) {
+                if (entry.getValue() != null) {
+                    final UserHistoryDictionary dict = entry.getValue().get();
+                    if (dict != null) {
+                        dict.clear();
                     }
-                    return dict;
                 }
             }
-            final PersonalizationDictionary dict =
-                    new PersonalizationDictionary(context, locale, sp);
-            sLangPersonalizationDictCache.put(
-                    locale, new SoftReference<PersonalizationDictionary>(dict));
-            return dict;
+            sLangUserHistoryDictCache.clear();
+            final File filesDir = context.getFilesDir();
+            if (filesDir == null) {
+                Log.e(TAG, "context.getFilesDir() returned null.");
+                return;
+            }
+            final boolean filesDeleted = FileUtils.deleteFilteredFiles(
+                    filesDir, new DictFilter(UserHistoryDictionary.NAME));
+            if (!filesDeleted) {
+                Log.e(TAG, "Cannot remove dictionary files. filesDir: " + filesDir.getAbsolutePath()
+                        + ", dictNamePrefix: " + UserHistoryDictionary.NAME);
+            }
         }
     }
 
-    public static PersonalizationPredictionDictionary getPersonalizationPredictionDictionary(
-            final Context context, final String locale, final SharedPreferences sp) {
-        synchronized (sLangPersonalizationPredictionDictCache) {
-            if (sLangPersonalizationPredictionDictCache.containsKey(locale)) {
-                final SoftReference<PersonalizationPredictionDictionary> ref =
-                        sLangPersonalizationPredictionDictCache.get(locale);
-                final PersonalizationPredictionDictionary dict = ref == null ? null : ref.get();
-                if (dict != null) {
-                    if (DEBUG) {
-                        Log.w(TAG, "Use cached PersonalizationPredictionDictionary for " + locale);
-                    }
-                    return dict;
-                }
-            }
-            final PersonalizationPredictionDictionary dict =
-                    new PersonalizationPredictionDictionary(context, locale, sp);
-            sLangPersonalizationPredictionDictCache.put(
-                    locale, new SoftReference<PersonalizationPredictionDictionary>(dict));
-            return dict;
+    private static class DictFilter implements FilenameFilter {
+        private final String mName;
+
+        DictFilter(final String name) {
+            mName = name;
+        }
+
+        @Override
+        public boolean accept(final File dir, final String name) {
+            return name.startsWith(mName);
         }
     }
 }

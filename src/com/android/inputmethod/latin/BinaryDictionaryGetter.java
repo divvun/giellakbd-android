@@ -21,13 +21,12 @@ import android.content.SharedPreferences;
 import android.content.res.AssetFileDescriptor;
 import android.util.Log;
 
-import com.android.inputmethod.latin.makedict.DictDecoder;
-import com.android.inputmethod.latin.makedict.FormatSpec;
-import com.android.inputmethod.latin.makedict.FormatSpec.FileHeader;
+import com.android.inputmethod.latin.common.LocaleUtils;
+import com.android.inputmethod.latin.define.DecoderSpecificConstants;
+import com.android.inputmethod.latin.makedict.DictionaryHeader;
 import com.android.inputmethod.latin.makedict.UnsupportedFormatException;
-import com.android.inputmethod.latin.utils.CollectionUtils;
+import com.android.inputmethod.latin.utils.BinaryDictionaryUtils;
 import com.android.inputmethod.latin.utils.DictionaryInfoUtils;
-import com.android.inputmethod.latin.utils.LocaleUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -55,6 +54,9 @@ final public class BinaryDictionaryGetter {
      * Name of the common preferences name to know which word list are on and which are off.
      */
     private static final String COMMON_PREFERENCES_NAME = "LatinImeDictPrefs";
+
+    private static final boolean SHOULD_USE_DICT_VERSION =
+            DecoderSpecificConstants.SHOULD_USE_DICT_VERSION;
 
     // Name of the category for the main dictionary
     public static final String MAIN_DICTIONARY_CATEGORY = "main";
@@ -89,10 +91,15 @@ final public class BinaryDictionaryGetter {
      */
     public static AssetFileAddress loadFallbackResource(final Context context,
             final int fallbackResId) {
-        final AssetFileDescriptor afd = context.getResources().openRawResourceFd(fallbackResId);
+        AssetFileDescriptor afd = null;
+        try {
+            afd = context.getResources().openRawResourceFd(fallbackResId);
+        } catch (RuntimeException e) {
+            Log.e(TAG, "Resource not found: " + fallbackResId);
+            return null;
+        }
         if (afd == null) {
-            Log.e(TAG, "Found the resource but cannot read it. Is it compressed? resId="
-                    + fallbackResId);
+            Log.e(TAG, "Resource cannot be opened: " + fallbackResId);
             return null;
         }
         try {
@@ -101,8 +108,7 @@ final public class BinaryDictionaryGetter {
         } finally {
             try {
                 afd.close();
-            } catch (IOException e) {
-                // Ignored
+            } catch (IOException ignored) {
             }
         }
     }
@@ -112,7 +118,7 @@ final public class BinaryDictionaryGetter {
         public DictPackSettings(final Context context) {
             mDictPreferences = null == context ? null
                     : context.getSharedPreferences(COMMON_PREFERENCES_NAME,
-                            Context.MODE_WORLD_READABLE | Context.MODE_MULTI_PROCESS);
+                            Context.MODE_MULTI_PROCESS);
         }
         public boolean isWordListActive(final String dictId) {
             if (null == mDictPreferences) {
@@ -123,12 +129,11 @@ final public class BinaryDictionaryGetter {
                 // reason some dictionaries have been installed BUT the dictionary pack can't be
                 // found anymore it's safer to actually supply installed dictionaries.
                 return true;
-            } else {
-                // The default is true here for the same reasons as above. We got the dictionary
-                // pack but if we don't have any settings for it it means the user has never been
-                // to the settings yet. So by default, the main dictionaries should be on.
-                return mDictPreferences.getBoolean(dictId, true);
             }
+            // The default is true here for the same reasons as above. We got the dictionary
+            // pack but if we don't have any settings for it it means the user has never been
+            // to the settings yet. So by default, the main dictionaries should be on.
+            return mDictPreferences.getBoolean(dictId, true);
         }
     }
 
@@ -161,7 +166,7 @@ final public class BinaryDictionaryGetter {
     public static File[] getCachedWordLists(final String locale, final Context context) {
         final File[] directoryList = DictionaryInfoUtils.getCachedDirectoryList(context);
         if (null == directoryList) return EMPTY_FILE_ARRAY;
-        final HashMap<String, FileAndMatchLevel> cacheFiles = CollectionUtils.newHashMap();
+        final HashMap<String, FileAndMatchLevel> cacheFiles = new HashMap<>();
         for (File directory : directoryList) {
             if (!directory.isDirectory()) continue;
             final String dirLocale =
@@ -190,48 +195,17 @@ final public class BinaryDictionaryGetter {
         return result;
     }
 
-    /**
-     * Remove all files with the passed id, except the passed file.
-     *
-     * If a dictionary with a given ID has a metadata change that causes it to change
-     * path, we need to remove the old version. The only way to do this is to check all
-     * installed files for a matching ID in a different directory.
-     */
-    public static void removeFilesWithIdExcept(final Context context, final String id,
-            final File fileToKeep) {
-        try {
-            final File canonicalFileToKeep = fileToKeep.getCanonicalFile();
-            final File[] directoryList = DictionaryInfoUtils.getCachedDirectoryList(context);
-            if (null == directoryList) return;
-            for (File directory : directoryList) {
-                // There is one directory per locale. See #getCachedDirectoryList
-                if (!directory.isDirectory()) continue;
-                final File[] wordLists = directory.listFiles();
-                if (null == wordLists) continue;
-                for (File wordList : wordLists) {
-                    final String fileId =
-                            DictionaryInfoUtils.getWordListIdFromFileName(wordList.getName());
-                    if (fileId.equals(id)) {
-                        if (!canonicalFileToKeep.equals(wordList.getCanonicalFile())) {
-                            wordList.delete();
-                        }
-                    }
-                }
-            }
-        } catch (java.io.IOException e) {
-            Log.e(TAG, "IOException trying to cleanup files", e);
-        }
-    }
-
     // ## HACK ## we prevent usage of a dictionary before version 18. The reason for this is, since
     // those do not include whitelist entries, the new code with an old version of the dictionary
     // would lose whitelist functionality.
-    private static boolean hackCanUseDictionaryFile(final Locale locale, final File f) {
+    private static boolean hackCanUseDictionaryFile(final File file) {
+        if (!SHOULD_USE_DICT_VERSION) {
+            return true;
+        }
+
         try {
             // Read the version of the file
-            final DictDecoder dictDecoder = FormatSpec.getDictDecoder(f);
-            final FileHeader header = dictDecoder.readHeader();
-
+            final DictionaryHeader header = BinaryDictionaryUtils.getHeader(file);
             final String version = header.mDictionaryOptions.mAttributes.get(VERSION_KEY);
             if (null == version) {
                 // No version in the options : the format is unexpected
@@ -266,21 +240,30 @@ final public class BinaryDictionaryGetter {
      * @return The list of addresses of valid dictionary files, or null.
      */
     public static ArrayList<AssetFileAddress> getDictionaryFiles(final Locale locale,
-            final Context context) {
+            final Context context, boolean notifyDictionaryPackForUpdates) {
+        if (notifyDictionaryPackForUpdates) {
+            final boolean hasDefaultWordList = DictionaryInfoUtils.isDictionaryAvailable(
+                    context, locale);
+            // It makes sure that the first time keyboard comes up and the dictionaries are reset,
+            // the DB is populated with the appropriate values for each locale. Helps in downloading
+            // the dictionaries when the user enables and switches new languages before the
+            // DictionaryService runs.
+            BinaryDictionaryFileDumper.downloadDictIfNeverRequested(
+                    locale, context, hasDefaultWordList);
 
-        final boolean hasDefaultWordList = DictionaryFactory.isDictionaryAvailable(context, locale);
-        BinaryDictionaryFileDumper.cacheWordListsFromContentProvider(locale, context,
-                hasDefaultWordList);
+            // Move a staging files to the cache ddirectories if any.
+            DictionaryInfoUtils.moveStagingFilesIfExists(context);
+        }
         final File[] cachedWordLists = getCachedWordLists(locale.toString(), context);
         final String mainDictId = DictionaryInfoUtils.getMainDictId(locale);
         final DictPackSettings dictPackSettings = new DictPackSettings(context);
 
         boolean foundMainDict = false;
-        final ArrayList<AssetFileAddress> fileList = CollectionUtils.newArrayList();
+        final ArrayList<AssetFileAddress> fileList = new ArrayList<>();
         // cachedWordLists may not be null, see doc for getCachedDictionaryList
         for (final File f : cachedWordLists) {
             final String wordListId = DictionaryInfoUtils.getWordListIdFromFileName(f.getName());
-            final boolean canUse = f.canRead() && hackCanUseDictionaryFile(locale, f);
+            final boolean canUse = f.canRead() && hackCanUseDictionaryFile(f);
             if (canUse && DictionaryInfoUtils.isMainWordListId(wordListId)) {
                 foundMainDict = true;
             }
@@ -289,7 +272,8 @@ final public class BinaryDictionaryGetter {
                 final AssetFileAddress afa = AssetFileAddress.makeFromFileName(f.getPath());
                 if (null != afa) fileList.add(afa);
             } else {
-                Log.e(TAG, "Found a cached dictionary file but cannot read or use it");
+                Log.e(TAG, "Found a cached dictionary file for " + locale.toString()
+                        + " but cannot read or use it");
             }
         }
 

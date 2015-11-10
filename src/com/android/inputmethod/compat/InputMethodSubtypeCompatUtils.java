@@ -19,7 +19,14 @@ package com.android.inputmethod.compat;
 import android.os.Build;
 import android.view.inputmethod.InputMethodSubtype;
 
+import com.android.inputmethod.annotations.UsedForTesting;
+import com.android.inputmethod.latin.RichInputMethodSubtype;
+import com.android.inputmethod.latin.common.Constants;
+
 import java.lang.reflect.Constructor;
+import java.lang.reflect.Method;
+
+import javax.annotation.Nonnull;
 
 public final class InputMethodSubtypeCompatUtils {
     private static final String TAG = InputMethodSubtypeCompatUtils.class.getSimpleName();
@@ -28,8 +35,8 @@ public final class InputMethodSubtypeCompatUtils {
     // has been introduced in API level 17 (Build.VERSION_CODE.JELLY_BEAN_MR1).
     private static final Constructor<?> CONSTRUCTOR_INPUT_METHOD_SUBTYPE =
             CompatUtils.getConstructor(InputMethodSubtype.class,
-                    Integer.TYPE, Integer.TYPE, String.class, String.class, String.class,
-                    Boolean.TYPE, Boolean.TYPE, Integer.TYPE);
+                    int.class, int.class, String.class, String.class, String.class, boolean.class,
+                    boolean.class, int.class);
     static {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
             if (CONSTRUCTOR_INPUT_METHOD_SUBTYPE == null) {
@@ -37,10 +44,18 @@ public final class InputMethodSubtypeCompatUtils {
             }
         }
     }
+
+    // Note that {@link InputMethodSubtype#isAsciiCapable()} has been introduced in API level 19
+    // (Build.VERSION_CODE.KITKAT).
+    private static final Method METHOD_isAsciiCapable = CompatUtils.getMethod(
+            InputMethodSubtype.class, "isAsciiCapable");
+
     private InputMethodSubtypeCompatUtils() {
         // This utility class is not publicly instantiable.
     }
 
+    @SuppressWarnings("deprecation")
+    @Nonnull
     public static InputMethodSubtype newInputMethodSubtype(int nameId, int iconId, String locale,
             String mode, String extraValue, boolean isAuxiliary,
             boolean overridesImplicitlyEnabledSubtype, int id) {
@@ -52,5 +67,19 @@ public final class InputMethodSubtypeCompatUtils {
         return (InputMethodSubtype) CompatUtils.newInstance(CONSTRUCTOR_INPUT_METHOD_SUBTYPE,
                 nameId, iconId, locale, mode, extraValue, isAuxiliary,
                 overridesImplicitlyEnabledSubtype, id);
+    }
+
+    public static boolean isAsciiCapable(final RichInputMethodSubtype subtype) {
+        return isAsciiCapable(subtype.getRawSubtype());
+    }
+
+    public static boolean isAsciiCapable(final InputMethodSubtype subtype) {
+        return isAsciiCapableWithAPI(subtype)
+                || subtype.containsExtraValueKey(Constants.Subtype.ExtraValue.ASCII_CAPABLE);
+    }
+
+    @UsedForTesting
+    public static boolean isAsciiCapableWithAPI(final InputMethodSubtype subtype) {
+        return (Boolean)CompatUtils.invoke(subtype, false, METHOD_isAsciiCapable);
     }
 }

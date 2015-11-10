@@ -19,7 +19,7 @@
 -->
 
 <merge
-    xmlns:latin="http://schemas.android.com/apk/res-auto"
+    xmlns:latin="http://schemas.android.com/apk/res/com.android.inputmethod.latin"
 >
     <include
         latin:keyboardLayout="@xml/key_styles_common" />
@@ -51,9 +51,9 @@
             latin:keyStyle="toMoreSymbolKeyStyle"
             latin:keyWidth="10.0%p" />
         <Key
-            latin:keyLabel="\\" />
+            latin:keySpec="\\" />
         <Key
-            latin:keyLabel="=" />
+            latin:keySpec="=" />
         <include
             latin:keyboardLayout="@xml/rowkeys_symbols3" />
         <Key
@@ -62,6 +62,7 @@
     </Row>
     <Row
         latin:keyWidth="9.0%p"
+        latin:backgroundType="functional"
     >
         <Key
             latin:keyStyle="toAlphaKeyStyle"
@@ -69,6 +70,6 @@
         <include
             latin:keyboardLayout="@xml/row_symbols4" />
         <include
-            latin:keyboardLayout="@xml/key_f2" />
+            latin:keyboardLayout="@xml/key_emoji" />
     </Row>
 </merge>

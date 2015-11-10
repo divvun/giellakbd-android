@@ -38,21 +38,26 @@ import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.util.AttributeSet;
 import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.android.inputmethod.latin.LatinImeLogger;
+import com.android.inputmethod.accessibility.AccessibilityUtils;
+import com.android.inputmethod.annotations.UsedForTesting;
+import com.android.inputmethod.latin.PunctuationSuggestions;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.SuggestedWords;
-import com.android.inputmethod.latin.utils.AutoCorrectionUtils;
+import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;
+import com.android.inputmethod.latin.settings.Settings;
+import com.android.inputmethod.latin.settings.SettingsValues;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 import com.android.inputmethod.latin.utils.ViewLayoutUtils;
 
 import java.util.ArrayList;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 final class SuggestionStripLayoutHelper {
     private static final int DEFAULT_SUGGESTIONS_COUNT_IN_STRIP = 3;
@@ -64,12 +69,12 @@ final class SuggestionStripLayoutHelper {
     public final int mPadding;
     public final int mDividerWidth;
     public final int mSuggestionsStripHeight;
-    public final int mSuggestionsCountInStrip;
+    private final int mSuggestionsCountInStrip;
     public final int mMoreSuggestionsRowHeight;
     private int mMaxMoreSuggestionsRow;
     public final float mMinMoreSuggestionsWidth;
     public final int mMoreSuggestionsBottomGap;
-    public boolean mMoreSuggestionsAvailable;
+    private boolean mMoreSuggestionsAvailable;
 
     // The index of these {@link ArrayList} is the position in the suggestion strip. The indices
     // increase towards the right for LTR scripts and the left for RTL scripts, starting with 0.
@@ -88,21 +93,16 @@ final class SuggestionStripLayoutHelper {
     private final int mTypedWordPositionWhenAutocorrect;
     private final Drawable mMoreSuggestionsHint;
     private static final String MORE_SUGGESTIONS_HINT = "\u2026";
-    private static final String LEFTWARDS_ARROW = "\u2190";
 
     private static final CharacterStyle BOLD_SPAN = new StyleSpan(Typeface.BOLD);
     private static final CharacterStyle UNDERLINE_SPAN = new UnderlineSpan();
 
-    private final int mSuggestionStripOption;
+    private final int mSuggestionStripOptions;
     // These constants are the flag values of
-    // {@link R.styleable#SuggestionStripView_suggestionStripOption} attribute.
+    // {@link R.styleable#SuggestionStripView_suggestionStripOptions} attribute.
     private static final int AUTO_CORRECT_BOLD = 0x01;
     private static final int AUTO_CORRECT_UNDERLINE = 0x02;
     private static final int VALID_TYPED_WORD_BOLD = 0x04;
-
-    private final TextView mWordToSaveView;
-    private final TextView mLeftwardsArrowView;
-    private final TextView mHintToSaveView;
 
     public SuggestionStripLayoutHelper(final Context context, final AttributeSet attrs,
             final int defStyle, final ArrayList<TextView> wordViews,
@@ -119,12 +119,13 @@ final class SuggestionStripLayoutHelper {
         mDividerWidth = dividerView.getMeasuredWidth();
 
         final Resources res = wordView.getResources();
-        mSuggestionsStripHeight = res.getDimensionPixelSize(R.dimen.suggestions_strip_height);
+        mSuggestionsStripHeight = res.getDimensionPixelSize(
+                R.dimen.config_suggestions_strip_height);
 
         final TypedArray a = context.obtainStyledAttributes(attrs,
                 R.styleable.SuggestionStripView, defStyle, R.style.SuggestionStripView);
-        mSuggestionStripOption = a.getInt(
-                R.styleable.SuggestionStripView_suggestionStripOption, 0);
+        mSuggestionStripOptions = a.getInt(
+                R.styleable.SuggestionStripView_suggestionStripOptions, 0);
         mAlphaObsoleted = ResourceUtils.getFraction(a,
                 R.styleable.SuggestionStripView_alphaObsoleted, 1.0f);
         mColorValidTypedWord = a.getColor(R.styleable.SuggestionStripView_colorValidTypedWord, 0);
@@ -145,20 +146,17 @@ final class SuggestionStripLayoutHelper {
         a.recycle();
 
         mMoreSuggestionsHint = getMoreSuggestionsHint(res,
-                res.getDimension(R.dimen.more_suggestions_hint_text_size), mColorAutoCorrect);
+                res.getDimension(R.dimen.config_more_suggestions_hint_text_size),
+                mColorAutoCorrect);
         mCenterPositionInStrip = mSuggestionsCountInStrip / 2;
         // Assuming there are at least three suggestions. Also, note that the suggestions are
         // laid out according to script direction, so this is left of the center for LTR scripts
         // and right of the center for RTL scripts.
         mTypedWordPositionWhenAutocorrect = mCenterPositionInStrip - 1;
         mMoreSuggestionsBottomGap = res.getDimensionPixelOffset(
-                R.dimen.more_suggestions_bottom_gap);
-        mMoreSuggestionsRowHeight = res.getDimensionPixelSize(R.dimen.more_suggestions_row_height);
-
-        final LayoutInflater inflater = LayoutInflater.from(context);
-        mWordToSaveView = (TextView)inflater.inflate(R.layout.suggestion_word, null);
-        mLeftwardsArrowView = (TextView)inflater.inflate(R.layout.hint_add_to_dictionary, null);
-        mHintToSaveView = (TextView)inflater.inflate(R.layout.hint_add_to_dictionary, null);
+                R.dimen.config_more_suggestions_bottom_gap);
+        mMoreSuggestionsRowHeight = res.getDimensionPixelSize(
+                R.dimen.config_more_suggestions_row_height);
     }
 
     public int getMaxMoreSuggestionsRow() {
@@ -169,16 +167,14 @@ final class SuggestionStripLayoutHelper {
         return mMaxMoreSuggestionsRow * mMoreSuggestionsRowHeight + mMoreSuggestionsBottomGap;
     }
 
-    public int setMoreSuggestionsHeight(final int remainingHeight) {
+    public void setMoreSuggestionsHeight(final int remainingHeight) {
         final int currentHeight = getMoreSuggestionsHeight();
         if (currentHeight <= remainingHeight) {
-            return currentHeight;
+            return;
         }
 
         mMaxMoreSuggestionsRow = (remainingHeight - mMoreSuggestionsBottomGap)
                 / mMoreSuggestionsRowHeight;
-        final int newHeight = getMoreSuggestionsHeight();
-        return newHeight;
     }
 
     private static Drawable getMoreSuggestionsHint(final Resources res, final float textSize,
@@ -195,7 +191,9 @@ final class SuggestionStripLayoutHelper {
         final Bitmap buffer = Bitmap.createBitmap(width, (height * 3 / 2), Bitmap.Config.ARGB_8888);
         final Canvas canvas = new Canvas(buffer);
         canvas.drawText(MORE_SUGGESTIONS_HINT, width / 2, height, paint);
-        return new BitmapDrawable(res, buffer);
+        BitmapDrawable bitmapDrawable = new BitmapDrawable(res, buffer);
+        bitmapDrawable.setTargetDensity(canvas);
+        return bitmapDrawable;
     }
 
     private CharSequence getStyledSuggestedWord(final SuggestedWords suggestedWords,
@@ -203,33 +201,82 @@ final class SuggestionStripLayoutHelper {
         if (indexInSuggestedWords >= suggestedWords.size()) {
             return null;
         }
-        final String word = suggestedWords.getWord(indexInSuggestedWords);
-        final boolean isAutoCorrect = indexInSuggestedWords == 1
-                && suggestedWords.willAutoCorrect();
-        final boolean isTypedWordValid = indexInSuggestedWords == 0
-                && suggestedWords.mTypedWordValid;
-        if (!isAutoCorrect && !isTypedWordValid) {
+        final String word = suggestedWords.getLabel(indexInSuggestedWords);
+        // TODO: don't use the index to decide whether this is the auto-correction/typed word, as
+        // this is brittle
+        final boolean isAutoCorrection = suggestedWords.mWillAutoCorrect
+                && indexInSuggestedWords == SuggestedWords.INDEX_OF_AUTO_CORRECTION;
+        final boolean isTypedWordValid = suggestedWords.mTypedWordValid
+                && indexInSuggestedWords == SuggestedWords.INDEX_OF_TYPED_WORD;
+        if (!isAutoCorrection && !isTypedWordValid) {
             return word;
         }
 
-        final int len = word.length();
         final Spannable spannedWord = new SpannableString(word);
-        final int option = mSuggestionStripOption;
-        if ((isAutoCorrect && (option & AUTO_CORRECT_BOLD) != 0)
-                || (isTypedWordValid && (option & VALID_TYPED_WORD_BOLD) != 0)) {
-            spannedWord.setSpan(BOLD_SPAN, 0, len, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        final int options = mSuggestionStripOptions;
+        if ((isAutoCorrection && (options & AUTO_CORRECT_BOLD) != 0)
+                || (isTypedWordValid && (options & VALID_TYPED_WORD_BOLD) != 0)) {
+            addStyleSpan(spannedWord, BOLD_SPAN);
         }
-        if (isAutoCorrect && (option & AUTO_CORRECT_UNDERLINE) != 0) {
-            spannedWord.setSpan(UNDERLINE_SPAN, 0, len, Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+        if (isAutoCorrection && (options & AUTO_CORRECT_UNDERLINE) != 0) {
+            addStyleSpan(spannedWord, UNDERLINE_SPAN);
         }
         return spannedWord;
     }
 
+    /**
+     * Convert an index of {@link SuggestedWords} to position in the suggestion strip.
+     * @param indexInSuggestedWords the index of {@link SuggestedWords}.
+     * @param suggestedWords the suggested words list
+     * @return Non-negative integer of the position in the suggestion strip.
+     *         Negative integer if the word of the index shouldn't be shown on the suggestion strip.
+     */
     private int getPositionInSuggestionStrip(final int indexInSuggestedWords,
             final SuggestedWords suggestedWords) {
+        final SettingsValues settingsValues = Settings.getInstance().getCurrent();
+        final boolean shouldOmitTypedWord = shouldOmitTypedWord(suggestedWords.mInputStyle,
+                settingsValues.mGestureFloatingPreviewTextEnabled,
+                settingsValues.mShouldShowLxxSuggestionUi);
+        return getPositionInSuggestionStrip(indexInSuggestedWords, suggestedWords.mWillAutoCorrect,
+                settingsValues.mShouldShowLxxSuggestionUi && shouldOmitTypedWord,
+                mCenterPositionInStrip, mTypedWordPositionWhenAutocorrect);
+    }
+
+    @UsedForTesting
+    static boolean shouldOmitTypedWord(final int inputStyle,
+            final boolean gestureFloatingPreviewTextEnabled,
+            final boolean shouldShowUiToAcceptTypedWord) {
+        final boolean omitTypedWord = (inputStyle == SuggestedWords.INPUT_STYLE_TYPING)
+                || (inputStyle == SuggestedWords.INPUT_STYLE_TAIL_BATCH)
+                || (inputStyle == SuggestedWords.INPUT_STYLE_UPDATE_BATCH
+                        && gestureFloatingPreviewTextEnabled);
+        return shouldShowUiToAcceptTypedWord && omitTypedWord;
+    }
+
+    @UsedForTesting
+    static int getPositionInSuggestionStrip(final int indexInSuggestedWords,
+            final boolean willAutoCorrect, final boolean omitTypedWord,
+            final int centerPositionInStrip, final int typedWordPositionWhenAutoCorrect) {
+        if (omitTypedWord) {
+            if (indexInSuggestedWords == SuggestedWords.INDEX_OF_TYPED_WORD) {
+                // Ignore.
+                return -1;
+            }
+            if (indexInSuggestedWords == SuggestedWords.INDEX_OF_AUTO_CORRECTION) {
+                // Center in the suggestion strip.
+                return centerPositionInStrip;
+            }
+            // If neither of those, the order in the suggestion strip is left of the center first
+            // then right of the center, to both edges of the suggestion strip.
+            // For example, center-1, center+1, center-2, center+2, and so on.
+            final int n = indexInSuggestedWords;
+            final int offsetFromCenter = (n % 2) == 0 ? -(n / 2) : (n / 2);
+            final int positionInSuggestionStrip = centerPositionInStrip + offsetFromCenter;
+            return positionInSuggestionStrip;
+        }
         final int indexToDisplayMostImportantSuggestion;
         final int indexToDisplaySecondMostImportantSuggestion;
-        if (suggestedWords.willAutoCorrect()) {
+        if (willAutoCorrect) {
             indexToDisplayMostImportantSuggestion = SuggestedWords.INDEX_OF_AUTO_CORRECTION;
             indexToDisplaySecondMostImportantSuggestion = SuggestedWords.INDEX_OF_TYPED_WORD;
         } else {
@@ -237,44 +284,40 @@ final class SuggestionStripLayoutHelper {
             indexToDisplaySecondMostImportantSuggestion = SuggestedWords.INDEX_OF_AUTO_CORRECTION;
         }
         if (indexInSuggestedWords == indexToDisplayMostImportantSuggestion) {
-            return mCenterPositionInStrip;
+            // Center in the suggestion strip.
+            return centerPositionInStrip;
         }
         if (indexInSuggestedWords == indexToDisplaySecondMostImportantSuggestion) {
-            return mTypedWordPositionWhenAutocorrect;
+            // Center-1.
+            return typedWordPositionWhenAutoCorrect;
         }
-        // If neither of those, the order in the suggestion strip is the same as in SuggestedWords.
-        return indexInSuggestedWords;
+        // If neither of those, the order in the suggestion strip is right of the center first
+        // then left of the center, to both edges of the suggestion strip.
+        // For example, Center+1, center-2, center+2, center-3, and so on.
+        final int n = indexInSuggestedWords + 1;
+        final int offsetFromCenter = (n % 2) == 0 ? -(n / 2) : (n / 2);
+        final int positionInSuggestionStrip = centerPositionInStrip + offsetFromCenter;
+        return positionInSuggestionStrip;
     }
 
-    private int getSuggestionTextColor(final int indexInSuggestedWords,
-            final SuggestedWords suggestedWords) {
-        final int positionInStrip =
-                getPositionInSuggestionStrip(indexInSuggestedWords, suggestedWords);
-        // TODO: Need to revisit this logic with bigram suggestions
-        final boolean isSuggested = (indexInSuggestedWords != SuggestedWords.INDEX_OF_TYPED_WORD);
+    private int getSuggestionTextColor(final SuggestedWords suggestedWords,
+            final int indexInSuggestedWords) {
+        // Use identity for strings, not #equals : it's the typed word if it's the same object
+        final boolean isTypedWord = suggestedWords.getInfo(indexInSuggestedWords).isKindOf(
+                SuggestedWordInfo.KIND_TYPED);
 
         final int color;
-        if (positionInStrip == mCenterPositionInStrip && suggestedWords.willAutoCorrect()) {
+        if (indexInSuggestedWords == SuggestedWords.INDEX_OF_AUTO_CORRECTION
+                && suggestedWords.mWillAutoCorrect) {
             color = mColorAutoCorrect;
-        } else if (positionInStrip == mCenterPositionInStrip && suggestedWords.mTypedWordValid) {
+        } else if (isTypedWord && suggestedWords.mTypedWordValid) {
             color = mColorValidTypedWord;
-        } else if (isSuggested) {
-            color = mColorSuggested;
-        } else {
+        } else if (isTypedWord) {
             color = mColorTypedWord;
+        } else {
+            color = mColorSuggested;
         }
-        if (LatinImeLogger.sDBG && suggestedWords.size() > 1) {
-            // If we auto-correct, then the autocorrection is in slot 0 and the typed word
-            // is in slot 1.
-            if (positionInStrip == mCenterPositionInStrip
-                    && AutoCorrectionUtils.shouldBlockAutoCorrectionBySafetyNet(
-                            suggestedWords.getWord(SuggestedWords.INDEX_OF_AUTO_CORRECTION),
-                            suggestedWords.getWord(SuggestedWords.INDEX_OF_TYPED_WORD))) {
-                return 0xFFFF0000;
-            }
-        }
-
-        if (suggestedWords.mIsObsoleteSuggestions && isSuggested) {
+        if (suggestedWords.mIsObsoleteSuggestions && !isTypedWord) {
             return applyAlpha(color, mAlphaObsoleted);
         }
         return color;
@@ -292,34 +335,51 @@ final class SuggestionStripLayoutHelper {
         params.gravity = Gravity.CENTER;
     }
 
-    public void layout(final SuggestedWords suggestedWords, final ViewGroup stripView,
+    /**
+     * Layout suggestions to the suggestions strip. And returns the start index of more
+     * suggestions.
+     *
+     * @param suggestedWords suggestions to be shown in the suggestions strip.
+     * @param stripView the suggestions strip view.
+     * @param placerView the view where the debug info will be placed.
+     * @return the start index of more suggestions.
+     */
+    public int layoutAndReturnStartIndexOfMoreSuggestions(
+            final Context context,
+            final SuggestedWords suggestedWords,
+            final ViewGroup stripView,
             final ViewGroup placerView) {
-        if (suggestedWords.mIsPunctuationSuggestions) {
-            layoutPunctuationSuggestions(suggestedWords, stripView);
-            return;
+        if (suggestedWords.isPunctuationSuggestions()) {
+            return layoutPunctuationsAndReturnStartIndexOfMoreSuggestions(
+                    (PunctuationSuggestions)suggestedWords, stripView);
         }
 
-        final int countInStrip = mSuggestionsCountInStrip;
-        setupWordViewsTextAndColor(suggestedWords, countInStrip);
+        final int wordCountToShow = suggestedWords.getWordCountToShow(
+                Settings.getInstance().getCurrent().mShouldShowLxxSuggestionUi);
+        final int startIndexOfMoreSuggestions = setupWordViewsAndReturnStartIndexOfMoreSuggestions(
+                suggestedWords, mSuggestionsCountInStrip);
         final TextView centerWordView = mWordViews.get(mCenterPositionInStrip);
-        final int availableStripWidth = placerView.getWidth()
-                - placerView.getPaddingRight() - placerView.getPaddingLeft();
-        final int centerWidth = getSuggestionWidth(mCenterPositionInStrip, availableStripWidth);
-        if (getTextScaleX(centerWordView.getText(), centerWidth, centerWordView.getPaint())
-                < MIN_TEXT_XSCALE) {
+        final int stripWidth = stripView.getWidth();
+        final int centerWidth = getSuggestionWidth(mCenterPositionInStrip, stripWidth);
+        if (wordCountToShow == 1 || getTextScaleX(centerWordView.getText(), centerWidth,
+                centerWordView.getPaint()) < MIN_TEXT_XSCALE) {
             // Layout only the most relevant suggested word at the center of the suggestion strip
             // by consolidating all slots in the strip.
-            mMoreSuggestionsAvailable = (suggestedWords.size() > 1);
-            layoutWord(mCenterPositionInStrip, availableStripWidth - mPadding);
+            final int countInStrip = 1;
+            mMoreSuggestionsAvailable = (wordCountToShow > countInStrip);
+            layoutWord(context, mCenterPositionInStrip, stripWidth - mPadding);
             stripView.addView(centerWordView);
             setLayoutWeight(centerWordView, 1.0f, ViewGroup.LayoutParams.MATCH_PARENT);
             if (SuggestionStripView.DBG) {
-                layoutDebugInfo(mCenterPositionInStrip, placerView, availableStripWidth);
+                layoutDebugInfo(mCenterPositionInStrip, placerView, stripWidth);
             }
-            return;
+            final Integer lastIndex = (Integer)centerWordView.getTag();
+            return (lastIndex == null ? 0 : lastIndex) + 1;
         }
 
-        mMoreSuggestionsAvailable = (suggestedWords.size() > countInStrip);
+        final int countInStrip = mSuggestionsCountInStrip;
+        mMoreSuggestionsAvailable = (wordCountToShow > countInStrip);
+        @SuppressWarnings("unused")
         int x = 0;
         for (int positionInStrip = 0; positionInStrip < countInStrip; positionInStrip++) {
             if (positionInStrip != 0) {
@@ -329,8 +389,8 @@ final class SuggestionStripLayoutHelper {
                 x += divider.getMeasuredWidth();
             }
 
-            final int width = getSuggestionWidth(positionInStrip, availableStripWidth);
-            final TextView wordView = layoutWord(positionInStrip, width);
+            final int width = getSuggestionWidth(positionInStrip, stripWidth);
+            final TextView wordView = layoutWord(context, positionInStrip, width);
             stripView.addView(wordView);
             setLayoutWeight(wordView, getSuggestionWeight(positionInStrip),
                     ViewGroup.LayoutParams.MATCH_PARENT);
@@ -340,6 +400,7 @@ final class SuggestionStripLayoutHelper {
                 layoutDebugInfo(positionInStrip, placerView, x);
             }
         }
+        return startIndexOfMoreSuggestions;
     }
 
     /**
@@ -358,7 +419,7 @@ final class SuggestionStripLayoutHelper {
      * @param width the maximum width for layout in pixels.
      * @return the {@link TextView} containing the suggested word appropriately formatted.
      */
-    private TextView layoutWord(final int positionInStrip, final int width) {
+    private TextView layoutWord(final Context context, final int positionInStrip, final int width) {
         final TextView wordView = mWordViews.get(positionInStrip);
         final CharSequence word = wordView.getText();
         if (positionInStrip == mCenterPositionInStrip && mMoreSuggestionsAvailable) {
@@ -370,13 +431,23 @@ final class SuggestionStripLayoutHelper {
         } else {
             wordView.setCompoundDrawablesWithIntrinsicBounds(null, null, null, null);
         }
-
-        // Disable this suggestion if the suggestion is null or empty.
-        wordView.setEnabled(!TextUtils.isEmpty(word));
-        final CharSequence text = getEllipsizedText(word, width, wordView.getPaint());
-        final float scaleX = getTextScaleX(word, width, wordView.getPaint());
+        // {@link StyleSpan} in a content description may cause an issue of TTS/TalkBack.
+        // Use a simple {@link String} to avoid the issue.
+        wordView.setContentDescription(
+                TextUtils.isEmpty(word)
+                    ? context.getResources().getString(R.string.spoken_empty_suggestion)
+                    : word.toString());
+        final CharSequence text = getEllipsizedTextWithSettingScaleX(
+                word, width, wordView.getPaint());
+        final float scaleX = wordView.getTextScaleX();
         wordView.setText(text); // TextView.setText() resets text scale x to 1.0.
-        wordView.setTextScaleX(Math.max(scaleX, MIN_TEXT_XSCALE));
+        wordView.setTextScaleX(scaleX);
+        // A <code>wordView</code> should be disabled when <code>word</code> is empty in order to
+        // make it unclickable.
+        // With accessibility touch exploration on, <code>wordView</code> should be enabled even
+        // when it is empty to avoid announcing as "disabled".
+        wordView.setEnabled(!TextUtils.isEmpty(word)
+                || AccessibilityUtils.getInstance().isTouchExplorationEnabled());
         return wordView;
     }
 
@@ -411,37 +482,45 @@ final class SuggestionStripLayoutHelper {
         return (1.0f - mCenterSuggestionWeight) / (mSuggestionsCountInStrip - 1);
     }
 
-    private void setupWordViewsTextAndColor(final SuggestedWords suggestedWords,
-            final int countInStrip) {
+    private int setupWordViewsAndReturnStartIndexOfMoreSuggestions(
+            final SuggestedWords suggestedWords, final int maxSuggestionInStrip) {
         // Clear all suggestions first
-        for (int positionInStrip = 0; positionInStrip < countInStrip; ++positionInStrip) {
-            mWordViews.get(positionInStrip).setText(null);
+        for (int positionInStrip = 0; positionInStrip < maxSuggestionInStrip; ++positionInStrip) {
+            final TextView wordView = mWordViews.get(positionInStrip);
+            wordView.setText(null);
+            wordView.setTag(null);
             // Make this inactive for touches in {@link #layoutWord(int,int)}.
             if (SuggestionStripView.DBG) {
                 mDebugInfoViews.get(positionInStrip).setText(null);
             }
         }
-        final int count = Math.min(suggestedWords.size(), countInStrip);
-        for (int indexInSuggestedWords = 0; indexInSuggestedWords < count;
-                indexInSuggestedWords++) {
+        int count = 0;
+        int indexInSuggestedWords;
+        for (indexInSuggestedWords = 0; indexInSuggestedWords < suggestedWords.size()
+                && count < maxSuggestionInStrip; indexInSuggestedWords++) {
             final int positionInStrip =
                     getPositionInSuggestionStrip(indexInSuggestedWords, suggestedWords);
+            if (positionInStrip < 0) {
+                continue;
+            }
             final TextView wordView = mWordViews.get(positionInStrip);
             // {@link TextView#getTag()} is used to get the index in suggestedWords at
             // {@link SuggestionStripView#onClick(View)}.
             wordView.setTag(indexInSuggestedWords);
             wordView.setText(getStyledSuggestedWord(suggestedWords, indexInSuggestedWords));
-            wordView.setTextColor(getSuggestionTextColor(positionInStrip, suggestedWords));
+            wordView.setTextColor(getSuggestionTextColor(suggestedWords, indexInSuggestedWords));
             if (SuggestionStripView.DBG) {
                 mDebugInfoViews.get(positionInStrip).setText(
                         suggestedWords.getDebugString(indexInSuggestedWords));
             }
+            count++;
         }
+        return indexInSuggestedWords;
     }
 
-    private void layoutPunctuationSuggestions(final SuggestedWords suggestedWords,
-            final ViewGroup stripView) {
-        final int countInStrip = Math.min(suggestedWords.size(), PUNCTUATIONS_IN_STRIP);
+    private int layoutPunctuationsAndReturnStartIndexOfMoreSuggestions(
+            final PunctuationSuggestions punctuationSuggestions, final ViewGroup stripView) {
+        final int countInStrip = Math.min(punctuationSuggestions.size(), PUNCTUATIONS_IN_STRIP);
         for (int positionInStrip = 0; positionInStrip < countInStrip; positionInStrip++) {
             if (positionInStrip != 0) {
                 // Add divider if this isn't the left most suggestion in suggestions strip.
@@ -449,71 +528,35 @@ final class SuggestionStripLayoutHelper {
             }
 
             final TextView wordView = mWordViews.get(positionInStrip);
-            wordView.setEnabled(true);
-            wordView.setTextColor(mColorAutoCorrect);
+            final String punctuation = punctuationSuggestions.getLabel(positionInStrip);
             // {@link TextView#getTag()} is used to get the index in suggestedWords at
             // {@link SuggestionStripView#onClick(View)}.
             wordView.setTag(positionInStrip);
-            wordView.setText(suggestedWords.getWord(positionInStrip));
+            wordView.setText(punctuation);
+            wordView.setContentDescription(punctuation);
             wordView.setTextScaleX(1.0f);
             wordView.setCompoundDrawables(null, null, null, null);
+            wordView.setTextColor(mColorAutoCorrect);
             stripView.addView(wordView);
             setLayoutWeight(wordView, 1.0f, mSuggestionsStripHeight);
         }
-        mMoreSuggestionsAvailable = (suggestedWords.size() > countInStrip);
+        mMoreSuggestionsAvailable = (punctuationSuggestions.size() > countInStrip);
+        return countInStrip;
     }
 
-    public void layoutAddToDictionaryHint(final String word, final ViewGroup stripView,
-            final int stripWidth, final CharSequence hintText, final OnClickListener listener) {
-        final int width = stripWidth - mDividerWidth - mPadding * 2;
-
-        final TextView wordView = mWordToSaveView;
-        wordView.setTextColor(mColorTypedWord);
-        final int wordWidth = (int)(width * mCenterSuggestionWeight);
-        final CharSequence text = getEllipsizedText(word, wordWidth, wordView.getPaint());
-        final float wordScaleX = wordView.getTextScaleX();
-        // {@link TextView#setTag()} is used to hold the word to be added to dictionary. The word
-        // will be extracted at {@link #getAddToDictionaryWord()}.
-        wordView.setTag(word);
-        wordView.setText(text);
-        wordView.setTextScaleX(wordScaleX);
-        stripView.addView(wordView);
-        setLayoutWeight(wordView, mCenterSuggestionWeight, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        stripView.addView(mDividerViews.get(0));
-
-        final TextView leftArrowView = mLeftwardsArrowView;
-        leftArrowView.setTextColor(mColorAutoCorrect);
-        leftArrowView.setText(LEFTWARDS_ARROW);
-        stripView.addView(leftArrowView);
-
-        final TextView hintView = mHintToSaveView;
-        hintView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        hintView.setTextColor(mColorAutoCorrect);
-        final int hintWidth = width - wordWidth - leftArrowView.getWidth();
-        final float hintScaleX = getTextScaleX(hintText, hintWidth, hintView.getPaint());
-        hintView.setText(hintText);
-        hintView.setTextScaleX(hintScaleX);
-        stripView.addView(hintView);
-        setLayoutWeight(
-                hintView, 1.0f - mCenterSuggestionWeight, ViewGroup.LayoutParams.MATCH_PARENT);
-
-        wordView.setOnClickListener(listener);
-        leftArrowView.setOnClickListener(listener);
-        hintView.setOnClickListener(listener);
+    public void layoutImportantNotice(final View importantNoticeStrip,
+            final String importantNoticeTitle) {
+        final TextView titleView = (TextView)importantNoticeStrip.findViewById(
+                R.id.important_notice_title);
+        final int width = titleView.getWidth() - titleView.getPaddingLeft()
+                - titleView.getPaddingRight();
+        titleView.setTextColor(mColorAutoCorrect);
+        titleView.setText(importantNoticeTitle); // TextView.setText() resets text scale x to 1.0.
+        final float titleScaleX = getTextScaleX(importantNoticeTitle, width, titleView.getPaint());
+        titleView.setTextScaleX(titleScaleX);
     }
 
-    public String getAddToDictionaryWord() {
-        // String tag is set at
-        // {@link #layoutAddToDictionaryHint(String,ViewGroup,int,CharSequence,OnClickListener}.
-        return (String)mWordToSaveView.getTag();
-    }
-
-    public boolean isAddToDictionaryShowing(final View v) {
-        return v == mWordToSaveView || v == mHintToSaveView || v == mLeftwardsArrowView;
-    }
-
-    private static void setLayoutWeight(final View v, final float weight, final int height) {
+    static void setLayoutWeight(final View v, final float weight, final int height) {
         final ViewGroup.LayoutParams lp = v.getLayoutParams();
         if (lp instanceof LinearLayout.LayoutParams) {
             final LinearLayout.LayoutParams llp = (LinearLayout.LayoutParams)lp;
@@ -523,18 +566,19 @@ final class SuggestionStripLayoutHelper {
         }
     }
 
-    private static float getTextScaleX(final CharSequence text, final int maxWidth,
+    private static float getTextScaleX(@Nullable final CharSequence text, final int maxWidth,
             final TextPaint paint) {
         paint.setTextScaleX(1.0f);
         final int width = getTextWidth(text, paint);
-        if (width <= maxWidth) {
+        if (width <= maxWidth || maxWidth <= 0) {
             return 1.0f;
         }
-        return maxWidth / (float)width;
+        return maxWidth / (float) width;
     }
 
-    private static CharSequence getEllipsizedText(final CharSequence text, final int maxWidth,
-            final TextPaint paint) {
+    @Nullable
+    private static CharSequence getEllipsizedTextWithSettingScaleX(
+            @Nullable final CharSequence text, final int maxWidth, @Nonnull final TextPaint paint) {
         if (text == null) {
             return null;
         }
@@ -544,62 +588,63 @@ final class SuggestionStripLayoutHelper {
             return text;
         }
 
-        // Note that TextUtils.ellipsize() use text-x-scale as 1.0 if ellipsize is needed. To
-        // get squeezed and ellipsized text, passes enlarged width (maxWidth / MIN_TEXT_XSCALE).
-        final float upscaledWidth = maxWidth / MIN_TEXT_XSCALE;
-        CharSequence ellipsized = TextUtils.ellipsize(
-                text, paint, upscaledWidth, TextUtils.TruncateAt.MIDDLE);
-        // For an unknown reason, ellipsized seems to return a text that does indeed fit inside the
-        // passed width according to paint.measureText, but not according to paint.getTextWidths.
-        // But when rendered, the text seems to actually take up as many pixels as returned by
-        // paint.getTextWidths, hence problem.
-        // To save this case, we compare the measured size of the new text, and if it's too much,
-        // try it again removing the difference. This may still give a text too long by one or
-        // two pixels so we take an additional 2 pixels cushion and call it a day.
-        // TODO: figure out why getTextWidths and measureText don't agree with each other, and
-        // remove the following code.
-        final float ellipsizedTextWidth = getTextWidth(ellipsized, paint);
-        if (upscaledWidth <= ellipsizedTextWidth) {
-            ellipsized = TextUtils.ellipsize(
-                    text, paint, upscaledWidth - (ellipsizedTextWidth - upscaledWidth) - 2,
-                    TextUtils.TruncateAt.MIDDLE);
-        }
+        // <code>text</code> must be ellipsized with minimum text scale x.
         paint.setTextScaleX(MIN_TEXT_XSCALE);
-        return ellipsized;
+        final boolean hasBoldStyle = hasStyleSpan(text, BOLD_SPAN);
+        final boolean hasUnderlineStyle = hasStyleSpan(text, UNDERLINE_SPAN);
+        // TextUtils.ellipsize erases any span object existed after ellipsized point.
+        // We have to restore these spans afterward.
+        final CharSequence ellipsizedText = TextUtils.ellipsize(
+                text, paint, maxWidth, TextUtils.TruncateAt.MIDDLE);
+        if (!hasBoldStyle && !hasUnderlineStyle) {
+            return ellipsizedText;
+        }
+        final Spannable spannableText = (ellipsizedText instanceof Spannable)
+                ? (Spannable)ellipsizedText : new SpannableString(ellipsizedText);
+        if (hasBoldStyle) {
+            addStyleSpan(spannableText, BOLD_SPAN);
+        }
+        if (hasUnderlineStyle) {
+            addStyleSpan(spannableText, UNDERLINE_SPAN);
+        }
+        return spannableText;
     }
 
-    private static int getTextWidth(final CharSequence text, final TextPaint paint) {
+    private static boolean hasStyleSpan(@Nullable final CharSequence text,
+            final CharacterStyle style) {
+        if (text instanceof Spanned) {
+            return ((Spanned)text).getSpanStart(style) >= 0;
+        }
+        return false;
+    }
+
+    private static void addStyleSpan(@Nonnull final Spannable text, final CharacterStyle style) {
+        text.removeSpan(style);
+        text.setSpan(style, 0, text.length(), Spanned.SPAN_INCLUSIVE_EXCLUSIVE);
+    }
+
+    private static int getTextWidth(@Nullable final CharSequence text, final TextPaint paint) {
         if (TextUtils.isEmpty(text)) {
             return 0;
         }
+        final int length = text.length();
+        final float[] widths = new float[length];
+        final int count;
         final Typeface savedTypeface = paint.getTypeface();
-        paint.setTypeface(getTextTypeface(text));
-        final int len = text.length();
-        final float[] widths = new float[len];
-        final int count = paint.getTextWidths(text, 0, len, widths);
+        try {
+            paint.setTypeface(getTextTypeface(text));
+            count = paint.getTextWidths(text, 0, length, widths);
+        } finally {
+            paint.setTypeface(savedTypeface);
+        }
         int width = 0;
         for (int i = 0; i < count; i++) {
             width += Math.round(widths[i] + 0.5f);
         }
-        paint.setTypeface(savedTypeface);
         return width;
     }
 
-    private static Typeface getTextTypeface(final CharSequence text) {
-        if (!(text instanceof SpannableString)) {
-            return Typeface.DEFAULT;
-        }
-
-        final SpannableString ss = (SpannableString)text;
-        final StyleSpan[] styles = ss.getSpans(0, text.length(), StyleSpan.class);
-        if (styles.length == 0) {
-            return Typeface.DEFAULT;
-        }
-
-        if (styles[0].getStyle() == Typeface.BOLD) {
-            return Typeface.DEFAULT_BOLD;
-        }
-        // TODO: BOLD_ITALIC, ITALIC case?
-        return Typeface.DEFAULT;
+    private static Typeface getTextTypeface(@Nullable final CharSequence text) {
+        return hasStyleSpan(text, BOLD_SPAN) ? Typeface.DEFAULT_BOLD : Typeface.DEFAULT;
     }
 }

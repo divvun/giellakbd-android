@@ -18,7 +18,7 @@
 */
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <!-- Note that correctionX is obsolete (See TouchPositionCorrection)
+    <!-- Note that correctionX is obsolete (See com.android.inputmethod.keyboard.internal.TouchPositionCorrection)
         An entry of the touch_position_correction word should be:
         1. correctionX: (touch_center_x - hitbox_center_x) / hitbox_width
         2. correctionY: (touch_center_y - hitbox_center_y) / hitbox_height
@@ -29,31 +29,11 @@
         name="touch_position_correction_data_default"
         translatable="false"
     >
-        <!-- The default touch position data (See ProximityInfo)
+        <!-- The default touch position data (See com.android.inputmethod.keyboard.ProximityInfo)
              correctionX = 0.0f
              correctionY = 0.0f
              correctionR = DEFAULT_TOUCH_POSITION_CORRECTION_RADIUS
         -->
-    </string-array>
-
-    <string-array
-        name="touch_position_correction_data_gb"
-        translatable="false"
-    >
-        <!-- First row -->
-        <item>0.0091285</item>
-        <item>0.1193203</item>
-        <item>0.1622607</item>
-
-        <!-- Second row -->
-        <item>-0.0233128</item>
-        <item>0.1379798</item>
-        <item>0.1585229</item>
-
-        <!-- Third row -->
-        <item>-0.0080185</item>
-        <item>0.1911477</item>
-        <item>0.1570948</item>
     </string-array>
 
     <string-array

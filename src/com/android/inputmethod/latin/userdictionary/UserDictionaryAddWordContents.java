@@ -28,11 +28,13 @@ import android.widget.EditText;
 
 import com.android.inputmethod.compat.UserDictionaryCompatUtils;
 import com.android.inputmethod.latin.R;
-import com.android.inputmethod.latin.utils.LocaleUtils;
+import com.android.inputmethod.latin.common.LocaleUtils;
 
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.TreeSet;
+
+import javax.annotation.Nullable;
 
 // Caveat: This class is basically taken from
 // packages/apps/Settings/src/com/android/settings/inputmethod/UserDictionaryAddWordContents.java
@@ -167,7 +169,9 @@ public class UserDictionaryAddWordContents {
         // should not insert, because either A. the word exists with no shortcut, in which
         // case the exact same thing we want to insert is already there, or B. the word
         // exists with at least one shortcut, in which case it has priority on our word.
-        if (hasWord(newWord, context)) return CODE_ALREADY_PRESENT;
+        if (TextUtils.isEmpty(newShortcut) && hasWord(newWord, context)) {
+            return CODE_ALREADY_PRESENT;
+        }
 
         // Disallow duplicates. If the same word with no shortcut is defined, remove it; if
         // the same word with the same shortcut is defined, remove it; but we don't mind if
@@ -216,8 +220,8 @@ public class UserDictionaryAddWordContents {
     public static class LocaleRenderer {
         private final String mLocaleString;
         private final String mDescription;
-        // LocaleString may NOT be null.
-        public LocaleRenderer(final Context context, final String localeString) {
+
+        public LocaleRenderer(final Context context, @Nullable final String localeString) {
             mLocaleString = localeString;
             if (null == localeString) {
                 mDescription = context.getString(R.string.user_dict_settings_more_languages);
@@ -256,7 +260,7 @@ public class UserDictionaryAddWordContents {
         // The system locale should be inside. We want it at the 2nd spot.
         locales.remove(systemLocale); // system locale may not be null
         locales.remove(""); // Remove the empty string if it's there
-        final ArrayList<LocaleRenderer> localesList = new ArrayList<LocaleRenderer>();
+        final ArrayList<LocaleRenderer> localesList = new ArrayList<>();
         // Add the passed locale, then the system locale at the top of the list. Add an
         // "all languages" entry at the bottom of the list.
         addLocaleDisplayNameToList(activity, localesList, mLocale);
@@ -279,3 +283,4 @@ public class UserDictionaryAddWordContents {
         return mLocale;
     }
 }
+

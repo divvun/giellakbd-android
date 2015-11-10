@@ -16,8 +16,10 @@
 
 package com.android.inputmethod.dictionarypack;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,13 +31,13 @@ import java.util.List;
  * Helper class to easy up manipulation of dictionary pack metadata.
  */
 public class MetadataHandler {
-    @SuppressWarnings("unused")
-    private static final String TAG = "DictionaryProvider:" + MetadataHandler.class.getSimpleName();
+
+    public static final String TAG = MetadataHandler.class.getSimpleName();
 
     // The canonical file name for metadata. This is not the name of a real file on the
     // device, but a symbolic name used in the database and in metadata handling. It is never
     // tested against, only used for human-readability as the file name for the metadata.
-    public final static String METADATA_FILENAME = "metadata.json";
+    public static final String METADATA_FILENAME = "metadata.json";
 
     /**
      * Reads the data from the cursor and store it in metadata objects.
@@ -43,9 +45,8 @@ public class MetadataHandler {
      * @return the constructed list of wordlist metadata.
      */
     private static List<WordListMetadata> makeMetadataObject(final Cursor results) {
-        final ArrayList<WordListMetadata> buildingMetadata = new ArrayList<WordListMetadata>();
-
-        if (results.moveToFirst()) {
+        final ArrayList<WordListMetadata> buildingMetadata = new ArrayList<>();
+        if (null != results && results.moveToFirst()) {
             final int localeColumn = results.getColumnIndex(MetadataDbHelper.LOCALE_COLUMN);
             final int typeColumn = results.getColumnIndex(MetadataDbHelper.TYPE_COLUMN);
             final int descriptionColumn =
@@ -53,7 +54,10 @@ public class MetadataHandler {
             final int idIndex = results.getColumnIndex(MetadataDbHelper.WORDLISTID_COLUMN);
             final int updateIndex = results.getColumnIndex(MetadataDbHelper.DATE_COLUMN);
             final int fileSizeIndex = results.getColumnIndex(MetadataDbHelper.FILESIZE_COLUMN);
+            final int rawChecksumIndex =
+                    results.getColumnIndex(MetadataDbHelper.RAW_CHECKSUM_COLUMN);
             final int checksumIndex = results.getColumnIndex(MetadataDbHelper.CHECKSUM_COLUMN);
+            final int retryCountIndex = results.getColumnIndex(MetadataDbHelper.RETRY_COUNT_COLUMN);
             final int localFilenameIndex =
                     results.getColumnIndex(MetadataDbHelper.LOCAL_FILENAME_COLUMN);
             final int remoteFilenameIndex =
@@ -61,22 +65,21 @@ public class MetadataHandler {
             final int versionIndex = results.getColumnIndex(MetadataDbHelper.VERSION_COLUMN);
             final int formatVersionIndex =
                     results.getColumnIndex(MetadataDbHelper.FORMATVERSION_COLUMN);
-
             do {
                 buildingMetadata.add(new WordListMetadata(results.getString(idIndex),
                         results.getInt(typeColumn),
                         results.getString(descriptionColumn),
                         results.getLong(updateIndex),
                         results.getLong(fileSizeIndex),
+                        results.getString(rawChecksumIndex),
                         results.getString(checksumIndex),
+                        results.getInt(retryCountIndex),
                         results.getString(localFilenameIndex),
                         results.getString(remoteFilenameIndex),
                         results.getInt(versionIndex),
                         results.getInt(formatVersionIndex),
                         0, results.getString(localeColumn)));
             } while (results.moveToNext());
-
-            results.close();
         }
         return Collections.unmodifiableList(buildingMetadata);
     }
@@ -92,9 +95,38 @@ public class MetadataHandler {
         // If clientId is null, we get a cursor on the default database (see
         // MetadataDbHelper#getInstance() for more on this)
         final Cursor results = MetadataDbHelper.queryCurrentMetadata(context, clientId);
-        final List<WordListMetadata> resultList = makeMetadataObject(results);
-        results.close();
-        return resultList;
+        // If null, we should return makeMetadataObject(null), so we go through.
+        try {
+            return makeMetadataObject(results);
+        } finally {
+            if (null != results) {
+                results.close();
+            }
+        }
+    }
+
+    /**
+     * Gets the metadata, for a specific dictionary.
+     *
+     * @param context The context to open files over.
+     * @param clientId the client id for retrieving the database. null for default (deprecated).
+     * @param wordListId the word list ID.
+     * @param version the word list version.
+     * @return the current metaData
+     */
+    public static WordListMetadata getCurrentMetadataForWordList(final Context context,
+            final String clientId, final String wordListId, final int version) {
+        final ContentValues contentValues = MetadataDbHelper.getContentValuesByWordListId(
+                MetadataDbHelper.getDb(context, clientId), wordListId, version);
+        if (contentValues == null) {
+            // TODO: Figure out why this would happen.
+            // Check if this happens when the metadata gets updated in the background.
+            Log.e(TAG, String.format( "Unable to find the current metadata for wordlist "
+                            + "(clientId=%s, wordListId=%s, version=%d) on the database",
+                    clientId, wordListId, version));
+            return null;
+        }
+        return WordListMetadata.createFromContentValues(contentValues);
     }
 
     /**

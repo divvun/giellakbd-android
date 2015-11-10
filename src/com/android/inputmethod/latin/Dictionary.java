@@ -16,10 +16,15 @@
 
 package com.android.inputmethod.latin;
 
-import com.android.inputmethod.keyboard.ProximityInfo;
+import com.android.inputmethod.annotations.UsedForTesting;
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;
+import com.android.inputmethod.latin.common.ComposedData;
+import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion;
 
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Arrays;
+import java.util.HashSet;
 
 /**
  * Abstract base class for a dictionary that can do a fuzzy search for words based on a set of key
@@ -27,24 +32,28 @@ import java.util.ArrayList;
  */
 public abstract class Dictionary {
     public static final int NOT_A_PROBABILITY = -1;
+    public static final float NOT_A_WEIGHT_OF_LANG_MODEL_VS_SPATIAL_MODEL = -1.0f;
 
     // The following types do not actually come from real dictionary instances, so we create
     // corresponding instances.
     public static final String TYPE_USER_TYPED = "user_typed";
-    public static final Dictionary DICTIONARY_USER_TYPED = new PhonyDictionary(TYPE_USER_TYPED);
+    public static final PhonyDictionary DICTIONARY_USER_TYPED = new PhonyDictionary(TYPE_USER_TYPED);
+
+    public static final String TYPE_USER_SHORTCUT = "user_shortcut";
+    public static final PhonyDictionary DICTIONARY_USER_SHORTCUT =
+            new PhonyDictionary(TYPE_USER_SHORTCUT);
 
     public static final String TYPE_APPLICATION_DEFINED = "application_defined";
-    public static final Dictionary DICTIONARY_APPLICATION_DEFINED =
+    public static final PhonyDictionary DICTIONARY_APPLICATION_DEFINED =
             new PhonyDictionary(TYPE_APPLICATION_DEFINED);
 
     public static final String TYPE_HARDCODED = "hardcoded"; // punctuation signs and such
-    public static final Dictionary DICTIONARY_HARDCODED =
+    public static final PhonyDictionary DICTIONARY_HARDCODED =
             new PhonyDictionary(TYPE_HARDCODED);
 
     // Spawned by resuming suggestions. Comes from a span that was in the TextView.
     public static final String TYPE_RESUMED = "resumed";
-    public static final Dictionary DICTIONARY_RESUMED =
-            new PhonyDictionary(TYPE_RESUMED);
+    public static final PhonyDictionary DICTIONARY_RESUMED = new PhonyDictionary(TYPE_RESUMED);
 
     // The following types of dictionary have actual functional instances. We don't need final
     // phony dictionary instances for them.
@@ -52,53 +61,75 @@ public abstract class Dictionary {
     public static final String TYPE_CONTACTS = "contacts";
     // User dictionary, the system-managed one.
     public static final String TYPE_USER = "user";
-    // User history dictionary internal to LatinIME. This assumes bigram prediction for now.
+    // User history dictionary internal to LatinIME.
     public static final String TYPE_USER_HISTORY = "history";
-    // Personalization binary dictionary internal to LatinIME.
-    public static final String TYPE_PERSONALIZATION = "personalization";
-    // Personalization prediction dictionary internal to LatinIME's Java code.
-    public static final String TYPE_PERSONALIZATION_PREDICTION_IN_JAVA =
-            "personalization_prediction_in_java";
     public final String mDictType;
+    // The locale for this dictionary. May be null if unknown (phony dictionary for example).
+    public final Locale mLocale;
 
-    public Dictionary(final String dictType) {
+    /**
+     * Set out of the dictionary types listed above that are based on data specific to the user,
+     * e.g., the user's contacts.
+     */
+    private static final HashSet<String> sUserSpecificDictionaryTypes = new HashSet<>(Arrays.asList(
+            TYPE_USER_TYPED,
+            TYPE_USER,
+            TYPE_CONTACTS,
+            TYPE_USER_HISTORY));
+
+    public Dictionary(final String dictType, final Locale locale) {
         mDictType = dictType;
+        mLocale = locale;
     }
 
     /**
-     * Searches for suggestions for a given context. For the moment the context is only the
-     * previous word.
-     * @param composer the key sequence to match with coordinate info, as a WordComposer
-     * @param prevWord the previous word, or null if none
-     * @param proximityInfo the object for key proximity. May be ignored by some implementations.
-     * @param blockOffensiveWords whether to block potentially offensive words
-     * @param additionalFeaturesOptions options about additional features used for the suggestion.
+     * Searches for suggestions for a given context.
+     * @param composedData the key sequence to match with coordinate info
+     * @param ngramContext the context for n-gram.
+     * @param proximityInfoHandle the handle for key proximity. Is ignored by some implementations.
+     * @param settingsValuesForSuggestion the settings values used for the suggestion.
+     * @param sessionId the session id.
+     * @param weightForLocale the weight given to this locale, to multiply the output scores for
+     * multilingual input.
+     * @param inOutWeightOfLangModelVsSpatialModel the weight of the language model as a ratio of
+     * the spatial model, used for generating suggestions. inOutWeightOfLangModelVsSpatialModel is
+     * a float array that has only one element. This can be updated when a different value is used.
      * @return the list of suggestions (possibly null if none)
      */
-    // TODO: pass more context than just the previous word, to enable better suggestions (n-gram
-    // and more)
-    abstract public ArrayList<SuggestedWordInfo> getSuggestions(final WordComposer composer,
-            final String prevWord, final ProximityInfo proximityInfo,
-            final boolean blockOffensiveWords, final int[] additionalFeaturesOptions);
+    abstract public ArrayList<SuggestedWordInfo> getSuggestions(final ComposedData composedData,
+            final NgramContext ngramContext, final long proximityInfoHandle,
+            final SettingsValuesForSuggestion settingsValuesForSuggestion,
+            final int sessionId, final float weightForLocale,
+            final float[] inOutWeightOfLangModelVsSpatialModel);
 
-    // The default implementation of this method ignores sessionId.
-    // Subclasses that want to use sessionId need to override this method.
-    public ArrayList<SuggestedWordInfo> getSuggestionsWithSessionId(final WordComposer composer,
-            final String prevWord, final ProximityInfo proximityInfo,
-            final boolean blockOffensiveWords, final int[] additionalFeaturesOptions,
-            final int sessionId) {
-        return getSuggestions(composer, prevWord, proximityInfo, blockOffensiveWords,
-                additionalFeaturesOptions);
+    /**
+     * Checks if the given word has to be treated as a valid word. Please note that some
+     * dictionaries have entries that should be treated as invalid words.
+     * @param word the word to search for. The search should be case-insensitive.
+     * @return true if the word is valid, false otherwise
+     */
+    public boolean isValidWord(final String word) {
+        return isInDictionary(word);
     }
 
     /**
-     * Checks if the given word occurs in the dictionary
-     * @param word the word to search for. The search should be case-insensitive.
-     * @return true if the word exists, false otherwise
+     * Checks if the given word is in the dictionary regardless of it being valid or not.
      */
-    abstract public boolean isValidWord(final String word);
+    abstract public boolean isInDictionary(final String word);
 
+    /**
+     * Get the frequency of the word.
+     * @param word the word to get the frequency of.
+     */
     public int getFrequency(final String word) {
+        return NOT_A_PROBABILITY;
+    }
+
+    /**
+     * Get the maximum frequency of the word.
+     * @param word the word to get the maximum frequency of.
+     */
+    public int getMaxFrequencyOfExactMatches(final String word) {
         return NOT_A_PROBABILITY;
     }
 
@@ -150,24 +181,35 @@ public abstract class Dictionary {
     }
 
     /**
+     * Whether this dictionary is based on data specific to the user, e.g., the user's contacts.
+     * @return Whether this dictionary is specific to the user.
+     */
+    public boolean isUserSpecific() {
+        return sUserSpecificDictionaryTypes.contains(mDictType);
+    }
+
+    /**
      * Not a true dictionary. A placeholder used to indicate suggestions that don't come from any
      * real dictionary.
      */
-    private static class PhonyDictionary extends Dictionary {
-        // This class is not publicly instantiable.
-        private PhonyDictionary(final String type) {
-            super(type);
+    @UsedForTesting
+    static class PhonyDictionary extends Dictionary {
+        @UsedForTesting
+        PhonyDictionary(final String type) {
+            super(type, null);
         }
 
         @Override
-        public ArrayList<SuggestedWordInfo> getSuggestions(final WordComposer composer,
-                final String prevWord, final ProximityInfo proximityInfo,
-                final boolean blockOffensiveWords, final int[] additionalFeaturesOptions) {
+        public ArrayList<SuggestedWordInfo> getSuggestions(final ComposedData composedData,
+                final NgramContext ngramContext, final long proximityInfoHandle,
+                final SettingsValuesForSuggestion settingsValuesForSuggestion,
+                final int sessionId, final float weightForLocale,
+                final float[] inOutWeightOfLangModelVsSpatialModel) {
             return null;
         }
 
         @Override
-        public boolean isValidWord(String word) {
+        public boolean isInDictionary(String word) {
             return false;
         }
     }

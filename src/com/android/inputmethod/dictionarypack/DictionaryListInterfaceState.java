@@ -18,8 +18,6 @@ package com.android.inputmethod.dictionarypack;
 
 import android.view.View;
 
-import com.android.inputmethod.latin.utils.CollectionUtils;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -34,13 +32,13 @@ import java.util.HashMap;
  * in case some dictionaries appeared, disappeared, changed states etc.
  */
 public class DictionaryListInterfaceState {
-    private static class State {
+    static class State {
         public boolean mOpen = false;
         public int mStatus = MetadataDbHelper.STATUS_UNKNOWN;
     }
 
-    private HashMap<String, State> mWordlistToState = CollectionUtils.newHashMap();
-    private ArrayList<View> mViewCache = CollectionUtils.newArrayList();
+    private HashMap<String, State> mWordlistToState = new HashMap<>();
+    private ArrayList<View> mViewCache = new ArrayList<>();
 
     public boolean isOpen(final String wordlistId) {
         final State state = mWordlistToState.get(wordlistId);

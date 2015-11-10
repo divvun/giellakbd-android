@@ -16,6 +16,8 @@
 
 package com.android.inputmethod.dictionarypack;
 
+import com.android.inputmethod.latin.common.LocaleUtils;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
@@ -26,20 +28,20 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceGroup;
 import android.text.TextUtils;
-import android.text.format.DateUtils;
 import android.util.Log;
-import android.view.animation.AnimationUtils;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
 
 import com.android.inputmethod.latin.R;
 
@@ -67,8 +69,8 @@ public final class DictionarySettingsFragment extends PreferenceFragment
     private boolean mChangedSettings;
     private DictionaryListInterfaceState mDictionaryListInterfaceState =
             new DictionaryListInterfaceState();
-    private TreeMap<String, WordListPreference> mCurrentPreferenceMap =
-            new TreeMap<String, WordListPreference>(); // never null
+    // never null
+    private TreeMap<String, WordListPreference> mCurrentPreferenceMap = new TreeMap<>();
 
     private final BroadcastReceiver mConnectivityChangedReceiver = new BroadcastReceiver() {
             @Override
@@ -105,16 +107,27 @@ public final class DictionarySettingsFragment extends PreferenceFragment
 
     @Override
     public void onCreateOptionsMenu(final Menu menu, final MenuInflater inflater) {
-        final String metadataUri =
-                MetadataDbHelper.getMetadataUriAsString(getActivity(), mClientId);
-        // We only add the "Refresh" button if we have a non-empty URL to refresh from. If the
-        // URL is empty, of course we can't refresh so it makes no sense to display this.
-        if (!TextUtils.isEmpty(metadataUri)) {
-            mUpdateNowMenu =
-                    menu.add(Menu.NONE, MENU_UPDATE_NOW, 0, R.string.check_for_updates_now);
-            mUpdateNowMenu.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
-            refreshNetworkState();
-        }
+        new AsyncTask<Void, Void, String>() {
+            @Override
+            protected String doInBackground(Void... params) {
+                return MetadataDbHelper.getMetadataUriAsString(getActivity(), mClientId);
+            }
+
+            @Override
+            protected void onPostExecute(String metadataUri) {
+                // We only add the "Refresh" button if we have a non-empty URL to refresh from. If
+                // the URL is empty, of course we can't refresh so it makes no sense to display
+                // this.
+                if (!TextUtils.isEmpty(metadataUri)) {
+                    if (mUpdateNowMenu == null) {
+                        mUpdateNowMenu = menu.add(Menu.NONE, MENU_UPDATE_NOW, 0,
+                                        R.string.check_for_updates_now);
+                        mUpdateNowMenu.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+                    }
+                    refreshNetworkState();
+                }
+            }
+        }.execute();
     }
 
     @Override
@@ -123,18 +136,25 @@ public final class DictionarySettingsFragment extends PreferenceFragment
         mChangedSettings = false;
         UpdateHandler.registerUpdateEventListener(this);
         final Activity activity = getActivity();
-        if (!MetadataDbHelper.isClientKnown(activity, mClientId)) {
-            Log.i(TAG, "Unknown dictionary pack client: " + mClientId + ". Requesting info.");
-            final Intent unknownClientBroadcast =
-                    new Intent(DictionaryPackConstants.UNKNOWN_DICTIONARY_PROVIDER_CLIENT);
-            unknownClientBroadcast.putExtra(
-                    DictionaryPackConstants.DICTIONARY_PROVIDER_CLIENT_EXTRA, mClientId);
-            activity.sendBroadcast(unknownClientBroadcast);
-        }
         final IntentFilter filter = new IntentFilter();
         filter.addAction(ConnectivityManager.CONNECTIVITY_ACTION);
         getActivity().registerReceiver(mConnectivityChangedReceiver, filter);
         refreshNetworkState();
+
+        new Thread("onResume") {
+            @Override
+            public void run() {
+                if (!MetadataDbHelper.isClientKnown(activity, mClientId)) {
+                    Log.i(TAG, "Unknown dictionary pack client: " + mClientId
+                            + ". Requesting info.");
+                    final Intent unknownClientBroadcast =
+                            new Intent(DictionaryPackConstants.UNKNOWN_DICTIONARY_PROVIDER_CLIENT);
+                    unknownClientBroadcast.putExtra(
+                            DictionaryPackConstants.DICTIONARY_PROVIDER_CLIENT_EXTRA, mClientId);
+                    activity.sendBroadcast(unknownClientBroadcast);
+                }
+            }
+        }.start();
     }
 
     @Override
@@ -203,24 +223,18 @@ public final class DictionarySettingsFragment extends PreferenceFragment
     @Override
     public void updateCycleCompleted() {}
 
-    private void refreshNetworkState() {
+    void refreshNetworkState() {
         NetworkInfo info = mConnectivityManager.getActiveNetworkInfo();
         boolean isConnected = null == info ? false : info.isConnected();
         if (null != mUpdateNowMenu) mUpdateNowMenu.setEnabled(isConnected);
     }
 
-    private void refreshInterface() {
+    void refreshInterface() {
         final Activity activity = getActivity();
         if (null == activity) return;
-        final long lastUpdateDate =
-                MetadataDbHelper.getLastUpdateDateForClient(getActivity(), mClientId);
         final PreferenceGroup prefScreen = getPreferenceScreen();
         final Collection<? extends Preference> prefList =
                 createInstalledDictSettingsCollection(mClientId);
-
-        final String updateNowSummary = getString(R.string.last_update) + " "
-                + DateUtils.formatDateTime(activity, lastUpdateDate,
-                        DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_TIME);
 
         activity.runOnUiThread(new Runnable() {
                 @Override
@@ -239,14 +253,14 @@ public final class DictionarySettingsFragment extends PreferenceFragment
             });
     }
 
-    private Preference createErrorMessage(final Activity activity, final int messageResource) {
+    private static Preference createErrorMessage(final Activity activity, final int messageResource) {
         final Preference message = new Preference(activity);
         message.setTitle(messageResource);
         message.setEnabled(false);
         return message;
     }
 
-    private void removeAnyDictSettings(final PreferenceGroup prefGroup) {
+    static void removeAnyDictSettings(final PreferenceGroup prefGroup) {
         for (int i = prefGroup.getPreferenceCount() - 1; i >= 0; --i) {
             prefGroup.removePreference(prefGroup.getPreference(i));
         }
@@ -276,22 +290,22 @@ public final class DictionarySettingsFragment extends PreferenceFragment
                 .appendQueryParameter(DictionaryProvider.QUERY_PARAMETER_PROTOCOL_VERSION, "2")
                 .build();
         final Activity activity = getActivity();
-        final Cursor cursor = null == activity ? null
+        final Cursor cursor = (null == activity) ? null
                 : activity.getContentResolver().query(contentUri, null, null, null, null);
 
         if (null == cursor) {
-            final ArrayList<Preference> result = new ArrayList<Preference>();
+            final ArrayList<Preference> result = new ArrayList<>();
             result.add(createErrorMessage(activity, R.string.cannot_connect_to_dict_service));
             return result;
-        } else if (!cursor.moveToFirst()) {
-            final ArrayList<Preference> result = new ArrayList<Preference>();
-            result.add(createErrorMessage(activity, R.string.no_dictionaries_available));
-            cursor.close();
-            return result;
-        } else {
+        }
+        try {
+            if (!cursor.moveToFirst()) {
+                final ArrayList<Preference> result = new ArrayList<>();
+                result.add(createErrorMessage(activity, R.string.no_dictionaries_available));
+                return result;
+            }
             final String systemLocaleString = Locale.getDefault().toString();
-            final TreeMap<String, WordListPreference> prefMap =
-                    new TreeMap<String, WordListPreference>();
+            final TreeMap<String, WordListPreference> prefMap = new TreeMap<>();
             final int idIndex = cursor.getColumnIndex(MetadataDbHelper.WORDLISTID_COLUMN);
             final int versionIndex = cursor.getColumnIndex(MetadataDbHelper.VERSION_COLUMN);
             final int localeIndex = cursor.getColumnIndex(MetadataDbHelper.LOCALE_COLUMN);
@@ -317,15 +331,20 @@ public final class DictionarySettingsFragment extends PreferenceFragment
                     final WordListPreference pref;
                     if (null != oldPreference
                             && oldPreference.mVersion == version
+                            && oldPreference.hasStatus(status)
                             && oldPreference.mLocale.equals(locale)) {
-                        // If the old preference has all the new attributes, reuse it. We test
-                        // for version and locale because although attributes other than status
-                        // need to be the same, others have been tested through the key of the
-                        // map. Also, status may differ so we don't want to use #equals() here.
+                        // If the old preference has all the new attributes, reuse it. Ideally,
+                        // we should reuse the old pref even if its status is different and call
+                        // setStatus here, but setStatus calls Preference#setSummary() which
+                        // needs to be done on the UI thread and we're not on the UI thread
+                        // here. We could do all this work on the UI thread, but in this case
+                        // it's probably lighter to stay on a background thread and throw this
+                        // old preference out.
                         pref = oldPreference;
-                        pref.setStatus(status);
                     } else {
                         // Otherwise, discard it and create a new one instead.
+                        // TODO: when the status is different from the old one, we need to
+                        // animate the old one out before animating the new one in.
                         pref = new WordListPreference(activity, mDictionaryListInterfaceState,
                                 mClientId, wordlistId, version, locale, description, status,
                                 filesize);
@@ -333,9 +352,10 @@ public final class DictionarySettingsFragment extends PreferenceFragment
                     prefMap.put(key, pref);
                 }
             } while (cursor.moveToNext());
-            cursor.close();
             mCurrentPreferenceMap = prefMap;
             return prefMap.values();
+        } finally {
+            cursor.close();
         }
     }
 
@@ -364,7 +384,7 @@ public final class DictionarySettingsFragment extends PreferenceFragment
                 // We call tryUpdate(), which returns whether we could successfully start an update.
                 // If we couldn't, we'll never receive the end callback, so we stop the loading
                 // animation and return to the previous screen.
-                if (!UpdateHandler.tryUpdate(activity, true)) {
+                if (!UpdateHandler.tryUpdate(activity)) {
                     stopLoadingAnimation();
                 }
             }
@@ -374,8 +394,13 @@ public final class DictionarySettingsFragment extends PreferenceFragment
     private void cancelRefresh() {
         UpdateHandler.unregisterUpdateEventListener(this);
         final Context context = getActivity();
-        UpdateHandler.cancelUpdate(context, mClientId);
-        stopLoadingAnimation();
+        new Thread("cancelByHand") {
+            @Override
+            public void run() {
+                UpdateHandler.cancelUpdate(context, mClientId);
+                stopLoadingAnimation();
+            }
+        }.start();
     }
 
     private void startLoadingAnimation() {
@@ -386,26 +411,28 @@ public final class DictionarySettingsFragment extends PreferenceFragment
         if (null != mUpdateNowMenu) mUpdateNowMenu.setTitle(R.string.cancel);
     }
 
-    private void stopLoadingAnimation() {
+    void stopLoadingAnimation() {
         final View preferenceView = getView();
         final Activity activity = getActivity();
         if (null == activity) return;
+        final View loadingView = mLoadingView;
+        final MenuItem updateNowMenu = mUpdateNowMenu;
         activity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    mLoadingView.setVisibility(View.GONE);
-                    preferenceView.setVisibility(View.VISIBLE);
-                    mLoadingView.startAnimation(AnimationUtils.loadAnimation(
-                            getActivity(), android.R.anim.fade_out));
-                    preferenceView.startAnimation(AnimationUtils.loadAnimation(
-                            getActivity(), android.R.anim.fade_in));
-                    // The menu is created by the framework asynchronously after the activity,
-                    // which means it's possible to have the activity running but the menu not
-                    // created yet - hence the necessity for a null check here.
-                    if (null != mUpdateNowMenu) {
-                        mUpdateNowMenu.setTitle(R.string.check_for_updates_now);
-                    }
+            @Override
+            public void run() {
+                loadingView.setVisibility(View.GONE);
+                preferenceView.setVisibility(View.VISIBLE);
+                loadingView.startAnimation(AnimationUtils.loadAnimation(
+                        activity, android.R.anim.fade_out));
+                preferenceView.startAnimation(AnimationUtils.loadAnimation(
+                        activity, android.R.anim.fade_in));
+                // The menu is created by the framework asynchronously after the activity,
+                // which means it's possible to have the activity running but the menu not
+                // created yet - hence the necessity for a null check here.
+                if (null != updateNowMenu) {
+                    updateNowMenu.setTitle(R.string.check_for_updates_now);
                 }
-            });
+            }
+        });
     }
 }

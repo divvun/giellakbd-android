@@ -21,41 +21,50 @@ import android.util.Log;
 import android.util.SparseArray;
 
 import com.android.inputmethod.latin.R;
-import com.android.inputmethod.latin.utils.CollectionUtils;
 import com.android.inputmethod.latin.utils.XmlParseUtils;
 
 import org.xmlpull.v1.XmlPullParser;
 import org.xmlpull.v1.XmlPullParserException;
 
+import java.util.Arrays;
 import java.util.HashMap;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public final class KeyStylesSet {
     private static final String TAG = KeyStylesSet.class.getSimpleName();
     private static final boolean DEBUG = false;
 
-    private final HashMap<String, KeyStyle> mStyles = CollectionUtils.newHashMap();
+    @Nonnull
+    private final HashMap<String, KeyStyle> mStyles = new HashMap<>();
 
+    @Nonnull
     private final KeyboardTextsSet mTextsSet;
+    @Nonnull
     private final KeyStyle mEmptyKeyStyle;
+    @Nonnull
     private static final String EMPTY_STYLE_NAME = "<empty>";
 
-    public KeyStylesSet(final KeyboardTextsSet textsSet) {
+    public KeyStylesSet(@Nonnull final KeyboardTextsSet textsSet) {
         mTextsSet = textsSet;
         mEmptyKeyStyle = new EmptyKeyStyle(textsSet);
         mStyles.put(EMPTY_STYLE_NAME, mEmptyKeyStyle);
     }
 
     private static final class EmptyKeyStyle extends KeyStyle {
-        EmptyKeyStyle(final KeyboardTextsSet textsSet) {
+        EmptyKeyStyle(@Nonnull final KeyboardTextsSet textsSet) {
             super(textsSet);
         }
 
         @Override
+        @Nullable
         public String[] getStringArray(final TypedArray a, final int index) {
             return parseStringArray(a, index);
         }
 
         @Override
+        @Nullable
         public String getString(final TypedArray a, final int index) {
             return parseString(a, index);
         }
@@ -74,29 +83,33 @@ public final class KeyStylesSet {
     private static final class DeclaredKeyStyle extends KeyStyle {
         private final HashMap<String, KeyStyle> mStyles;
         private final String mParentStyleName;
-        private final SparseArray<Object> mStyleAttributes = CollectionUtils.newSparseArray();
+        private final SparseArray<Object> mStyleAttributes = new SparseArray<>();
 
-        public DeclaredKeyStyle(final String parentStyleName, final KeyboardTextsSet textsSet,
-                final HashMap<String, KeyStyle> styles) {
+        public DeclaredKeyStyle(@Nonnull final String parentStyleName,
+                @Nonnull final KeyboardTextsSet textsSet,
+                @Nonnull final HashMap<String, KeyStyle> styles) {
             super(textsSet);
             mParentStyleName = parentStyleName;
             mStyles = styles;
         }
 
         @Override
+        @Nullable
         public String[] getStringArray(final TypedArray a, final int index) {
             if (a.hasValue(index)) {
                 return parseStringArray(a, index);
             }
             final Object value = mStyleAttributes.get(index);
             if (value != null) {
-                return (String[])value;
+                final String[] array = (String[])value;
+                return Arrays.copyOf(array, array.length);
             }
             final KeyStyle parentStyle = mStyles.get(mParentStyleName);
             return parentStyle.getStringArray(a, index);
         }
 
         @Override
+        @Nullable
         public String getString(final TypedArray a, final int index) {
             if (a.hasValue(index)) {
                 return parseString(a, index);
@@ -133,17 +146,13 @@ public final class KeyStylesSet {
 
         public void readKeyAttributes(final TypedArray keyAttr) {
             // TODO: Currently not all Key attributes can be declared as style.
-            readString(keyAttr, R.styleable.Keyboard_Key_code);
             readString(keyAttr, R.styleable.Keyboard_Key_altCode);
-            readString(keyAttr, R.styleable.Keyboard_Key_keyLabel);
-            readString(keyAttr, R.styleable.Keyboard_Key_keyOutputText);
+            readString(keyAttr, R.styleable.Keyboard_Key_keySpec);
             readString(keyAttr, R.styleable.Keyboard_Key_keyHintLabel);
             readStringArray(keyAttr, R.styleable.Keyboard_Key_moreKeys);
             readStringArray(keyAttr, R.styleable.Keyboard_Key_additionalMoreKeys);
             readFlags(keyAttr, R.styleable.Keyboard_Key_keyLabelFlags);
-            readString(keyAttr, R.styleable.Keyboard_Key_keyIcon);
             readString(keyAttr, R.styleable.Keyboard_Key_keyIconDisabled);
-            readString(keyAttr, R.styleable.Keyboard_Key_keyIconPreview);
             readInt(keyAttr, R.styleable.Keyboard_Key_maxMoreKeysColumn);
             readInt(keyAttr, R.styleable.Keyboard_Key_backgroundType);
             readFlags(keyAttr, R.styleable.Keyboard_Key_keyActionFlags);
@@ -179,37 +188,43 @@ public final class KeyStylesSet {
     public void parseKeyStyleAttributes(final TypedArray keyStyleAttr, final TypedArray keyAttrs,
             final XmlPullParser parser) throws XmlPullParserException {
         final String styleName = keyStyleAttr.getString(R.styleable.Keyboard_KeyStyle_styleName);
+        if (styleName == null) {
+            throw new XmlParseUtils.ParseException(
+                    KeyboardBuilder.TAG_KEY_STYLE + " has no styleName attribute", parser);
+        }
         if (DEBUG) {
             Log.d(TAG, String.format("<%s styleName=%s />",
                     KeyboardBuilder.TAG_KEY_STYLE, styleName));
             if (mStyles.containsKey(styleName)) {
-                Log.d(TAG, "key-style " + styleName + " is overridden at "
+                Log.d(TAG, KeyboardBuilder.TAG_KEY_STYLE + " " + styleName + " is overridden at "
                         + parser.getPositionDescription());
             }
         }
 
-        String parentStyleName = EMPTY_STYLE_NAME;
-        if (keyStyleAttr.hasValue(R.styleable.Keyboard_KeyStyle_parentStyle)) {
-            parentStyleName = keyStyleAttr.getString(R.styleable.Keyboard_KeyStyle_parentStyle);
-            if (!mStyles.containsKey(parentStyleName)) {
-                throw new XmlParseUtils.ParseException(
-                        "Unknown parentStyle " + parentStyleName, parser);
-            }
+        final String parentStyleInAttr = keyStyleAttr.getString(
+                R.styleable.Keyboard_KeyStyle_parentStyle);
+        if (parentStyleInAttr != null && !mStyles.containsKey(parentStyleInAttr)) {
+            throw new XmlParseUtils.ParseException(
+                    "Unknown parentStyle " + parentStyleInAttr, parser);
         }
+        final String parentStyleName = (parentStyleInAttr == null) ? EMPTY_STYLE_NAME
+                : parentStyleInAttr;
         final DeclaredKeyStyle style = new DeclaredKeyStyle(parentStyleName, mTextsSet, mStyles);
         style.readKeyAttributes(keyAttrs);
         mStyles.put(styleName, style);
     }
 
+    @Nonnull
     public KeyStyle getKeyStyle(final TypedArray keyAttr, final XmlPullParser parser)
             throws XmlParseUtils.ParseException {
-        if (!keyAttr.hasValue(R.styleable.Keyboard_Key_keyStyle)) {
+        final String styleName = keyAttr.getString(R.styleable.Keyboard_Key_keyStyle);
+        if (styleName == null) {
             return mEmptyKeyStyle;
         }
-        final String styleName = keyAttr.getString(R.styleable.Keyboard_Key_keyStyle);
-        if (!mStyles.containsKey(styleName)) {
+        final KeyStyle style = mStyles.get(styleName);
+        if (style == null) {
             throw new XmlParseUtils.ParseException("Unknown key style: " + styleName, parser);
         }
-        return mStyles.get(styleName);
+        return style;
     }
 }

@@ -37,15 +37,19 @@ import com.android.inputmethod.compat.TextViewCompatUtils;
 import com.android.inputmethod.compat.ViewCompatUtils;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.settings.SettingsActivity;
-import com.android.inputmethod.latin.utils.CollectionUtils;
-import com.android.inputmethod.latin.utils.StaticInnerHandlerWrapper;
+import com.android.inputmethod.latin.utils.LeakGuardHandlerWrapper;
+import com.android.inputmethod.latin.utils.UncachedInputMethodManagerUtils;
 
 import java.util.ArrayList;
+
+import javax.annotation.Nonnull;
 
 // TODO: Use Fragment to implement welcome screen and setup steps.
 public final class SetupWizardActivity extends Activity implements View.OnClickListener {
     static final String TAG = SetupWizardActivity.class.getSimpleName();
 
+    // For debugging purpose.
+    private static final boolean FORCE_TO_SHOW_WELCOME_SCREEN = false;
     private static final boolean ENABLE_WELCOME_VIDEO = true;
 
     private InputMethodManager mImm;
@@ -53,6 +57,9 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
     private View mSetupWizard;
     private View mWelcomeScreen;
     private View mSetupScreen;
+    private Uri mWelcomeVideoUri;
+    private VideoView mWelcomeVideoView;
+    private ImageView mWelcomeImageView;
     private View mActionStart;
     private View mActionNext;
     private TextView mStep1Bullet;
@@ -71,27 +78,28 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
     private SettingsPoolingHandler mHandler;
 
     private static final class SettingsPoolingHandler
-            extends StaticInnerHandlerWrapper<SetupWizardActivity> {
+            extends LeakGuardHandlerWrapper<SetupWizardActivity> {
         private static final int MSG_POLLING_IME_SETTINGS = 0;
         private static final long IME_SETTINGS_POLLING_INTERVAL = 200;
 
         private final InputMethodManager mImmInHandler;
 
-        public SettingsPoolingHandler(final SetupWizardActivity outerInstance,
+        public SettingsPoolingHandler(@Nonnull final SetupWizardActivity ownerInstance,
                 final InputMethodManager imm) {
-            super(outerInstance);
+            super(ownerInstance);
             mImmInHandler = imm;
         }
 
         @Override
         public void handleMessage(final Message msg) {
-            final SetupWizardActivity setupWizardActivity = getOuterInstance();
+            final SetupWizardActivity setupWizardActivity = getOwnerInstance();
             if (setupWizardActivity == null) {
                 return;
             }
             switch (msg.what) {
             case MSG_POLLING_IME_SETTINGS:
-                if (SetupActivity.isThisImeEnabled(setupWizardActivity, mImmInHandler)) {
+                if (UncachedInputMethodManagerUtils.isThisImeEnabled(setupWizardActivity,
+                        mImmInHandler)) {
                     setupWizardActivity.invokeSetupWizardOfThisIme();
                     return;
                 }
@@ -183,6 +191,32 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
         });
         mSetupStepGroup.addStep(step3);
 
+        mWelcomeVideoUri = new Uri.Builder()
+                .scheme(ContentResolver.SCHEME_ANDROID_RESOURCE)
+                .authority(getPackageName())
+                .path(Integer.toString(R.raw.setup_welcome_video))
+                .build();
+        final VideoView welcomeVideoView = (VideoView)findViewById(R.id.setup_welcome_video);
+        welcomeVideoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(final MediaPlayer mp) {
+                // Now VideoView has been laid-out and ready to play, remove background of it to
+                // reveal the video.
+                welcomeVideoView.setBackgroundResource(0);
+                mp.setLooping(true);
+            }
+        });
+        welcomeVideoView.setOnErrorListener(new MediaPlayer.OnErrorListener() {
+            @Override
+            public boolean onError(final MediaPlayer mp, final int what, final int extra) {
+                Log.e(TAG, "Playing welcome video causes error: what=" + what + " extra=" + extra);
+                hideWelcomeVideoAndShowWelcomeImage();
+                return true;
+            }
+        });
+        mWelcomeVideoView = welcomeVideoView;
+        mWelcomeImageView = (ImageView)findViewById(R.id.setup_welcome_image);
+
         mActionStart = findViewById(R.id.setup_start_label);
         mActionStart.setOnClickListener(this);
         mActionNext = findViewById(R.id.setup_next);
@@ -231,6 +265,8 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
         intent.setClass(this, SettingsActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
                 | Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.putExtra(SettingsActivity.EXTRA_ENTRY_KEY,
+                SettingsActivity.EXTRA_ENTRY_VALUE_APP_ICON);
         startActivity(intent);
     }
 
@@ -249,7 +285,8 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
     }
 
     void invokeSubtypeEnablerOfThisIme() {
-        final InputMethodInfo imi = SetupActivity.getInputMethodInfoOf(getPackageName(), mImm);
+        final InputMethodInfo imi =
+                UncachedInputMethodManagerUtils.getInputMethodInfoOf(getPackageName(), mImm);
         if (imi == null) {
             return;
         }
@@ -273,10 +310,13 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
 
     private int determineSetupStepNumber() {
         mHandler.cancelPollingImeSettings();
-        if (!SetupActivity.isThisImeEnabled(this, mImm)) {
+        if (FORCE_TO_SHOW_WELCOME_SCREEN) {
             return STEP_1;
         }
-        if (!SetupActivity.isThisImeCurrent(this, mImm)) {
+        if (!UncachedInputMethodManagerUtils.isThisImeEnabled(this, mImm)) {
+            return STEP_1;
+        }
+        if (!UncachedInputMethodManagerUtils.isThisImeCurrent(this, mImm)) {
             return STEP_2;
         }
         return STEP_3;
@@ -336,8 +376,26 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
         super.onBackPressed();
     }
 
+    void hideWelcomeVideoAndShowWelcomeImage() {
+        mWelcomeVideoView.setVisibility(View.GONE);
+        mWelcomeImageView.setImageResource(R.raw.setup_welcome_image);
+        mWelcomeImageView.setVisibility(View.VISIBLE);
+    }
+
+    private void showAndStartWelcomeVideo() {
+        mWelcomeVideoView.setVisibility(View.VISIBLE);
+        mWelcomeVideoView.setVideoURI(mWelcomeVideoUri);
+        mWelcomeVideoView.start();
+    }
+
+    private void hideAndStopWelcomeVideo() {
+        mWelcomeVideoView.stopPlayback();
+        mWelcomeVideoView.setVisibility(View.GONE);
+    }
+
     @Override
     protected void onPause() {
+        hideAndStopWelcomeVideo();
         super.onPause();
     }
 
@@ -357,8 +415,14 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
         mWelcomeScreen.setVisibility(welcomeScreen ? View.VISIBLE : View.GONE);
         mSetupScreen.setVisibility(welcomeScreen ? View.GONE : View.VISIBLE);
         if (welcomeScreen) {
+            if (ENABLE_WELCOME_VIDEO) {
+                showAndStartWelcomeVideo();
+            } else {
+                hideWelcomeVideoAndShowWelcomeImage();
+            }
             return;
         }
+        hideAndStopWelcomeVideo();
         final boolean isStepActionAlreadyDone = mStepNumber < determineSetupStepNumber();
         mSetupStepGroup.enableStep(mStepNumber, isStepActionAlreadyDone);
         mActionNext.setVisibility(isStepActionAlreadyDone ? View.VISIBLE : View.GONE);
@@ -429,7 +493,7 @@ public final class SetupWizardActivity extends Activity implements View.OnClickL
 
     static final class SetupStepGroup {
         private final SetupStepIndicatorView mIndicatorView;
-        private final ArrayList<SetupStep> mGroup = CollectionUtils.newArrayList();
+        private final ArrayList<SetupStep> mGroup = new ArrayList<>();
 
         public SetupStepGroup(final SetupStepIndicatorView indicatorView) {
             mIndicatorView = indicatorView;

@@ -20,11 +20,15 @@ import android.util.SparseIntArray;
 
 import com.android.inputmethod.keyboard.Key;
 import com.android.inputmethod.keyboard.KeyboardId;
-import com.android.inputmethod.latin.Constants;
-import com.android.inputmethod.latin.utils.CollectionUtils;
+import com.android.inputmethod.latin.common.Constants;
 
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.SortedSet;
 import java.util.TreeSet;
+
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 
 public class KeyboardParams {
     public KeyboardId mId;
@@ -45,6 +49,7 @@ public class KeyboardParams {
     public int mLeftPadding;
     public int mRightPadding;
 
+    @Nullable
     public KeyVisualAttributes mKeyVisualAttributes;
 
     public int mDefaultRowHeight;
@@ -58,38 +63,67 @@ public class KeyboardParams {
     public int GRID_WIDTH;
     public int GRID_HEIGHT;
 
-    public final TreeSet<Key> mKeys = CollectionUtils.newTreeSet(); // ordered set
-    public final ArrayList<Key> mShiftKeys = CollectionUtils.newArrayList();
-    public final ArrayList<Key> mAltCodeKeysWhileTyping = CollectionUtils.newArrayList();
+    // Keys are sorted from top-left to bottom-right order.
+    @Nonnull
+    public final SortedSet<Key> mSortedKeys = new TreeSet<>(ROW_COLUMN_COMPARATOR);
+    @Nonnull
+    public final ArrayList<Key> mShiftKeys = new ArrayList<>();
+    @Nonnull
+    public final ArrayList<Key> mAltCodeKeysWhileTyping = new ArrayList<>();
+    @Nonnull
     public final KeyboardIconsSet mIconsSet = new KeyboardIconsSet();
-    public final KeyboardCodesSet mCodesSet = new KeyboardCodesSet();
+    @Nonnull
     public final KeyboardTextsSet mTextsSet = new KeyboardTextsSet();
+    @Nonnull
     public final KeyStylesSet mKeyStyles = new KeyStylesSet(mTextsSet);
 
-    public KeysCache mKeysCache;
+    @Nonnull
+    private final UniqueKeysCache mUniqueKeysCache;
+    public boolean mAllowRedundantMoreKeys;
 
     public int mMostCommonKeyHeight = 0;
     public int mMostCommonKeyWidth = 0;
 
     public boolean mProximityCharsCorrectionEnabled;
 
+    @Nonnull
     public final TouchPositionCorrection mTouchPositionCorrection =
             new TouchPositionCorrection();
 
+    // Comparator to sort {@link Key}s from top-left to bottom-right order.
+    private static final Comparator<Key> ROW_COLUMN_COMPARATOR = new Comparator<Key>() {
+        @Override
+        public int compare(final Key lhs, final Key rhs) {
+            if (lhs.getY() < rhs.getY()) return -1;
+            if (lhs.getY() > rhs.getY()) return 1;
+            if (lhs.getX() < rhs.getX()) return -1;
+            if (lhs.getX() > rhs.getX()) return 1;
+            return 0;
+        }
+    };
+
+    public KeyboardParams() {
+        this(UniqueKeysCache.NO_CACHE);
+    }
+
+    public KeyboardParams(@Nonnull final UniqueKeysCache keysCache) {
+        mUniqueKeysCache = keysCache;
+    }
+
     protected void clearKeys() {
-        mKeys.clear();
+        mSortedKeys.clear();
         mShiftKeys.clear();
         clearHistogram();
     }
 
-    public void onAddKey(final Key newKey) {
-        final Key key = (mKeysCache != null) ? mKeysCache.get(newKey) : newKey;
+    public void onAddKey(@Nonnull final Key newKey) {
+        final Key key = mUniqueKeysCache.getUniqueKey(newKey);
         final boolean isSpacer = key.isSpacer();
         if (isSpacer && key.getWidth() == 0) {
             // Ignore zero width {@link Spacer}.
             return;
         }
-        mKeys.add(key);
+        mSortedKeys.add(key);
         if (isSpacer) {
             return;
         }
@@ -99,6 +133,23 @@ public class KeyboardParams {
         }
         if (key.altCodeWhileTyping()) {
             mAltCodeKeysWhileTyping.add(key);
+        }
+    }
+
+    public void removeRedundantMoreKeys() {
+        if (mAllowRedundantMoreKeys) {
+            return;
+        }
+        final MoreKeySpec.LettersOnBaseLayout lettersOnBaseLayout =
+                new MoreKeySpec.LettersOnBaseLayout();
+        for (final Key key : mSortedKeys) {
+            lettersOnBaseLayout.addLetter(key);
+        }
+        final ArrayList<Key> allKeys = new ArrayList<>(mSortedKeys);
+        mSortedKeys.clear();
+        for (final Key key : allKeys) {
+            final Key filteredKey = Key.removeRedundantMoreKeys(key, lettersOnBaseLayout);
+            mSortedKeys.add(mUniqueKeysCache.getUniqueKey(filteredKey));
         }
     }
 

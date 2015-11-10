@@ -18,8 +18,6 @@ package com.android.inputmethod.keyboard.internal;
 
 import android.util.Log;
 
-import com.android.inputmethod.latin.utils.CollectionUtils;
-
 import java.util.ArrayList;
 
 public final class PointerTrackerQueue {
@@ -28,7 +26,7 @@ public final class PointerTrackerQueue {
 
     public interface Element {
         public boolean isModifier();
-        public boolean isInSlidingKeyInput();
+        public boolean isInDraggingFinger();
         public void onPhantomUpEvent(long eventTime);
         public void cancelTrackingForAction();
     }
@@ -37,7 +35,7 @@ public final class PointerTrackerQueue {
     // Note: {@link #mExpandableArrayOfActivePointers} and {@link #mArraySize} are synchronized by
     // {@link #mExpandableArrayOfActivePointers}
     private final ArrayList<Element> mExpandableArrayOfActivePointers =
-            CollectionUtils.newArrayList(INITIAL_CAPACITY);
+            new ArrayList<>(INITIAL_CAPACITY);
     private int mArraySize = 0;
 
     public int size() {
@@ -97,7 +95,7 @@ public final class PointerTrackerQueue {
     public void releaseAllPointersOlderThan(final Element pointer, final long eventTime) {
         synchronized (mExpandableArrayOfActivePointers) {
             if (DEBUG) {
-                Log.d(TAG, "releaseAllPoniterOlderThan: " + pointer + " " + this);
+                Log.d(TAG, "releaseAllPointerOlderThan: " + pointer + " " + this);
             }
             final ArrayList<Element> expandableArray = mExpandableArrayOfActivePointers;
             final int arraySize = mArraySize;
@@ -146,9 +144,9 @@ public final class PointerTrackerQueue {
         synchronized (mExpandableArrayOfActivePointers) {
             if (DEBUG) {
                 if (pointer == null) {
-                    Log.d(TAG, "releaseAllPoniters: " + this);
+                    Log.d(TAG, "releaseAllPointers: " + this);
                 } else {
-                    Log.d(TAG, "releaseAllPoniterExcept: " + pointer + " " + this);
+                    Log.d(TAG, "releaseAllPointerExcept: " + pointer + " " + this);
                 }
             }
             final ArrayList<Element> expandableArray = mExpandableArrayOfActivePointers;
@@ -193,13 +191,13 @@ public final class PointerTrackerQueue {
         }
     }
 
-    public boolean isAnyInSlidingKeyInput() {
+    public boolean isAnyInDraggingFinger() {
         synchronized (mExpandableArrayOfActivePointers) {
             final ArrayList<Element> expandableArray = mExpandableArrayOfActivePointers;
             final int arraySize = mArraySize;
             for (int index = 0; index < arraySize; index++) {
                 final Element element = expandableArray.get(index);
-                if (element.isInSlidingKeyInput()) {
+                if (element.isInDraggingFinger()) {
                     return true;
                 }
             }

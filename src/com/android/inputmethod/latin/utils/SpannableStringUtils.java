@@ -22,6 +22,13 @@ import android.text.Spanned;
 import android.text.SpannedString;
 import android.text.TextUtils;
 import android.text.style.SuggestionSpan;
+import android.text.style.URLSpan;
+
+import com.android.inputmethod.annotations.UsedForTesting;
+
+import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public final class SpannableStringUtils {
     /**
@@ -40,12 +47,17 @@ public final class SpannableStringUtils {
      * are out of range in <code>dest</code>.
      */
     public static void copyNonParagraphSuggestionSpansFrom(Spanned source, int start, int end,
-                                     Spannable dest, int destoff) {
+            Spannable dest, int destoff) {
         Object[] spans = source.getSpans(start, end, SuggestionSpan.class);
 
         for (int i = 0; i < spans.length; i++) {
             int fl = source.getSpanFlags(spans[i]);
-            if (0 != (fl & Spannable.SPAN_PARAGRAPH)) continue;
+            // We don't care about the PARAGRAPH flag in LatinIME code. However, if this flag
+            // is set, Spannable#setSpan will throw an exception unless the span is on the edge
+            // of a word. But the spans have been split into two by the getText{Before,After}Cursor
+            // methods, so after concatenation they may end in the middle of a word.
+            // Since we don't use them, we can just remove them and avoid crashing.
+            fl &= ~Spanned.SPAN_PARAGRAPH;
 
             int st = source.getSpanStart(spans[i]);
             int en = source.getSpanEnd(spans[i]);
@@ -106,5 +118,66 @@ public final class SpannableStringUtils {
         }
 
         return new SpannedString(ss);
+    }
+
+    public static boolean hasUrlSpans(final CharSequence text,
+            final int startIndex, final int endIndex) {
+        if (!(text instanceof Spanned)) {
+            return false; // Not spanned, so no link
+        }
+        final Spanned spanned = (Spanned)text;
+        // getSpans(x, y) does not return spans that start on x or end on y. x-1, y+1 does the
+        // trick, and works in all cases even if startIndex <= 0 or endIndex >= text.length().
+        final URLSpan[] spans = spanned.getSpans(startIndex - 1, endIndex + 1, URLSpan.class);
+        return null != spans && spans.length > 0;
+    }
+
+    /**
+     * Splits the given {@code charSequence} with at occurrences of the given {@code regex}.
+     * <p>
+     * This is equivalent to
+     * {@code charSequence.toString().split(regex, preserveTrailingEmptySegments ? -1 : 0)}
+     * except that the spans are preserved in the result array.
+     * </p>
+     * @param charSequence the character sequence to be split.
+     * @param regex the regex pattern to be used as the separator.
+     * @param preserveTrailingEmptySegments {@code true} to preserve the trailing empty
+     * segments. Otherwise, trailing empty segments will be removed before being returned.
+     * @return the array which contains the result. All the spans in the <code>charSequence</code>
+     * is preserved.
+     */
+    @UsedForTesting
+    public static CharSequence[] split(final CharSequence charSequence, final String regex,
+            final boolean preserveTrailingEmptySegments) {
+        // A short-cut for non-spanned strings.
+        if (!(charSequence instanceof Spanned)) {
+            // -1 means that trailing empty segments will be preserved.
+            return charSequence.toString().split(regex, preserveTrailingEmptySegments ? -1 : 0);
+        }
+
+        // Hereafter, emulate String.split for CharSequence.
+        final ArrayList<CharSequence> sequences = new ArrayList<>();
+        final Matcher matcher = Pattern.compile(regex).matcher(charSequence);
+        int nextStart = 0;
+        boolean matched = false;
+        while (matcher.find()) {
+            sequences.add(charSequence.subSequence(nextStart, matcher.start()));
+            nextStart = matcher.end();
+            matched = true;
+        }
+        if (!matched) {
+            // never matched. preserveTrailingEmptySegments is ignored in this case.
+            return new CharSequence[] { charSequence };
+        }
+        sequences.add(charSequence.subSequence(nextStart, charSequence.length()));
+        if (!preserveTrailingEmptySegments) {
+            for (int i = sequences.size() - 1; i >= 0; --i) {
+                if (!TextUtils.isEmpty(sequences.get(i))) {
+                    break;
+                }
+                sequences.remove(i);
+            }
+        }
+        return sequences.toArray(new CharSequence[sequences.size()]);
     }
 }

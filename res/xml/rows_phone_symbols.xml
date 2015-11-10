@@ -19,7 +19,7 @@
 -->
 
 <merge
-    xmlns:latin="http://schemas.android.com/apk/res-auto"
+    xmlns:latin="http://schemas.android.com/apk/res/com.android.inputmethod.latin"
 >
     <include
         latin:keyboardLayout="@xml/key_styles_common" />
@@ -27,46 +27,54 @@
         latin:keyboardLayout="@xml/key_styles_number" />
     <Row>
         <Key
-            latin:keyLabel="("
-            latin:keyStyle="numKeyStyle" />
+            latin:keySpec="("
+            latin:keyStyle="numSymbolKeyStyle" />
         <Key
-            latin:keyLabel="/"
-            latin:keyStyle="numKeyStyle" />
+            latin:keySpec="/"
+            latin:keyStyle="numSymbolKeyStyle" />
         <Key
-            latin:keyLabel=")"
-            latin:keyStyle="numKeyStyle" />
+            latin:keySpec=")"
+            latin:keyStyle="numSymbolKeyStyle" />
         <Key
-            latin:keyLabel="-"
+            latin:keySpec="-"
             latin:moreKeys="+"
             latin:keyLabelFlags="hasPopupHint"
-            latin:keyStyle="numFunctionalKeyStyle"
+            latin:keyStyle="numKeyStyle"
+            latin:backgroundType="functional"
             latin:keyWidth="fillRight" />
     </Row>
     <Row>
         <Key
-            latin:keyLabel="N"
-            latin:keyStyle="numKeyBaseStyle" />
+            latin:keySpec="N"
+            latin:keyStyle="numSymbolKeyStyle" />
         <!-- Pause is a comma. Check PhoneNumberUtils.java to see if this
             has changed. -->
         <Key
-            latin:keyStyle="numPauseKeyStyle" />
+            latin:keySpec="!string/label_pause_key|,"
+            latin:keyLabelFlags="followKeyLabelRatio|autoXScale"
+            latin:keyStyle="numSymbolKeyStyle" />
         <Key
-            latin:keyLabel=","
-            latin:keyStyle="numKeyStyle" />
+            latin:keySpec=","
+            latin:keyStyle="numSymbolKeyStyle" />
         <Key
-            latin:keyLabel="."
-            latin:keyStyle="numFunctionalKeyStyle"
+            latin:keySpec="."
+            latin:keyStyle="numKeyStyle"
+            latin:backgroundType="functional"
             latin:keyWidth="fillRight" />
     </Row>
     <Row>
+        <!-- U+FF0A: "＊" FULLWIDTH ASTERISK -->
         <Key
-            latin:keyStyle="numStarKeyStyle" />
+            latin:keySpec="&#xFF0A;|*"
+            latin:keyStyle="numSymbolKeyStyle" />
         <!-- Wait is a semicolon. -->
         <Key
-            latin:keyStyle="numWaitKeyStyle" />
+            latin:keySpec="!string/label_wait_key|;"
+            latin:keyLabelFlags="followKeyLabelRatio|autoXScale"
+            latin:keyStyle="numSymbolKeyStyle" />
         <Key
-            latin:keyLabel="\#"
-            latin:keyStyle="numKeyStyle" />
+            latin:keySpec="\#"
+            latin:keyStyle="numSymbolKeyStyle" />
         <Key
             latin:keyStyle="deleteKeyStyle"
             latin:keyWidth="fillRight" />
@@ -75,8 +83,8 @@
         <Key
             latin:keyStyle="numPhoneToNumericKeyStyle" />
         <Key
-            latin:keyLabel="+"
-            latin:keyStyle="numKeyStyle" />
+            latin:keySpec="+"
+            latin:keyStyle="numSymbolKeyStyle" />
         <Key
             latin:keyStyle="numSpaceKeyStyle" />
         <Key

@@ -19,12 +19,13 @@ package com.android.inputmethod.latin.utils;
 import android.content.Context;
 import android.content.Intent;
 
+@SuppressWarnings("unused")
 public class FeedbackUtils {
-    public static boolean isFeedbackFormSupported() {
+    public static boolean isHelpAndFeedbackFormSupported() {
         return false;
     }
 
-    public static void showFeedbackForm(Context context) {
+    public static void showHelpAndFeedbackForm(Context context) {
     }
 
     public static int getAboutKeyboardTitleResId() {

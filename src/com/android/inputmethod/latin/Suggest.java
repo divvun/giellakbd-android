@@ -16,28 +16,26 @@
 
 package com.android.inputmethod.latin;
 
-import android.content.Context;
-import android.preference.PreferenceManager;
 import android.text.TextUtils;
-import android.util.Log;
 
-import com.android.inputmethod.annotations.UsedForTesting;
-import com.android.inputmethod.keyboard.ProximityInfo;
+import static com.android.inputmethod.latin.define.DecoderSpecificConstants.SHOULD_AUTO_CORRECT_USING_NON_WHITE_LISTED_SUGGESTION;
+import static com.android.inputmethod.latin.define.DecoderSpecificConstants.SHOULD_REMOVE_PREVIOUSLY_REJECTED_SUGGESTION;
+
+import com.android.inputmethod.keyboard.Keyboard;
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;
-import com.android.inputmethod.latin.personalization.PersonalizationDictionary;
-import com.android.inputmethod.latin.personalization.PersonalizationPredictionDictionary;
-import com.android.inputmethod.latin.personalization.UserHistoryDictionary;
-import com.android.inputmethod.latin.settings.Settings;
+import com.android.inputmethod.latin.common.Constants;
+import com.android.inputmethod.latin.common.StringUtils;
+import com.android.inputmethod.latin.define.DebugFlags;
+import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion;
 import com.android.inputmethod.latin.utils.AutoCorrectionUtils;
-import com.android.inputmethod.latin.utils.BoundedTreeSet;
-import com.android.inputmethod.latin.utils.CollectionUtils;
-import com.android.inputmethod.latin.utils.StringUtils;
+import com.android.inputmethod.latin.utils.BinaryDictionaryUtils;
+import com.android.inputmethod.latin.utils.SuggestionResults;
 
 import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Locale;
-import java.util.concurrent.ConcurrentHashMap;
+
+import javax.annotation.Nonnull;
 
 /**
  * This class loads a dictionary and provides a list of suggestions for a given sequence of
@@ -49,165 +47,48 @@ public final class Suggest {
     // Session id for
     // {@link #getSuggestedWords(WordComposer,String,ProximityInfo,boolean,int)}.
     // We are sharing the same ID between typing and gesture to save RAM footprint.
-    public static final int SESSION_TYPING = 0;
-    public static final int SESSION_GESTURE = 0;
-
-    // TODO: rename this to CORRECTION_OFF
-    public static final int CORRECTION_NONE = 0;
-    // TODO: rename this to CORRECTION_ON
-    public static final int CORRECTION_FULL = 1;
+    public static final int SESSION_ID_TYPING = 0;
+    public static final int SESSION_ID_GESTURE = 0;
 
     // Close to -2**31
     private static final int SUPPRESS_SUGGEST_THRESHOLD = -2000000000;
 
-    public static final int MAX_SUGGESTIONS = 18;
+    private static final boolean DBG = DebugFlags.DEBUG_ENABLED;
+    private final DictionaryFacilitator mDictionaryFacilitator;
 
-    public interface SuggestInitializationListener {
-        public void onUpdateMainDictionaryAvailability(boolean isMainDictionaryAvailable);
+    private static final int MAXIMUM_AUTO_CORRECT_LENGTH_FOR_GERMAN = 12;
+    private static final HashMap<String, Integer> sLanguageToMaximumAutoCorrectionWithSpaceLength =
+            new HashMap<>();
+    static {
+        // TODO: should we add Finnish here?
+        // TODO: This should not be hardcoded here but be written in the dictionary header
+        sLanguageToMaximumAutoCorrectionWithSpaceLength.put(Locale.GERMAN.getLanguage(),
+                MAXIMUM_AUTO_CORRECT_LENGTH_FOR_GERMAN);
     }
-
-    private static final boolean DBG = LatinImeLogger.sDBG;
-
-    private final ConcurrentHashMap<String, Dictionary> mDictionaries =
-            CollectionUtils.newConcurrentHashMap();
-    private HashSet<String> mOnlyDictionarySetForDebug = null;
-    private Dictionary mMainDictionary;
-    private ContactsBinaryDictionary mContactsDict;
-    @UsedForTesting
-    private boolean mIsCurrentlyWaitingForMainDictionary = false;
 
     private float mAutoCorrectionThreshold;
+    private float mPlausibilityThreshold;
 
-    // Locale used for upper- and title-casing words
-    public final Locale mLocale;
-
-    public Suggest(final Context context, final Locale locale,
-            final SuggestInitializationListener listener) {
-        initAsynchronously(context, locale, listener);
-        mLocale = locale;
-        // initialize a debug flag for the personalization
-        if (Settings.readUseOnlyPersonalizationDictionaryForDebug(
-                PreferenceManager.getDefaultSharedPreferences(context))) {
-            mOnlyDictionarySetForDebug = new HashSet<String>();
-            mOnlyDictionarySetForDebug.add(Dictionary.TYPE_PERSONALIZATION);
-            mOnlyDictionarySetForDebug.add(Dictionary.TYPE_PERSONALIZATION_PREDICTION_IN_JAVA);
-        }
-    }
-
-    @UsedForTesting
-    Suggest(final AssetFileAddress[] dictionaryList, final Locale locale) {
-        final Dictionary mainDict = DictionaryFactory.createDictionaryForTest(dictionaryList,
-                false /* useFullEditDistance */, locale);
-        mLocale = locale;
-        mMainDictionary = mainDict;
-        addOrReplaceDictionaryInternal(Dictionary.TYPE_MAIN, mainDict);
-    }
-
-    private void initAsynchronously(final Context context, final Locale locale,
-            final SuggestInitializationListener listener) {
-        resetMainDict(context, locale, listener);
-    }
-
-    private void addOrReplaceDictionaryInternal(final String key, final Dictionary dict) {
-        if (mOnlyDictionarySetForDebug != null && !mOnlyDictionarySetForDebug.contains(key)) {
-            Log.w(TAG, "Ignore add " + key + " dictionary for debug.");
-            return;
-        }
-        addOrReplaceDictionary(mDictionaries, key, dict);
-    }
-
-    private static void addOrReplaceDictionary(
-            final ConcurrentHashMap<String, Dictionary> dictionaries,
-            final String key, final Dictionary dict) {
-        final Dictionary oldDict = (dict == null)
-                ? dictionaries.remove(key)
-                : dictionaries.put(key, dict);
-        if (oldDict != null && dict != oldDict) {
-            oldDict.close();
-        }
-    }
-
-    public void resetMainDict(final Context context, final Locale locale,
-            final SuggestInitializationListener listener) {
-        mIsCurrentlyWaitingForMainDictionary = true;
-        mMainDictionary = null;
-        if (listener != null) {
-            listener.onUpdateMainDictionaryAvailability(hasMainDictionary());
-        }
-        new Thread("InitializeBinaryDictionary") {
-            @Override
-            public void run() {
-                final DictionaryCollection newMainDict =
-                        DictionaryFactory.createMainDictionaryFromManager(context, locale);
-                addOrReplaceDictionaryInternal(Dictionary.TYPE_MAIN, newMainDict);
-                mMainDictionary = newMainDict;
-                if (listener != null) {
-                    listener.onUpdateMainDictionaryAvailability(hasMainDictionary());
-                }
-                mIsCurrentlyWaitingForMainDictionary = false;
-            }
-        }.start();
-    }
-
-    // The main dictionary could have been loaded asynchronously.  Don't cache the return value
-    // of this method.
-    public boolean hasMainDictionary() {
-        return null != mMainDictionary && mMainDictionary.isInitialized();
-    }
-
-    @UsedForTesting
-    public boolean isCurrentlyWaitingForMainDictionary() {
-        return mIsCurrentlyWaitingForMainDictionary;
-    }
-
-    public Dictionary getMainDictionary() {
-        return mMainDictionary;
-    }
-
-    public ContactsBinaryDictionary getContactsDictionary() {
-        return mContactsDict;
-    }
-
-    public ConcurrentHashMap<String, Dictionary> getUnigramDictionaries() {
-        return mDictionaries;
+    public Suggest(final DictionaryFacilitator dictionaryFacilitator) {
+        mDictionaryFacilitator = dictionaryFacilitator;
     }
 
     /**
-     * Sets an optional user dictionary resource to be loaded. The user dictionary is consulted
-     * before the main dictionary, if set. This refers to the system-managed user dictionary.
+     * Set the normalized-score threshold for a suggestion to be considered strong enough that we
+     * will auto-correct to this.
+     * @param threshold the threshold
      */
-    public void setUserDictionary(final UserBinaryDictionary userDictionary) {
-        addOrReplaceDictionaryInternal(Dictionary.TYPE_USER, userDictionary);
-    }
-
-    /**
-     * Sets an optional contacts dictionary resource to be loaded. It is also possible to remove
-     * the contacts dictionary by passing null to this method. In this case no contacts dictionary
-     * won't be used.
-     */
-    public void setContactsDictionary(final ContactsBinaryDictionary contactsDictionary) {
-        mContactsDict = contactsDictionary;
-        addOrReplaceDictionaryInternal(Dictionary.TYPE_CONTACTS, contactsDictionary);
-    }
-
-    public void setUserHistoryDictionary(final UserHistoryDictionary userHistoryDictionary) {
-        addOrReplaceDictionaryInternal(Dictionary.TYPE_USER_HISTORY, userHistoryDictionary);
-    }
-
-    public void setPersonalizationPredictionDictionary(
-            final PersonalizationPredictionDictionary personalizationPredictionDictionary) {
-        addOrReplaceDictionaryInternal(Dictionary.TYPE_PERSONALIZATION_PREDICTION_IN_JAVA,
-                personalizationPredictionDictionary);
-    }
-
-    public void setPersonalizationDictionary(
-            final PersonalizationDictionary personalizationDictionary) {
-        addOrReplaceDictionaryInternal(Dictionary.TYPE_PERSONALIZATION,
-                personalizationDictionary);
-    }
-
-    public void setAutoCorrectionThreshold(float threshold) {
+    public void setAutoCorrectionThreshold(final float threshold) {
         mAutoCorrectionThreshold = threshold;
+    }
+
+    /**
+     * Set the normalized-score threshold for what we consider a "plausible" suggestion, in
+     * the same dimension as the auto-correction threshold.
+     * @param threshold the threshold
+     */
+    public void setPlausibilityThreshold(final float threshold) {
+        mPlausibilityThreshold = threshold;
     }
 
     public interface OnGetSuggestedWordsCallback {
@@ -215,190 +96,233 @@ public final class Suggest {
     }
 
     public void getSuggestedWords(final WordComposer wordComposer,
-            final String prevWordForBigram, final ProximityInfo proximityInfo,
-            final boolean blockOffensiveWords, final boolean isCorrectionEnabled,
-            final int[] additionalFeaturesOptions, final int sessionId, final int sequenceNumber,
+            final NgramContext ngramContext, final Keyboard keyboard,
+            final SettingsValuesForSuggestion settingsValuesForSuggestion,
+            final boolean isCorrectionEnabled, final int inputStyle, final int sequenceNumber,
             final OnGetSuggestedWordsCallback callback) {
-        LatinImeLogger.onStartSuggestion(prevWordForBigram);
         if (wordComposer.isBatchMode()) {
-            getSuggestedWordsForBatchInput(wordComposer, prevWordForBigram, proximityInfo,
-                    blockOffensiveWords, additionalFeaturesOptions, sessionId, sequenceNumber,
-                    callback);
+            getSuggestedWordsForBatchInput(wordComposer, ngramContext, keyboard,
+                    settingsValuesForSuggestion, inputStyle, sequenceNumber, callback);
         } else {
-            getSuggestedWordsForTypingInput(wordComposer, prevWordForBigram, proximityInfo,
-                    blockOffensiveWords, isCorrectionEnabled, additionalFeaturesOptions,
+            getSuggestedWordsForNonBatchInput(wordComposer, ngramContext, keyboard,
+                    settingsValuesForSuggestion, inputStyle, isCorrectionEnabled,
                     sequenceNumber, callback);
         }
     }
 
-    // Retrieves suggestions for the typing input
-    // and calls the callback function with the suggestions.
-    private void getSuggestedWordsForTypingInput(final WordComposer wordComposer,
-            final String prevWordForBigram, final ProximityInfo proximityInfo,
-            final boolean blockOffensiveWords, final boolean isCorrectionEnabled,
-            final int[] additionalFeaturesOptions, final int sequenceNumber,
-            final OnGetSuggestedWordsCallback callback) {
-        final int trailingSingleQuotesCount = wordComposer.trailingSingleQuotesCount();
-        final BoundedTreeSet suggestionsSet = new BoundedTreeSet(sSuggestedWordInfoComparator,
-                MAX_SUGGESTIONS);
+    private static ArrayList<SuggestedWordInfo> getTransformedSuggestedWordInfoList(
+            final WordComposer wordComposer, final SuggestionResults results,
+            final int trailingSingleQuotesCount, final Locale defaultLocale) {
+        final boolean shouldMakeSuggestionsAllUpperCase = wordComposer.isAllUpperCase()
+                && !wordComposer.isResumed();
+        final boolean isOnlyFirstCharCapitalized =
+                wordComposer.isOrWillBeOnlyFirstCharCapitalized();
 
-        final String typedWord = wordComposer.getTypedWord();
-        final String consideredWord = trailingSingleQuotesCount > 0
-                ? typedWord.substring(0, typedWord.length() - trailingSingleQuotesCount)
-                : typedWord;
-        LatinImeLogger.onAddSuggestedWord(typedWord, Dictionary.TYPE_USER_TYPED);
-
-        final WordComposer wordComposerForLookup;
-        if (trailingSingleQuotesCount > 0) {
-            wordComposerForLookup = new WordComposer(wordComposer);
-            for (int i = trailingSingleQuotesCount - 1; i >= 0; --i) {
-                wordComposerForLookup.deleteLast();
-            }
-        } else {
-            wordComposerForLookup = wordComposer;
-        }
-
-        for (final String key : mDictionaries.keySet()) {
-            final Dictionary dictionary = mDictionaries.get(key);
-            suggestionsSet.addAll(dictionary.getSuggestions(wordComposerForLookup,
-                    prevWordForBigram, proximityInfo, blockOffensiveWords,
-                    additionalFeaturesOptions));
-        }
-
-        final String whitelistedWord;
-        if (suggestionsSet.isEmpty()) {
-            whitelistedWord = null;
-        } else if (SuggestedWordInfo.KIND_WHITELIST != suggestionsSet.first().mKind) {
-            whitelistedWord = null;
-        } else {
-            whitelistedWord = suggestionsSet.first().mWord;
-        }
-
-        // The word can be auto-corrected if it has a whitelist entry that is not itself,
-        // or if it's a 2+ characters non-word (i.e. it's not in the dictionary).
-        final boolean allowsToBeAutoCorrected = (null != whitelistedWord
-                && !whitelistedWord.equals(consideredWord))
-                || (consideredWord.length() > 1 && !AutoCorrectionUtils.isValidWord(this,
-                        consideredWord, wordComposer.isFirstCharCapitalized()));
-
-        final boolean hasAutoCorrection;
-        // TODO: using isCorrectionEnabled here is not very good. It's probably useless, because
-        // any attempt to do auto-correction is already shielded with a test for this flag; at the
-        // same time, it feels wrong that the SuggestedWord object includes information about
-        // the current settings. It may also be useful to know, when the setting is off, whether
-        // the word *would* have been auto-corrected.
-        if (!isCorrectionEnabled || !allowsToBeAutoCorrected || !wordComposer.isComposingWord()
-                || suggestionsSet.isEmpty() || wordComposer.hasDigits()
-                || wordComposer.isMostlyCaps() || wordComposer.isResumed() || !hasMainDictionary()
-                || SuggestedWordInfo.KIND_SHORTCUT == suggestionsSet.first().mKind) {
-            // If we don't have a main dictionary, we never want to auto-correct. The reason for
-            // this is, the user may have a contact whose name happens to match a valid word in
-            // their language, and it will unexpectedly auto-correct. For example, if the user
-            // types in English with no dictionary and has a "Will" in their contact list, "will"
-            // would always auto-correct to "Will" which is unwanted. Hence, no main dict => no
-            // auto-correct.
-            // Also, shortcuts should never auto-correct unless they are whitelist entries.
-            // TODO: we may want to have shortcut-only entries auto-correct in the future.
-            hasAutoCorrection = false;
-        } else {
-            hasAutoCorrection = AutoCorrectionUtils.suggestionExceedsAutoCorrectionThreshold(
-                    suggestionsSet.first(), consideredWord, mAutoCorrectionThreshold);
-        }
-
-        final ArrayList<SuggestedWordInfo> suggestionsContainer =
-                CollectionUtils.newArrayList(suggestionsSet);
+        final ArrayList<SuggestedWordInfo> suggestionsContainer = new ArrayList<>(results);
         final int suggestionsCount = suggestionsContainer.size();
-        final boolean isFirstCharCapitalized = wordComposer.isFirstCharCapitalized();
-        final boolean isAllUpperCase = wordComposer.isAllUpperCase();
-        if (isFirstCharCapitalized || isAllUpperCase || 0 != trailingSingleQuotesCount) {
+        if (isOnlyFirstCharCapitalized || shouldMakeSuggestionsAllUpperCase
+                || 0 != trailingSingleQuotesCount) {
             for (int i = 0; i < suggestionsCount; ++i) {
                 final SuggestedWordInfo wordInfo = suggestionsContainer.get(i);
+                final Locale wordLocale = wordInfo.mSourceDict.mLocale;
                 final SuggestedWordInfo transformedWordInfo = getTransformedSuggestedWordInfo(
-                        wordInfo, mLocale, isAllUpperCase, isFirstCharCapitalized,
+                        wordInfo, null == wordLocale ? defaultLocale : wordLocale,
+                        shouldMakeSuggestionsAllUpperCase, isOnlyFirstCharCapitalized,
                         trailingSingleQuotesCount);
                 suggestionsContainer.set(i, transformedWordInfo);
             }
         }
+        return suggestionsContainer;
+    }
 
-        for (int i = 0; i < suggestionsCount; ++i) {
-            final SuggestedWordInfo wordInfo = suggestionsContainer.get(i);
-            LatinImeLogger.onAddSuggestedWord(wordInfo.mWord.toString(),
-                    wordInfo.mSourceDict.mDictType);
+    private static SuggestedWordInfo getWhitelistedWordInfoOrNull(
+            @Nonnull final ArrayList<SuggestedWordInfo> suggestions) {
+        if (suggestions.isEmpty()) {
+            return null;
+        }
+        final SuggestedWordInfo firstSuggestedWordInfo = suggestions.get(0);
+        if (!firstSuggestedWordInfo.isKindOf(SuggestedWordInfo.KIND_WHITELIST)) {
+            return null;
+        }
+        return firstSuggestedWordInfo;
+    }
+
+    // Retrieves suggestions for non-batch input (typing, recorrection, predictions...)
+    // and calls the callback function with the suggestions.
+    private void getSuggestedWordsForNonBatchInput(final WordComposer wordComposer,
+            final NgramContext ngramContext, final Keyboard keyboard,
+            final SettingsValuesForSuggestion settingsValuesForSuggestion,
+            final int inputStyleIfNotPrediction, final boolean isCorrectionEnabled,
+            final int sequenceNumber, final OnGetSuggestedWordsCallback callback) {
+        final String typedWordString = wordComposer.getTypedWord();
+        final int trailingSingleQuotesCount =
+                StringUtils.getTrailingSingleQuotesCount(typedWordString);
+        final String consideredWord = trailingSingleQuotesCount > 0
+                ? typedWordString.substring(0, typedWordString.length() - trailingSingleQuotesCount)
+                : typedWordString;
+
+        final SuggestionResults suggestionResults = mDictionaryFacilitator.getSuggestionResults(
+                wordComposer.getComposedDataSnapshot(), ngramContext, keyboard,
+                settingsValuesForSuggestion, SESSION_ID_TYPING, inputStyleIfNotPrediction);
+        final Locale locale = mDictionaryFacilitator.getLocale();
+        final ArrayList<SuggestedWordInfo> suggestionsContainer =
+                getTransformedSuggestedWordInfoList(wordComposer, suggestionResults,
+                        trailingSingleQuotesCount, locale);
+
+        boolean foundInDictionary = false;
+        Dictionary sourceDictionaryOfRemovedWord = null;
+        for (final SuggestedWordInfo info : suggestionsContainer) {
+            // Search for the best dictionary, defined as the first one with the highest match
+            // quality we can find.
+            if (!foundInDictionary && typedWordString.equals(info.mWord)) {
+                // Use this source if the old match had lower quality than this match
+                sourceDictionaryOfRemovedWord = info.mSourceDict;
+                foundInDictionary = true;
+                break;
+            }
         }
 
-        if (!TextUtils.isEmpty(typedWord)) {
-            suggestionsContainer.add(0, new SuggestedWordInfo(typedWord,
-                    SuggestedWordInfo.MAX_SCORE, SuggestedWordInfo.KIND_TYPED,
-                    Dictionary.DICTIONARY_USER_TYPED,
-                    SuggestedWordInfo.NOT_AN_INDEX /* indexOfTouchPointOfSecondWord */,
-                    SuggestedWordInfo.NOT_A_CONFIDENCE /* autoCommitFirstWordConfidence */));
+        final int firstOcurrenceOfTypedWordInSuggestions =
+                SuggestedWordInfo.removeDups(typedWordString, suggestionsContainer);
+
+        final SuggestedWordInfo whitelistedWordInfo =
+                getWhitelistedWordInfoOrNull(suggestionsContainer);
+        final String whitelistedWord = whitelistedWordInfo == null
+                ? null : whitelistedWordInfo.mWord;
+        final boolean resultsArePredictions = !wordComposer.isComposingWord();
+
+        // We allow auto-correction if whitelisting is not required or the word is whitelisted,
+        // or if the word had more than one char and was not suggested.
+        final boolean allowsToBeAutoCorrected =
+                (SHOULD_AUTO_CORRECT_USING_NON_WHITE_LISTED_SUGGESTION || whitelistedWord != null)
+                || (consideredWord.length() > 1 && (sourceDictionaryOfRemovedWord == null));
+
+        final boolean hasAutoCorrection;
+        // If correction is not enabled, we never auto-correct. This is for example for when
+        // the setting "Auto-correction" is "off": we still suggest, but we don't auto-correct.
+        if (!isCorrectionEnabled
+                // If the word does not allow to be auto-corrected, then we don't auto-correct.
+                || !allowsToBeAutoCorrected
+                // If we are doing prediction, then we never auto-correct of course
+                || resultsArePredictions
+                // If we don't have suggestion results, we can't evaluate the first suggestion
+                // for auto-correction
+                || suggestionResults.isEmpty()
+                // If the word has digits, we never auto-correct because it's likely the word
+                // was type with a lot of care
+                || wordComposer.hasDigits()
+                // If the word is mostly caps, we never auto-correct because this is almost
+                // certainly intentional (and careful input)
+                || wordComposer.isMostlyCaps()
+                // We never auto-correct when suggestions are resumed because it would be unexpected
+                || wordComposer.isResumed()
+                // If we don't have a main dictionary, we never want to auto-correct. The reason
+                // for this is, the user may have a contact whose name happens to match a valid
+                // word in their language, and it will unexpectedly auto-correct. For example, if
+                // the user types in English with no dictionary and has a "Will" in their contact
+                // list, "will" would always auto-correct to "Will" which is unwanted. Hence, no
+                // main dict => no auto-correct. Also, it would probably get obnoxious quickly.
+                // TODO: now that we have personalization, we may want to re-evaluate this decision
+                || !mDictionaryFacilitator.hasAtLeastOneInitializedMainDictionary()
+                // If the first suggestion is a shortcut we never auto-correct to it, regardless
+                // of how strong it is (whitelist entries are not KIND_SHORTCUT but KIND_WHITELIST).
+                // TODO: we may want to have shortcut-only entries auto-correct in the future.
+                || suggestionResults.first().isKindOf(SuggestedWordInfo.KIND_SHORTCUT)) {
+            hasAutoCorrection = false;
+        } else {
+            final SuggestedWordInfo firstSuggestion = suggestionResults.first();
+            if (suggestionResults.mFirstSuggestionExceedsConfidenceThreshold
+                    && firstOcurrenceOfTypedWordInSuggestions != 0) {
+                hasAutoCorrection = true;
+            } else if (!AutoCorrectionUtils.suggestionExceedsThreshold(
+                    firstSuggestion, consideredWord, mAutoCorrectionThreshold)) {
+                // Score is too low for autocorrect
+                hasAutoCorrection = false;
+            } else {
+                // We have a high score, so we need to check if this suggestion is in the correct
+                // form to allow auto-correcting to it in this language. For details of how this
+                // is determined, see #isAllowedByAutoCorrectionWithSpaceFilter.
+                // TODO: this should not have its own logic here but be handled by the dictionary.
+                hasAutoCorrection = isAllowedByAutoCorrectionWithSpaceFilter(firstSuggestion);
+            }
         }
-        SuggestedWordInfo.removeDups(suggestionsContainer);
+
+        final SuggestedWordInfo typedWordInfo = new SuggestedWordInfo(typedWordString,
+                "" /* prevWordsContext */, SuggestedWordInfo.MAX_SCORE,
+                SuggestedWordInfo.KIND_TYPED,
+                null == sourceDictionaryOfRemovedWord ? Dictionary.DICTIONARY_USER_TYPED
+                        : sourceDictionaryOfRemovedWord,
+                SuggestedWordInfo.NOT_AN_INDEX /* indexOfTouchPointOfSecondWord */,
+                SuggestedWordInfo.NOT_A_CONFIDENCE /* autoCommitFirstWordConfidence */);
+        if (!TextUtils.isEmpty(typedWordString)) {
+            suggestionsContainer.add(0, typedWordInfo);
+        }
 
         final ArrayList<SuggestedWordInfo> suggestionsList;
         if (DBG && !suggestionsContainer.isEmpty()) {
-            suggestionsList = getSuggestionsInfoListWithDebugInfo(typedWord, suggestionsContainer);
+            suggestionsList = getSuggestionsInfoListWithDebugInfo(typedWordString,
+                    suggestionsContainer);
         } else {
             suggestionsList = suggestionsContainer;
         }
 
+        final int inputStyle;
+        if (resultsArePredictions) {
+            inputStyle = suggestionResults.mIsBeginningOfSentence
+                    ? SuggestedWords.INPUT_STYLE_BEGINNING_OF_SENTENCE_PREDICTION
+                    : SuggestedWords.INPUT_STYLE_PREDICTION;
+        } else {
+            inputStyle = inputStyleIfNotPrediction;
+        }
+
+        final boolean isTypedWordValid = firstOcurrenceOfTypedWordInSuggestions > -1
+                || (!resultsArePredictions && !allowsToBeAutoCorrected);
         callback.onGetSuggestedWords(new SuggestedWords(suggestionsList,
-                // TODO: this first argument is lying. If this is a whitelisted word which is an
-                // actual word, it says typedWordValid = false, which looks wrong. We should either
-                // rename the attribute or change the value.
-                !allowsToBeAutoCorrected /* typedWordValid */,
-                hasAutoCorrection, /* willAutoCorrect */
-                false /* isPunctuationSuggestions */,
-                false /* isObsoleteSuggestions */,
-                !wordComposer.isComposingWord() /* isPrediction */, sequenceNumber));
+                suggestionResults.mRawSuggestions, typedWordInfo,
+                isTypedWordValid,
+                hasAutoCorrection /* willAutoCorrect */,
+                false /* isObsoleteSuggestions */, inputStyle, sequenceNumber));
     }
 
     // Retrieves suggestions for the batch input
     // and calls the callback function with the suggestions.
     private void getSuggestedWordsForBatchInput(final WordComposer wordComposer,
-            final String prevWordForBigram, final ProximityInfo proximityInfo,
-            final boolean blockOffensiveWords, final int[] additionalFeaturesOptions,
-            final int sessionId, final int sequenceNumber,
+            final NgramContext ngramContext, final Keyboard keyboard,
+            final SettingsValuesForSuggestion settingsValuesForSuggestion,
+            final int inputStyle, final int sequenceNumber,
             final OnGetSuggestedWordsCallback callback) {
-        final BoundedTreeSet suggestionsSet = new BoundedTreeSet(sSuggestedWordInfoComparator,
-                MAX_SUGGESTIONS);
-
-        // At second character typed, search the unigrams (scores being affected by bigrams)
-        for (final String key : mDictionaries.keySet()) {
-            final Dictionary dictionary = mDictionaries.get(key);
-            suggestionsSet.addAll(dictionary.getSuggestionsWithSessionId(wordComposer,
-                    prevWordForBigram, proximityInfo, blockOffensiveWords,
-                    additionalFeaturesOptions, sessionId));
-        }
-
-        for (SuggestedWordInfo wordInfo : suggestionsSet) {
-            LatinImeLogger.onAddSuggestedWord(wordInfo.mWord, wordInfo.mSourceDict.mDictType);
-        }
-
+        final SuggestionResults suggestionResults = mDictionaryFacilitator.getSuggestionResults(
+                wordComposer.getComposedDataSnapshot(), ngramContext, keyboard,
+                settingsValuesForSuggestion, SESSION_ID_GESTURE, inputStyle);
+        // For transforming words that don't come from a dictionary, because it's our best bet
+        final Locale locale = mDictionaryFacilitator.getLocale();
         final ArrayList<SuggestedWordInfo> suggestionsContainer =
-                CollectionUtils.newArrayList(suggestionsSet);
+                new ArrayList<>(suggestionResults);
         final int suggestionsCount = suggestionsContainer.size();
         final boolean isFirstCharCapitalized = wordComposer.wasShiftedNoLock();
         final boolean isAllUpperCase = wordComposer.isAllUpperCase();
         if (isFirstCharCapitalized || isAllUpperCase) {
             for (int i = 0; i < suggestionsCount; ++i) {
                 final SuggestedWordInfo wordInfo = suggestionsContainer.get(i);
+                final Locale wordlocale = wordInfo.mSourceDict.mLocale;
                 final SuggestedWordInfo transformedWordInfo = getTransformedSuggestedWordInfo(
-                        wordInfo, mLocale, isAllUpperCase, isFirstCharCapitalized,
-                        0 /* trailingSingleQuotesCount */);
+                        wordInfo, null == wordlocale ? locale : wordlocale, isAllUpperCase,
+                        isFirstCharCapitalized, 0 /* trailingSingleQuotesCount */);
                 suggestionsContainer.set(i, transformedWordInfo);
             }
         }
 
-        if (suggestionsContainer.size() > 1 && TextUtils.equals(suggestionsContainer.get(0).mWord,
-                wordComposer.getRejectedBatchModeSuggestion())) {
+        if (SHOULD_REMOVE_PREVIOUSLY_REJECTED_SUGGESTION
+                && suggestionsContainer.size() > 1
+                && TextUtils.equals(suggestionsContainer.get(0).mWord,
+                   wordComposer.getRejectedBatchModeSuggestion())) {
             final SuggestedWordInfo rejected = suggestionsContainer.remove(0);
             suggestionsContainer.add(1, rejected);
         }
-        SuggestedWordInfo.removeDups(suggestionsContainer);
+        SuggestedWordInfo.removeDups(null /* typedWord */, suggestionsContainer);
 
         // For some reason some suggestions with MIN_VALUE are making their way here.
-        // TODO: Find a more robust way to detect distractors.
+        // TODO: Find a more robust way to detect distracters.
         for (int i = suggestionsContainer.size() - 1; i >= 0; --i) {
             if (suggestionsContainer.get(i).mScore < SUPPRESS_SUGGEST_THRESHOLD) {
                 suggestionsContainer.remove(i);
@@ -407,12 +331,18 @@ public final class Suggest {
 
         // In the batch input mode, the most relevant suggested word should act as a "typed word"
         // (typedWordValid=true), not as an "auto correct word" (willAutoCorrect=false).
+        // Note that because this method is never used to get predictions, there is no need to
+        // modify inputType such in getSuggestedWordsForNonBatchInput.
+        final SuggestedWordInfo pseudoTypedWordInfo = suggestionsContainer.isEmpty() ? null
+                : suggestionsContainer.get(0);
+
         callback.onGetSuggestedWords(new SuggestedWords(suggestionsContainer,
+                suggestionResults.mRawSuggestions,
+                pseudoTypedWordInfo,
                 true /* typedWordValid */,
                 false /* willAutoCorrect */,
-                false /* isPunctuationSuggestions */,
                 false /* isObsoleteSuggestions */,
-                false /* isPrediction */, sequenceNumber));
+                inputStyle, sequenceNumber));
     }
 
     private static ArrayList<SuggestedWordInfo> getSuggestionsInfoListWithDebugInfo(
@@ -420,19 +350,19 @@ public final class Suggest {
         final SuggestedWordInfo typedWordInfo = suggestions.get(0);
         typedWordInfo.setDebugString("+");
         final int suggestionsSize = suggestions.size();
-        final ArrayList<SuggestedWordInfo> suggestionsList =
-                CollectionUtils.newArrayList(suggestionsSize);
+        final ArrayList<SuggestedWordInfo> suggestionsList = new ArrayList<>(suggestionsSize);
         suggestionsList.add(typedWordInfo);
         // Note: i here is the index in mScores[], but the index in mSuggestions is one more
         // than i because we added the typed word to mSuggestions without touching mScores.
         for (int i = 0; i < suggestionsSize - 1; ++i) {
             final SuggestedWordInfo cur = suggestions.get(i + 1);
-            final float normalizedScore = BinaryDictionary.calcNormalizedScore(
+            final float normalizedScore = BinaryDictionaryUtils.calcNormalizedScore(
                     typedWord, cur.toString(), cur.mScore);
             final String scoreInfoString;
             if (normalizedScore > 0) {
                 scoreInfoString = String.format(
-                        Locale.ROOT, "%d (%4.2f)", cur.mScore, normalizedScore);
+                        Locale.ROOT, "%d (%4.2f), %s", cur.mScore, normalizedScore,
+                        cur.mSourceDict.mDictType);
             } else {
                 scoreInfoString = Integer.toString(cur.mScore);
             }
@@ -442,29 +372,48 @@ public final class Suggest {
         return suggestionsList;
     }
 
-    private static final class SuggestedWordInfoComparator
-            implements Comparator<SuggestedWordInfo> {
-        // This comparator ranks the word info with the higher frequency first. That's because
-        // that's the order we want our elements in.
-        @Override
-        public int compare(final SuggestedWordInfo o1, final SuggestedWordInfo o2) {
-            if (o1.mScore > o2.mScore) return -1;
-            if (o1.mScore < o2.mScore) return 1;
-            if (o1.mCodePointCount < o2.mCodePointCount) return -1;
-            if (o1.mCodePointCount > o2.mCodePointCount) return 1;
-            return o1.mWord.compareTo(o2.mWord);
+    /**
+     * Computes whether this suggestion should be blocked or not in this language
+     *
+     * This function implements a filter that avoids auto-correcting to suggestions that contain
+     * spaces that are above a certain language-dependent character limit. In languages like German
+     * where it's possible to concatenate many words, it often happens our dictionary does not
+     * have the longer words. In this case, we offer a lot of unhelpful suggestions that contain
+     * one or several spaces. Ideally we should understand what the user wants and display useful
+     * suggestions by improving the dictionary and possibly having some specific logic. Until
+     * that's possible we should avoid displaying unhelpful suggestions. But it's hard to tell
+     * whether a suggestion is useful or not. So at least for the time being we block
+     * auto-correction when the suggestion is long and contains a space, which should avoid the
+     * worst damage.
+     * This function is implementing that filter. If the language enforces no such limit, then it
+     * always returns true. If the suggestion contains no space, it also returns true. Otherwise,
+     * it checks the length against the language-specific limit.
+     *
+     * @param info the suggestion info
+     * @return whether it's fine to auto-correct to this.
+     */
+    private static boolean isAllowedByAutoCorrectionWithSpaceFilter(final SuggestedWordInfo info) {
+        final Locale locale = info.mSourceDict.mLocale;
+        if (null == locale) {
+            return true;
         }
+        final Integer maximumLengthForThisLanguage =
+                sLanguageToMaximumAutoCorrectionWithSpaceLength.get(locale.getLanguage());
+        if (null == maximumLengthForThisLanguage) {
+            // This language does not enforce a maximum length to auto-correction
+            return true;
+        }
+        return info.mWord.length() <= maximumLengthForThisLanguage
+                || -1 == info.mWord.indexOf(Constants.CODE_SPACE);
     }
-    private static final SuggestedWordInfoComparator sSuggestedWordInfoComparator =
-            new SuggestedWordInfoComparator();
 
     /* package for test */ static SuggestedWordInfo getTransformedSuggestedWordInfo(
             final SuggestedWordInfo wordInfo, final Locale locale, final boolean isAllUpperCase,
-            final boolean isFirstCharCapitalized, final int trailingSingleQuotesCount) {
+            final boolean isOnlyFirstCharCapitalized, final int trailingSingleQuotesCount) {
         final StringBuilder sb = new StringBuilder(wordInfo.mWord.length());
         if (isAllUpperCase) {
             sb.append(wordInfo.mWord.toUpperCase(locale));
-        } else if (isFirstCharCapitalized) {
+        } else if (isOnlyFirstCharCapitalized) {
             sb.append(StringUtils.capitalizeFirstCodePoint(wordInfo.mWord, locale));
         } else {
             sb.append(wordInfo.mWord);
@@ -477,17 +426,9 @@ public final class Suggest {
         for (int i = quotesToAppend - 1; i >= 0; --i) {
             sb.appendCodePoint(Constants.CODE_SINGLE_QUOTE);
         }
-        return new SuggestedWordInfo(sb.toString(), wordInfo.mScore, wordInfo.mKind,
+        return new SuggestedWordInfo(sb.toString(), wordInfo.mPrevWordsContext,
+                wordInfo.mScore, wordInfo.mKindAndFlags,
                 wordInfo.mSourceDict, wordInfo.mIndexOfTouchPointOfSecondWord,
                 wordInfo.mAutoCommitFirstWordConfidence);
-    }
-
-    public void close() {
-        final HashSet<Dictionary> dictionaries = CollectionUtils.newHashSet();
-        dictionaries.addAll(mDictionaries.values());
-        for (final Dictionary dictionary : dictionaries) {
-            dictionary.close();
-        }
-        mMainDictionary = null;
     }
 }

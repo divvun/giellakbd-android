@@ -16,7 +16,6 @@
 
 package com.android.inputmethod.keyboard.internal;
 
-import android.content.res.ColorStateList;
 import android.content.res.TypedArray;
 import android.graphics.Typeface;
 import android.util.SparseIntArray;
@@ -24,7 +23,11 @@ import android.util.SparseIntArray;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+
 public final class KeyVisualAttributes {
+    @Nullable
     public final Typeface mTypeface;
 
     public final float mLetterRatio;
@@ -32,27 +35,30 @@ public final class KeyVisualAttributes {
     public final float mLabelRatio;
     public final int mLabelSize;
     public final float mLargeLetterRatio;
-    public final float mLargeLabelRatio;
     public final float mHintLetterRatio;
     public final float mShiftedLetterHintRatio;
     public final float mHintLabelRatio;
     public final float mPreviewTextRatio;
 
-    public final ColorStateList mTextColorStateList;
+    public final int mTextColor;
     public final int mTextInactivatedColor;
     public final int mTextShadowColor;
+    public final int mFunctionalTextColor;
     public final int mHintLetterColor;
     public final int mHintLabelColor;
     public final int mShiftedLetterHintInactivatedColor;
     public final int mShiftedLetterHintActivatedColor;
     public final int mPreviewTextColor;
 
+    public final float mHintLabelVerticalAdjustment;
+    public final float mLabelOffCenterRatio;
+    public final float mHintLabelOffCenterRatio;
+
     private static final int[] VISUAL_ATTRIBUTE_IDS = {
         R.styleable.Keyboard_Key_keyTypeface,
         R.styleable.Keyboard_Key_keyLetterSize,
         R.styleable.Keyboard_Key_keyLabelSize,
         R.styleable.Keyboard_Key_keyLargeLetterRatio,
-        R.styleable.Keyboard_Key_keyLargeLabelRatio,
         R.styleable.Keyboard_Key_keyHintLetterRatio,
         R.styleable.Keyboard_Key_keyShiftedLetterHintRatio,
         R.styleable.Keyboard_Key_keyHintLabelRatio,
@@ -60,11 +66,15 @@ public final class KeyVisualAttributes {
         R.styleable.Keyboard_Key_keyTextColor,
         R.styleable.Keyboard_Key_keyTextInactivatedColor,
         R.styleable.Keyboard_Key_keyTextShadowColor,
+        R.styleable.Keyboard_Key_functionalTextColor,
         R.styleable.Keyboard_Key_keyHintLetterColor,
         R.styleable.Keyboard_Key_keyHintLabelColor,
         R.styleable.Keyboard_Key_keyShiftedLetterHintInactivatedColor,
         R.styleable.Keyboard_Key_keyShiftedLetterHintActivatedColor,
         R.styleable.Keyboard_Key_keyPreviewTextColor,
+        R.styleable.Keyboard_Key_keyHintLabelVerticalAdjustment,
+        R.styleable.Keyboard_Key_keyLabelOffCenterRatio,
+        R.styleable.Keyboard_Key_keyHintLabelOffCenterRatio
     };
     private static final SparseIntArray sVisualAttributeIds = new SparseIntArray();
     private static final int ATTR_DEFINED = 1;
@@ -75,7 +85,8 @@ public final class KeyVisualAttributes {
         }
     }
 
-    public static KeyVisualAttributes newInstance(final TypedArray keyAttr) {
+    @Nullable
+    public static KeyVisualAttributes newInstance(@Nonnull final TypedArray keyAttr) {
         final int indexCount = keyAttr.getIndexCount();
         for (int i = 0; i < indexCount; i++) {
             final int attrId = keyAttr.getIndex(i);
@@ -87,7 +98,7 @@ public final class KeyVisualAttributes {
         return null;
     }
 
-    private KeyVisualAttributes(final TypedArray keyAttr) {
+    private KeyVisualAttributes(@Nonnull final TypedArray keyAttr) {
         if (keyAttr.hasValue(R.styleable.Keyboard_Key_keyTypeface)) {
             mTypeface = Typeface.defaultFromStyle(
                     keyAttr.getInt(R.styleable.Keyboard_Key_keyTypeface, Typeface.NORMAL));
@@ -105,8 +116,6 @@ public final class KeyVisualAttributes {
                 R.styleable.Keyboard_Key_keyLabelSize);
         mLargeLetterRatio = ResourceUtils.getFraction(keyAttr,
                 R.styleable.Keyboard_Key_keyLargeLetterRatio);
-        mLargeLabelRatio = ResourceUtils.getFraction(keyAttr,
-                R.styleable.Keyboard_Key_keyLargeLabelRatio);
         mHintLetterRatio = ResourceUtils.getFraction(keyAttr,
                 R.styleable.Keyboard_Key_keyHintLetterRatio);
         mShiftedLetterHintRatio = ResourceUtils.getFraction(keyAttr,
@@ -116,10 +125,11 @@ public final class KeyVisualAttributes {
         mPreviewTextRatio = ResourceUtils.getFraction(keyAttr,
                 R.styleable.Keyboard_Key_keyPreviewTextRatio);
 
-        mTextColorStateList = keyAttr.getColorStateList(R.styleable.Keyboard_Key_keyTextColor);
+        mTextColor = keyAttr.getColor(R.styleable.Keyboard_Key_keyTextColor, 0);
         mTextInactivatedColor = keyAttr.getColor(
                 R.styleable.Keyboard_Key_keyTextInactivatedColor, 0);
         mTextShadowColor = keyAttr.getColor(R.styleable.Keyboard_Key_keyTextShadowColor, 0);
+        mFunctionalTextColor = keyAttr.getColor(R.styleable.Keyboard_Key_functionalTextColor, 0);
         mHintLetterColor = keyAttr.getColor(R.styleable.Keyboard_Key_keyHintLetterColor, 0);
         mHintLabelColor = keyAttr.getColor(R.styleable.Keyboard_Key_keyHintLabelColor, 0);
         mShiftedLetterHintInactivatedColor = keyAttr.getColor(
@@ -127,5 +137,12 @@ public final class KeyVisualAttributes {
         mShiftedLetterHintActivatedColor = keyAttr.getColor(
                 R.styleable.Keyboard_Key_keyShiftedLetterHintActivatedColor, 0);
         mPreviewTextColor = keyAttr.getColor(R.styleable.Keyboard_Key_keyPreviewTextColor, 0);
+
+        mHintLabelVerticalAdjustment = ResourceUtils.getFraction(keyAttr,
+                R.styleable.Keyboard_Key_keyHintLabelVerticalAdjustment, 0.0f);
+        mLabelOffCenterRatio = ResourceUtils.getFraction(keyAttr,
+                R.styleable.Keyboard_Key_keyLabelOffCenterRatio, 0.0f);
+        mHintLabelOffCenterRatio = ResourceUtils.getFraction(keyAttr,
+                R.styleable.Keyboard_Key_keyHintLabelOffCenterRatio, 0.0f);
     }
 }

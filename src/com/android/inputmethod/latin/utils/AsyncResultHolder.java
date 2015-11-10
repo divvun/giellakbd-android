@@ -16,11 +16,13 @@
 
 package com.android.inputmethod.latin.utils;
 
+import android.util.Log;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 /**
- * This class is a holder of a result of asynchronous computation.
+ * This class is a holder of the result of an asynchronous computation.
  *
  * @param <E> the type of the result.
  */
@@ -29,16 +31,18 @@ public class AsyncResultHolder<E> {
     private final Object mLock = new Object();
 
     private E mResult;
+    private final String mTag;
     private final CountDownLatch mLatch;
 
-    public AsyncResultHolder() {
+    public AsyncResultHolder(final String tag) {
+        mTag = tag;
         mLatch = new CountDownLatch(1);
     }
 
     /**
-     * Sets the result value to this holder.
+     * Sets the result value of this holder.
      *
-     * @param result the value which is set.
+     * @param result the value to set.
      */
     public void set(final E result) {
         synchronized(mLock) {
@@ -54,17 +58,14 @@ public class AsyncResultHolder<E> {
      * Causes the current thread to wait unless the value is set or the specified time is elapsed.
      *
      * @param defaultValue the default value.
-     * @param timeOut the time to wait.
-     * @return if the result is set until the time limit then the result, otherwise defaultValue.
+     * @param timeOut the maximum time to wait.
+     * @return if the result is set before the time limit then the result, otherwise defaultValue.
      */
     public E get(final E defaultValue, final long timeOut) {
         try {
-            if(mLatch.await(timeOut, TimeUnit.MILLISECONDS)) {
-                return mResult;
-            } else {
-                return defaultValue;
-            }
+            return mLatch.await(timeOut, TimeUnit.MILLISECONDS) ? mResult : defaultValue;
         } catch (InterruptedException e) {
+            Log.w(mTag, "get() : Interrupted after " + timeOut + " ms");
             return defaultValue;
         }
     }

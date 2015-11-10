@@ -18,13 +18,14 @@ package com.android.inputmethod.latin;
 
 import android.util.Log;
 
-import com.android.inputmethod.keyboard.ProximityInfo;
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo;
-import com.android.inputmethod.latin.utils.CollectionUtils;
+import com.android.inputmethod.latin.common.ComposedData;
+import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
@@ -34,51 +35,57 @@ public final class DictionaryCollection extends Dictionary {
     private final String TAG = DictionaryCollection.class.getSimpleName();
     protected final CopyOnWriteArrayList<Dictionary> mDictionaries;
 
-    public DictionaryCollection(final String dictType) {
-        super(dictType);
-        mDictionaries = CollectionUtils.newCopyOnWriteArrayList();
+    public DictionaryCollection(final String dictType, final Locale locale) {
+        super(dictType, locale);
+        mDictionaries = new CopyOnWriteArrayList<>();
     }
 
-    public DictionaryCollection(final String dictType, final Dictionary... dictionaries) {
-        super(dictType);
+    public DictionaryCollection(final String dictType, final Locale locale,
+            final Dictionary... dictionaries) {
+        super(dictType, locale);
         if (null == dictionaries) {
-            mDictionaries = CollectionUtils.newCopyOnWriteArrayList();
+            mDictionaries = new CopyOnWriteArrayList<>();
         } else {
-            mDictionaries = CollectionUtils.newCopyOnWriteArrayList(dictionaries);
+            mDictionaries = new CopyOnWriteArrayList<>(dictionaries);
             mDictionaries.removeAll(Collections.singleton(null));
         }
     }
 
-    public DictionaryCollection(final String dictType, final Collection<Dictionary> dictionaries) {
-        super(dictType);
-        mDictionaries = CollectionUtils.newCopyOnWriteArrayList(dictionaries);
+    public DictionaryCollection(final String dictType, final Locale locale,
+            final Collection<Dictionary> dictionaries) {
+        super(dictType, locale);
+        mDictionaries = new CopyOnWriteArrayList<>(dictionaries);
         mDictionaries.removeAll(Collections.singleton(null));
     }
 
     @Override
-    public ArrayList<SuggestedWordInfo> getSuggestions(final WordComposer composer,
-            final String prevWord, final ProximityInfo proximityInfo,
-            final boolean blockOffensiveWords, final int[] additionalFeaturesOptions) {
+    public ArrayList<SuggestedWordInfo> getSuggestions(final ComposedData composedData,
+            final NgramContext ngramContext, final long proximityInfoHandle,
+            final SettingsValuesForSuggestion settingsValuesForSuggestion,
+            final int sessionId, final float weightForLocale,
+            final float[] inOutWeightOfLangModelVsSpatialModel) {
         final CopyOnWriteArrayList<Dictionary> dictionaries = mDictionaries;
         if (dictionaries.isEmpty()) return null;
         // To avoid creating unnecessary objects, we get the list out of the first
         // dictionary and add the rest to it if not null, hence the get(0)
-        ArrayList<SuggestedWordInfo> suggestions = dictionaries.get(0).getSuggestions(composer,
-                prevWord, proximityInfo, blockOffensiveWords, additionalFeaturesOptions);
-        if (null == suggestions) suggestions = CollectionUtils.newArrayList();
+        ArrayList<SuggestedWordInfo> suggestions = dictionaries.get(0).getSuggestions(composedData,
+                ngramContext, proximityInfoHandle, settingsValuesForSuggestion, sessionId,
+                weightForLocale, inOutWeightOfLangModelVsSpatialModel);
+        if (null == suggestions) suggestions = new ArrayList<>();
         final int length = dictionaries.size();
         for (int i = 1; i < length; ++ i) {
-            final ArrayList<SuggestedWordInfo> sugg = dictionaries.get(i).getSuggestions(composer,
-                    prevWord, proximityInfo, blockOffensiveWords, additionalFeaturesOptions);
+            final ArrayList<SuggestedWordInfo> sugg = dictionaries.get(i).getSuggestions(
+                    composedData, ngramContext, proximityInfoHandle, settingsValuesForSuggestion,
+                    sessionId, weightForLocale, inOutWeightOfLangModelVsSpatialModel);
             if (null != sugg) suggestions.addAll(sugg);
         }
         return suggestions;
     }
 
     @Override
-    public boolean isValidWord(final String word) {
+    public boolean isInDictionary(final String word) {
         for (int i = mDictionaries.size() - 1; i >= 0; --i)
-            if (mDictionaries.get(i).isValidWord(word)) return true;
+            if (mDictionaries.get(i).isInDictionary(word)) return true;
         return false;
     }
 
@@ -87,9 +94,17 @@ public final class DictionaryCollection extends Dictionary {
         int maxFreq = -1;
         for (int i = mDictionaries.size() - 1; i >= 0; --i) {
             final int tempFreq = mDictionaries.get(i).getFrequency(word);
-            if (tempFreq >= maxFreq) {
-                maxFreq = tempFreq;
-            }
+            maxFreq = Math.max(tempFreq, maxFreq);
+        }
+        return maxFreq;
+    }
+
+    @Override
+    public int getMaxFrequencyOfExactMatches(final String word) {
+        int maxFreq = -1;
+        for (int i = mDictionaries.size() - 1; i >= 0; --i) {
+            final int tempFreq = mDictionaries.get(i).getMaxFrequencyOfExactMatches(word);
+            maxFreq = Math.max(tempFreq, maxFreq);
         }
         return maxFreq;
     }

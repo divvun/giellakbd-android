@@ -19,7 +19,7 @@
 -->
 
 <merge
-    xmlns:latin="http://schemas.android.com/apk/res-auto"
+    xmlns:latin="http://schemas.android.com/apk/res/com.android.inputmethod.latin"
 >
     <include
         latin:keyboardLayout="@xml/key_styles_common" />
@@ -33,10 +33,11 @@
         <Key
             latin:keyStyle="num3KeyStyle" />
         <Key
-            latin:keyLabel="-"
+            latin:keySpec="-"
             latin:moreKeys="+"
             latin:keyLabelFlags="hasPopupHint"
-            latin:keyStyle="numFunctionalKeyStyle"
+            latin:keyStyle="numKeyStyle"
+            latin:backgroundType="functional"
             latin:keyWidth="fillRight" />
     </Row>
     <Row>
@@ -47,8 +48,9 @@
         <Key
             latin:keyStyle="num6KeyStyle" />
         <Key
-            latin:keyLabel="."
-            latin:keyStyle="numFunctionalKeyStyle"
+            latin:keySpec="."
+            latin:keyStyle="numKeyStyle"
+            latin:backgroundType="functional"
             latin:keyWidth="fillRight" />
     </Row>
     <Row>
@@ -68,8 +70,7 @@
         <!-- U+0030: "0" DIGIT ZERO -->
         <Key
             latin:keyStyle="num0KeyStyle"
-            latin:code="0x0030"
-            latin:keyLabel="0 +"
+            latin:keySpec="0 +|0"
             latin:moreKeys="!noPanelAutoMoreKey!,+" />
         <Key
             latin:keyStyle="numSpaceKeyStyle" />

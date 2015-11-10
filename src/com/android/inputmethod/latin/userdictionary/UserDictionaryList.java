@@ -31,11 +31,13 @@ import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
 import com.android.inputmethod.latin.R;
-import com.android.inputmethod.latin.utils.LocaleUtils;
+import com.android.inputmethod.latin.common.LocaleUtils;
 
 import java.util.List;
 import java.util.Locale;
 import java.util.TreeSet;
+
+import javax.annotation.Nullable;
 
 // Caveat: This class is basically taken from
 // packages/apps/Settings/src/com/android/settings/inputmethod/UserDictionaryList.java
@@ -47,26 +49,30 @@ public class UserDictionaryList extends PreferenceFragment {
             "android.settings.USER_DICTIONARY_SETTINGS";
 
     @Override
-    public void onCreate(Bundle icicle) {
+    public void onCreate(final Bundle icicle) {
         super.onCreate(icicle);
         setPreferenceScreen(getPreferenceManager().createPreferenceScreen(getActivity()));
     }
 
-    public static TreeSet<String> getUserDictionaryLocalesSet(Activity activity) {
-        @SuppressWarnings("deprecation")
-        final Cursor cursor = activity.managedQuery(UserDictionary.Words.CONTENT_URI,
+    public static TreeSet<String> getUserDictionaryLocalesSet(final Activity activity) {
+        final Cursor cursor = activity.getContentResolver().query(UserDictionary.Words.CONTENT_URI,
                 new String[] { UserDictionary.Words.LOCALE },
                 null, null, null);
-        final TreeSet<String> localeSet = new TreeSet<String>();
+        final TreeSet<String> localeSet = new TreeSet<>();
         if (null == cursor) {
             // The user dictionary service is not present or disabled. Return null.
             return null;
-        } else if (cursor.moveToFirst()) {
-            final int columnIndex = cursor.getColumnIndex(UserDictionary.Words.LOCALE);
-            do {
-                final String locale = cursor.getString(columnIndex);
-                localeSet.add(null != locale ? locale : "");
-            } while (cursor.moveToNext());
+        }
+        try {
+            if (cursor.moveToFirst()) {
+                final int columnIndex = cursor.getColumnIndex(UserDictionary.Words.LOCALE);
+                do {
+                    final String locale = cursor.getString(columnIndex);
+                    localeSet.add(null != locale ? locale : "");
+                } while (cursor.moveToNext());
+            }
+        } finally {
+            cursor.close();
         }
         if (!UserDictionarySettings.IS_SHORTCUT_API_SUPPORTED) {
             // For ICS, we need to show "For all languages" in case that the keyboard locale
@@ -104,7 +110,7 @@ public class UserDictionaryList extends PreferenceFragment {
      * Creates the entries that allow the user to go into the user dictionary for each locale.
      * @param userDictGroup The group to put the settings in.
      */
-    protected void createUserDictSettings(PreferenceGroup userDictGroup) {
+    protected void createUserDictSettings(final PreferenceGroup userDictGroup) {
         final Activity activity = getActivity();
         userDictGroup.removeAll();
         final TreeSet<String> localeSet =
@@ -117,31 +123,33 @@ public class UserDictionaryList extends PreferenceFragment {
         }
 
         if (localeSet.isEmpty()) {
-            userDictGroup.addPreference(createUserDictionaryPreference(null, activity));
+            userDictGroup.addPreference(createUserDictionaryPreference(null));
         } else {
             for (String locale : localeSet) {
-                userDictGroup.addPreference(createUserDictionaryPreference(locale, activity));
+                userDictGroup.addPreference(createUserDictionaryPreference(locale));
             }
         }
     }
 
     /**
      * Create a single User Dictionary Preference object, with its parameters set.
-     * @param locale The locale for which this user dictionary is for.
+     * @param localeString The locale for which this user dictionary is for.
      * @return The corresponding preference.
      */
-    protected Preference createUserDictionaryPreference(String locale, Activity activity) {
+    protected Preference createUserDictionaryPreference(@Nullable final String localeString) {
         final Preference newPref = new Preference(getActivity());
         final Intent intent = new Intent(USER_DICTIONARY_SETTINGS_INTENT_ACTION);
-        if (null == locale) {
+        if (null == localeString) {
             newPref.setTitle(Locale.getDefault().getDisplayName());
         } else {
-            if ("".equals(locale))
+            if (localeString.isEmpty()) {
                 newPref.setTitle(getString(R.string.user_dict_settings_all_languages));
-            else
-                newPref.setTitle(LocaleUtils.constructLocaleFromString(locale).getDisplayName());
-            intent.putExtra("locale", locale);
-            newPref.getExtras().putString("locale", locale);
+            } else {
+                newPref.setTitle(
+                        LocaleUtils.constructLocaleFromString(localeString).getDisplayName());
+            }
+            intent.putExtra("locale", localeString);
+            newPref.getExtras().putString("locale", localeString);
         }
         newPref.setIntent(intent);
         newPref.setFragment(UserDictionarySettings.class.getName());
@@ -154,3 +162,4 @@ public class UserDictionaryList extends PreferenceFragment {
         createUserDictSettings(getPreferenceScreen());
     }
 }
+
