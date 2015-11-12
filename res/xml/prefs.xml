@@ -22,22 +22,22 @@
         android:fragment="com.android.inputmethod.latin.settings.PreferencesSettingsFragment"
         android:title="@string/settings_screen_preferences"
         android:key="screen_preferences" />
-    <PreferenceScreen
+    <!--PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.AccountsSettingsFragment"
         android:title="@string/settings_screen_accounts"
-        android:key="screen_accounts" />
+        android:key="screen_accounts" /-->
     <PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.AppearanceSettingsFragment"
         android:title="@string/settings_screen_appearance"
         android:key="screen_appearance" />
-    <PreferenceScreen
+    <!--PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.GestureSettingsFragment"
         android:title="@string/settings_screen_gesture"
-        android:key="screen_gesture" />
-    <PreferenceScreen
+        android:key="screen_gesture" /-->
+    <!--PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.CorrectionSettingsFragment"
         android:title="@string/settings_screen_correction"
-        android:key="screen_correction" />
+        android:key="screen_correction" /-->
     <PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.AdvancedSettingsFragment"
         android:title="@string/settings_screen_advanced"

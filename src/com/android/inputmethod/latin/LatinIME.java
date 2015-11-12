@@ -1437,7 +1437,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     }
 
     public boolean hasSuggestionStripView() {
-        return null != mSuggestionStripView;
+        //return null != mSuggestionStripView;
+        return false;
     }
 
     private void setSuggestedWords(final SuggestedWords suggestedWords) {
