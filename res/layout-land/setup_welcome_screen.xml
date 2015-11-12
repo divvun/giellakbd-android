@@ -32,11 +32,11 @@
         android:layout_marginRight="@dimen/setup_title_end_margin">
         <include layout="@layout/setup_welcome_title" />
     </LinearLayout>
-    <LinearLayout
+    <!--LinearLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="@integer/setup_body_weight_in_screen"
         android:orientation="vertical">
         <include layout="@layout/setup_welcome_video" />
-    </LinearLayout>
+    </LinearLayout-->
 </LinearLayout>
