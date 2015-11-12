@@ -367,7 +367,7 @@ public class SettingsValues {
                     .remove(Settings.PREF_VOICE_MODE_OBSOLETE)
                     .apply();
         }
-        return prefs.getBoolean(Settings.PREF_VOICE_INPUT_KEY, true);
+        return prefs.getBoolean(Settings.PREF_VOICE_INPUT_KEY, false);
     }
 
     public String dump() {
