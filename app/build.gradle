@@ -14,12 +14,14 @@ android {
         versionName app.versionName
     }
 
-    signingConfigs {
-        release {
-            storeFile rootProject.file(app.storeFile)
-            keyAlias app.keyAlias
-            storePassword System.getenv("STORE_PW")
-            keyPassword System.getenv("KEY_PW")
+    if (app.keyAlias) {
+        signingConfigs {
+            release {
+                storeFile rootProject.file(app.storeFile)
+                keyAlias app.keyAlias
+                storePassword System.getenv("STORE_PW")
+                keyPassword System.getenv("KEY_PW")
+            }
         }
     }
 
