@@ -12,6 +12,10 @@ android {
 
         versionCode app.versionCode
         versionName app.versionName
+
+        ndk {
+            abiFilters 'x86', 'x86_64', 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+        }
     }
 
     if (app.keyAlias) {
@@ -34,6 +38,12 @@ android {
 
     aaptOptions.noCompress ".dict"
     aaptOptions.additionalParameters("--rename-manifest-package", app.packageName)
+
+    externalNativeBuild {
+        ndkBuild {
+            path '../jni/Android.mk'
+        }
+    }
 }
 
 dependencies {
