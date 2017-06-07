@@ -44,6 +44,10 @@ android {
             path '../jni/Android.mk'
         }
     }
+
+    lintOptions {
+        checkReleaseBuilds false
+    }
 }
 
 dependencies {
