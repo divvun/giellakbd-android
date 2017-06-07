@@ -18,14 +18,12 @@ android {
         }
     }
 
-    if (app.keyAlias) {
-        signingConfigs {
-            release {
-                storeFile rootProject.file(app.storeFile)
-                keyAlias app.keyAlias
-                storePassword System.getenv("STORE_PW")
-                keyPassword System.getenv("KEY_PW")
-            }
+    signingConfigs {
+        release {
+            storeFile rootProject.file(app.storeFile)
+            keyAlias app.keyAlias
+            storePassword System.getenv("STORE_PW")
+            keyPassword System.getenv("KEY_PW")
         }
     }
 
@@ -33,6 +31,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+            signingConfig signingConfigs.release
         }
     }
 
