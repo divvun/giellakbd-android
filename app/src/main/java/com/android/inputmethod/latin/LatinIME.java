@@ -1770,7 +1770,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         final CharSequence languageSelectionTitle = getString(R.string.language_selection_title);
         final CharSequence[] items = new CharSequence[] {
                 languageSelectionTitle,
-                getString(ApplicationUtils.getActivityTitleResId(this, SettingsActivity.class))
+                getString(R.string.english_ime_name)
         };
         final String imeId = mRichImm.getInputMethodIdOfThisIme();
         final OnClickListener listener = new OnClickListener() {

@@ -90,7 +90,7 @@
 
         <activity android:name="com.android.inputmethod.latin.settings.SettingsActivity"
                 android:theme="@style/platformSettingsTheme"
-                android:label="@string/english_ime_settings">
+                android:label="@string/english_ime_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
