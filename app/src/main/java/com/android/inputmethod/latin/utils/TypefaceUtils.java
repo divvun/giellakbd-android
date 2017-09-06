@@ -124,7 +124,6 @@ public final class TypefaceUtils {
                 fallback = 16;
             }
 
-            Log.w(TAG, String.format("No missing codepoints for API %s; falling back to %s.", sdk, fallback));
             sdk = fallback;
         }
 
