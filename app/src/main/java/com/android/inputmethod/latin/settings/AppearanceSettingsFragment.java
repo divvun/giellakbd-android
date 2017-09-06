@@ -17,6 +17,7 @@
 package com.android.inputmethod.latin.settings;
 
 import android.os.Bundle;
+import android.preference.Preference;
 
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.common.Constants;
@@ -34,13 +35,16 @@ public final class AppearanceSettingsFragment extends SubScreenFragment {
                 Constants.isPhone(Settings.readScreenMetrics(getResources()))) {
             removePreference(Settings.PREF_ENABLE_SPLIT_KEYBOARD);
         }
+
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        CustomInputStyleSettingsFragment.updateCustomInputStylesSummary(
-                findPreference(Settings.PREF_CUSTOM_INPUT_STYLES));
+        final Preference pref = findPreference(Settings.PREF_CUSTOM_INPUT_STYLES);
+        if (pref != null) {
+            CustomInputStyleSettingsFragment.updateCustomInputStylesSummary(pref);
+        }
         ThemeSettingsFragment.updateKeyboardThemeSummary(findPreference(Settings.SCREEN_THEME));
     }
 }
