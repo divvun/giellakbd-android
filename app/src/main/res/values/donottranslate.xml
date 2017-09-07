@@ -122,4 +122,6 @@
         <item>tr:AsciiCapable,SupportTouchPositionCorrection,EmojiCapable</item>
         <item>qwerty</item>
     </string-array>
+
+    <string name="sentry_dsn"></string>
 </resources>

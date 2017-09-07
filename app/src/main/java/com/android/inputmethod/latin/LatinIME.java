@@ -109,6 +109,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
 
+import io.sentry.Sentry;
+import io.sentry.android.AndroidSentryClientFactory;
+
 /**
  * Input method implementation for Qwerty'ish keyboard.
  */
@@ -560,6 +563,11 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     @Override
     public void onCreate() {
+        final String sentryDsn = getString(R.string.sentry_dsn);
+        if (sentryDsn != null && !"".equals(sentryDsn)) {
+            Sentry.init(sentryDsn, new AndroidSentryClientFactory(getApplicationContext()));
+        }
+
         Settings.init(this);
         DebugFlags.init(PreferenceManager.getDefaultSharedPreferences(this));
         RichInputMethodManager.init(this);
