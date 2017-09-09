@@ -36,6 +36,10 @@ import java.util.Locale;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
+import io.sentry.Sentry;
+import io.sentry.event.Event;
+import io.sentry.event.EventBuilder;
+
 /**
  * A helper class to deal with subtype locales.
   */
@@ -226,12 +230,28 @@ public final class SubtypeLocaleUtils {
             final RunInLocale<String> getExceptionalName = new RunInLocale<String>() {
                 @Override
                 protected String job(final Resources res) {
-                    return res.getString(exceptionalNameResId);
+                    try {
+                        return res.getString(exceptionalNameResId);
+                    } catch (Resources.NotFoundException e) {
+                        StackTraceElement[] trace = e.getStackTrace();
+
+                        Sentry.capture(new EventBuilder()
+                                .withCulprit(trace[trace.length - 1])
+                                .withMessage("Missing locale name for exceptionalNameResId: " + exceptionalNameResId)
+                                .withLevel(Event.Level.ERROR)
+                        );
+
+                        return LocaleUtils
+                                .constructLocaleFromString(localeString)
+                                .getDisplayName(displayLocale);
+                    }
+
                 }
             };
             displayName = getExceptionalName.runInLocale(sResources, displayLocale);
         } else {
-            displayName = LocaleUtils.constructLocaleFromString(localeString)
+            displayName = LocaleUtils
+                    .constructLocaleFromString(localeString)
                     .getDisplayName(displayLocale);
         }
         return StringUtils.capitalizeFirstCodePoint(displayName, displayLocale);

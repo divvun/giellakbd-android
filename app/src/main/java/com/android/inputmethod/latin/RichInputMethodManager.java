@@ -35,6 +35,7 @@ import com.android.inputmethod.compat.InputMethodManagerCompatWrapper;
 import com.android.inputmethod.compat.InputMethodSubtypeCompatUtils;
 import com.android.inputmethod.latin.settings.Settings;
 import com.android.inputmethod.latin.utils.AdditionalSubtypeUtils;
+import com.android.inputmethod.latin.utils.ExceptionLogger;
 import com.android.inputmethod.latin.utils.LanguageOnSpacebarUtils;
 import com.android.inputmethod.latin.utils.SubtypeLocaleUtils;
 
@@ -48,6 +49,8 @@ import java.util.Set;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import io.sentry.event.BreadcrumbBuilder;
 
 /**
  * Enrichment class for InputMethodManager to simplify interaction and add functionality.
@@ -322,6 +325,12 @@ public class RichInputMethodManager {
     public void onSubtypeChanged(@Nonnull final InputMethodSubtype newSubtype) {
         updateCurrentSubtype(newSubtype);
         updateShortcutIme();
+
+        final String msg = "New subtype: " + mCurrentRichInputMethodSubtype.getNameForLogging();
+        ExceptionLogger.getSentry().recordBreadcrumb(
+                new BreadcrumbBuilder().setMessage(msg).build()
+        );
+
         if (DEBUG) {
             Log.w(TAG, "onSubtypeChanged: " + mCurrentRichInputMethodSubtype.getNameForLogging());
         }

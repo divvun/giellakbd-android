@@ -39,12 +39,16 @@ import com.android.inputmethod.latin.define.ProductionFlags;
 import com.android.inputmethod.latin.settings.Settings;
 import com.android.inputmethod.latin.settings.SettingsValues;
 import com.android.inputmethod.latin.utils.CapsModeUtils;
+import com.android.inputmethod.latin.utils.ExceptionLogger;
 import com.android.inputmethod.latin.utils.LanguageOnSpacebarUtils;
 import com.android.inputmethod.latin.utils.RecapitalizeStatus;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 import com.android.inputmethod.latin.utils.ScriptUtils;
 
 import javax.annotation.Nonnull;
+
+import io.sentry.event.Breadcrumb;
+import io.sentry.event.BreadcrumbBuilder;
 
 public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
     private static final String TAG = KeyboardSwitcher.class.getSimpleName();
@@ -127,6 +131,12 @@ public final class KeyboardSwitcher implements KeyboardState.SwitchActions {
         } catch (KeyboardLayoutSetException e) {
             Log.w(TAG, "loading keyboard failed: " + e.mKeyboardId, e.getCause());
         }
+
+        ExceptionLogger.getSentry().recordBreadcrumb(
+                new BreadcrumbBuilder()
+                        .setMessage("Current subtype: " + mRichImm.getCurrentSubtype().toString())
+                        .build()
+        );
     }
 
     public void saveKeyboardState() {

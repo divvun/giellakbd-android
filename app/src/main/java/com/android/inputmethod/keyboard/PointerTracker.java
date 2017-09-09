@@ -30,6 +30,7 @@ import com.android.inputmethod.keyboard.internal.GestureEnabler;
 import com.android.inputmethod.keyboard.internal.GestureStrokeDrawingParams;
 import com.android.inputmethod.keyboard.internal.GestureStrokeDrawingPoints;
 import com.android.inputmethod.keyboard.internal.GestureStrokeRecognitionParams;
+import com.android.inputmethod.keyboard.internal.MoreKeySpec;
 import com.android.inputmethod.keyboard.internal.PointerTrackerQueue;
 import com.android.inputmethod.keyboard.internal.TimerProxy;
 import com.android.inputmethod.keyboard.internal.TypingTimeRecorder;
@@ -39,12 +40,18 @@ import com.android.inputmethod.latin.common.CoordinateUtils;
 import com.android.inputmethod.latin.common.InputPointers;
 import com.android.inputmethod.latin.define.DebugFlags;
 import com.android.inputmethod.latin.settings.Settings;
+import com.android.inputmethod.latin.utils.ExceptionLogger;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 
 import java.util.ArrayList;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import io.sentry.Sentry;
+import io.sentry.event.Breadcrumb;
+import io.sentry.event.BreadcrumbBuilder;
+import io.sentry.event.EventBuilder;
 
 public final class PointerTracker implements PointerTrackerQueue.Element,
         BatchInputArbiterListener {
@@ -1022,9 +1029,25 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
         if (key == null) {
             return;
         }
+
+        ExceptionLogger.getSentry().recordBreadcrumb(new BreadcrumbBuilder()
+            .setMessage("Key: " + key.toString())
+            .build()
+        );
+
         if (key.hasNoPanelAutoMoreKey()) {
             cancelKeyTracking();
-            final int moreKeyCode = key.getMoreKeys()[0].mCode;
+            final MoreKeySpec[] moreKeys = key.getMoreKeys();
+
+            if (moreKeys == null || moreKeys.length == 0) {
+                Sentry.capture(new EventBuilder()
+                        .withMessage("moreKeys null or empty")
+                        .build()
+                );
+                return;
+            }
+
+            final int moreKeyCode = moreKeys[0].mCode;
             sListener.onPressKey(moreKeyCode, 0 /* repeatCont */, true /* isSinglePointer */);
             sListener.onCodeInput(moreKeyCode, Constants.NOT_A_COORDINATE,
                     Constants.NOT_A_COORDINATE, false /* isKeyRepeat */);
