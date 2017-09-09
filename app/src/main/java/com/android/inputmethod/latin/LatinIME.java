@@ -90,6 +90,7 @@ import com.android.inputmethod.latin.suggestions.SuggestionStripViewAccessor;
 import com.android.inputmethod.latin.touchinputconsumer.GestureConsumer;
 import com.android.inputmethod.latin.utils.ApplicationUtils;
 import com.android.inputmethod.latin.utils.DialogUtils;
+import com.android.inputmethod.latin.utils.ExceptionLogger;
 import com.android.inputmethod.latin.utils.ImportantNoticeUtils;
 import com.android.inputmethod.latin.utils.IntentUtils;
 import com.android.inputmethod.latin.utils.JniUtils;
@@ -563,11 +564,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     @Override
     public void onCreate() {
-        final String sentryDsn = getString(R.string.sentry_dsn);
-        if (sentryDsn != null && !"".equals(sentryDsn)) {
-            Sentry.init(sentryDsn, new AndroidSentryClientFactory(getApplicationContext()));
-        }
-
+        ExceptionLogger.init(this);
         Settings.init(this);
         DebugFlags.init(PreferenceManager.getDefaultSharedPreferences(this));
         RichInputMethodManager.init(this);
