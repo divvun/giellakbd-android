@@ -311,7 +311,7 @@ public final class MoreKeysKeyboard extends Keyboard {
             }
             final MoreKeySpec[] moreKeys = key.getMoreKeys();
             mParams.setParameters(moreKeys.length, key.getMoreKeysColumnNumber(), keyWidth,
-                    rowHeight, key.getX() + key.getWidth() / 2, keyboard.mId.mWidth,
+                    rowHeight, key.getX() + key.getWidth() / 2, keyboard.mId.getMWidth(),
                     key.isMoreKeysFixedColumn(), key.isMoreKeysFixedOrder(), dividerWidth);
         }
 

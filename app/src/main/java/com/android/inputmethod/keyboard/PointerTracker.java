@@ -769,6 +769,7 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
         if (isShowingMoreKeysPanel()) {
             final int translatedX = mMoreKeysPanel.translateX(x);
             final int translatedY = mMoreKeysPanel.translateY(y);
+            Log.d("MoreKeys", "X:" + translatedX +  " Y: " + translatedY);
             mMoreKeysPanel.onMoveEvent(translatedX, translatedY, mPointerId, eventTime);
             onMoveKey(x, y);
             if (mIsInSlidingKeyInput) {
@@ -1161,7 +1162,7 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
         if (code == Constants.CODE_SHIFT) {
             return sParams.mLongPressShiftLockTimeout;
         }
-        final int longpressTimeout = Settings.getInstance().getCurrent().mKeyLongpressTimeout;
+        final int longpressTimeout = Settings.getInstance().getCurrent().getMKeyLongpressTimeout();
         if (mIsInSlidingKeyInput) {
             // We use longer timeout for sliding finger input started from the modifier key.
             return longpressTimeout * MULTIPLIER_FOR_LONG_PRESS_TIMEOUT_IN_SLIDING_INPUT;

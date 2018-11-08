@@ -83,7 +83,7 @@ public final class ImportantNoticeUtils {
     public static boolean shouldShowImportantNotice(final Context context,
             final SettingsValues settingsValues) {
         // Check to see whether "Use Contacts" is enabled by the user.
-        if (!settingsValues.mUseContactsDict) {
+        if (!settingsValues.getMUseContactsDict()) {
             return false;
         }
 

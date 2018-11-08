@@ -29,14 +29,14 @@ import java.lang.reflect.Method;
  * necessary (although it does not hurt).
  */
 public final class LooperCompatUtils {
-    private static final Method METHOD_quitSafely = CompatUtils.getMethod(
-            Looper.class, "quitSafely");
-
-    public static void quitSafely(final Looper looper) {
-        if (null != METHOD_quitSafely) {
-            CompatUtils.invoke(looper, null /* default return value */, METHOD_quitSafely);
-        } else {
-            looper.quit();
-        }
-    }
+//    private static final Method METHOD_quitSafely = CompatUtils.getMethod(
+//            Looper.class, "quitSafely");
+//
+//    public static void quitSafely(final Looper looper) {
+//        if (null != METHOD_quitSafely) {
+//            CompatUtils.invoke(looper, null /* default return value */, METHOD_quitSafely);
+//        } else {
+//            looper.quit();
+//        }
+//    }
 }

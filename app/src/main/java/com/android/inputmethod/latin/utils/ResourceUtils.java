@@ -119,7 +119,6 @@ public final class ResourceUtils {
      * @param conditionConstantArray an array of "condition,constant" elements to be searched.
      * @return the constant part of the matched "condition,constant" element. Returns null if no
      * condition matches.
-     * @see com.android.inputmethod.latin.utils.ResourceUtilsTests#testFindConstantForKeyValuePairsRegexp()
      */
     @UsedForTesting
     static String findConstantForKeyValuePairs(final HashMap<String, String> keyValuePairs,
@@ -189,9 +188,9 @@ public final class ResourceUtils {
 
     public static int getKeyboardHeight(final Resources res, final SettingsValues settingsValues) {
         final int defaultKeyboardHeight = getDefaultKeyboardHeight(res);
-        if (settingsValues.mHasKeyboardResize) {
+        if (settingsValues.getMHasKeyboardResize()) {
             // mKeyboardHeightScale Ranges from [.5,1.2], from xml/prefs_screen_debug.xml
-            return (int)(defaultKeyboardHeight * settingsValues.mKeyboardHeightScale);
+            return (int)(defaultKeyboardHeight * settingsValues.getMKeyboardHeightScale());
         }
         return defaultKeyboardHeight;
     }

@@ -35,7 +35,7 @@ import javax.annotation.Nonnull;
  * A class for detecting Emoji-Alt physical key.
  */
 final class EmojiAltPhysicalKeyDetector {
-    private static final String TAG = "EmojiAltPhysicalKeyDetector";
+    private static final String TAG = EmojiAltPhysicalKeyDetector.class.getSimpleName();
     private static final boolean DEBUG = false;
 
     private List<EmojiHotKeys> mHotKeysList;
@@ -171,7 +171,7 @@ final class EmojiAltPhysicalKeyDetector {
     }
 
     private static boolean shouldProcessEvent(@Nonnull final KeyEvent keyEvent) {
-        if (!Settings.getInstance().getCurrent().mEnableEmojiAltPhysicalKey) {
+        if (!Settings.getInstance().getCurrent().getMEnableEmojiAltPhysicalKey()) {
             // The feature is disabled.
             if (DEBUG) {
                 Log.d(TAG, "shouldProcessEvent(): Disabled");

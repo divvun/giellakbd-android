@@ -30,9 +30,6 @@ import android.view.ViewParent;
 import android.view.inputmethod.CursorAnchorInfo;
 import android.widget.TextView;
 
-import com.android.inputmethod.compat.BuildCompatUtils;
-import com.android.inputmethod.compat.CursorAnchorInfoCompatWrapper;
-
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
@@ -86,20 +83,17 @@ public final class CursorAnchorInfoUtils {
     }
 
     /**
-     * Extracts {@link CursorAnchorInfoCompatWrapper} from the given {@link TextView}.
-     * @param textView the target text view from which {@link CursorAnchorInfoCompatWrapper} is to
+     * Extracts {@link CursorAnchorInfo} from the given {@link TextView}.
+     * @param textView the target text view from which {@link CursorAnchorInfo} is to
      * be extracted.
-     * @return the {@link CursorAnchorInfoCompatWrapper} object based on the current layout.
+     * @return the {@link CursorAnchorInfo} object based on the current layout.
      * {@code null} if {@code Build.VERSION.SDK_INT} is 20 or prior or {@link TextView} is not
      * ready to provide layout information.
      */
     @Nullable
-    public static CursorAnchorInfoCompatWrapper extractFromTextView(
+    public static CursorAnchorInfo extractFromTextView(
             @Nonnull final TextView textView) {
-        if (BuildCompatUtils.EFFECTIVE_SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-            return null;
-        }
-        return CursorAnchorInfoCompatWrapper.wrap(extractFromTextViewInternal(textView));
+        return extractFromTextViewInternal(textView);
     }
 
     /**

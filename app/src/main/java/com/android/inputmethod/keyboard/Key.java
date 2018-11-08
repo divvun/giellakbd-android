@@ -114,9 +114,9 @@ public class Key implements Comparable<Key> {
      */
     private final int mVerticalGap;
     /** X coordinate of the top-left corner of the key in the keyboard layout, excluding the gap. */
-    private final int mX;
+    protected int mX;
     /** Y coordinate of the top-left corner of the key in the keyboard layout, excluding the gap. */
-    private final int mY;
+    protected int mY;
     /** Hit bounding box of the key */
     @Nonnull
     private final Rect mHitBox = new Rect();
@@ -288,7 +288,7 @@ public class Key implements Comparable<Key> {
 
         mLabelFlags = style.getFlags(keyAttr, R.styleable.Keyboard_Key_keyLabelFlags)
                 | row.getDefaultKeyLabelFlags();
-        final boolean needsToUpcase = needsToUpcase(mLabelFlags, params.mId.mElementId);
+        final boolean needsToUpcase = needsToUpcase(mLabelFlags, params.mId.getMElementId());
         final Locale localeForUpcasing = params.mId.getLocale();
         int actionFlags = style.getFlags(keyAttr, R.styleable.Keyboard_Key_keyActionFlags);
         String[] moreKeys = style.getStringArray(keyAttr, R.styleable.Keyboard_Key_moreKeys);
@@ -357,7 +357,7 @@ public class Key implements Comparable<Key> {
 
         final int code = KeySpecParser.getCode(keySpec);
         if ((mLabelFlags & LABEL_FLAGS_FROM_CUSTOM_ACTION_LABEL) != 0) {
-            mLabel = params.mId.mCustomActionLabel;
+            mLabel = params.mId.getMCustomActionLabel();
         } else if (code >= Character.MIN_SUPPLEMENTARY_CODE_POINT) {
             // This is a workaround to have a key that has a supplementary code point in its label.
             // Because we can put a string in resource neither as a XML entity of a supplementary

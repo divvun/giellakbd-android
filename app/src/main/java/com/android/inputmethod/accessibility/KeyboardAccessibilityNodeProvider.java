@@ -80,7 +80,7 @@ final class KeyboardAccessibilityNodeProvider<KV extends KeyboardView>
     public KeyboardAccessibilityNodeProvider(final KV keyboardView,
             final KeyboardAccessibilityDelegate<KV> delegate) {
         super();
-        mKeyCodeDescriptionMapper = KeyCodeDescriptionMapper.getInstance();
+        mKeyCodeDescriptionMapper = KeyCodeDescriptionMapper.Companion.getInstance();
         mAccessibilityUtils = AccessibilityUtils.getInstance();
         mKeyboardView = keyboardView;
         mDelegate = delegate;
@@ -321,7 +321,7 @@ final class KeyboardAccessibilityNodeProvider<KV extends KeyboardView>
      * @return The context-specific description of the key.
      */
     private String getKeyDescription(final Key key) {
-        final EditorInfo editorInfo = mKeyboard.mId.mEditorInfo;
+        final EditorInfo editorInfo = mKeyboard.mId.getMEditorInfo();
         final boolean shouldObscure = mAccessibilityUtils.shouldObscureInput(editorInfo);
         final SettingsValues currentSettings = Settings.getInstance().getCurrent();
         final String keyCodeDescription = mKeyCodeDescriptionMapper.getDescriptionForKey(

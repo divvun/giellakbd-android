@@ -110,7 +110,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
                 context, null /* editorInfo */);
         final Resources res = context.getResources();
         mEmojiLayoutParams = new EmojiLayoutParams(res);
-        builder.setSubtype(RichInputMethodSubtype.getEmojiSubtype());
+        builder.setSubtype(RichInputMethodSubtype.Companion.getEmojiSubtype());
         builder.setKeyboardGeometry(ResourceUtils.getDefaultKeyboardWidth(res),
                 mEmojiLayoutParams.mEmojiKeyboardHeight);
         final KeyboardLayoutSet layoutSet = builder.build();

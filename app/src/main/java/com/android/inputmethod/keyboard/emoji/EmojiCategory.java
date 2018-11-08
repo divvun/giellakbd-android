@@ -25,7 +25,6 @@ import android.os.Build;
 import android.util.Log;
 import android.util.Pair;
 
-import com.android.inputmethod.compat.BuildCompatUtils;
 import com.android.inputmethod.keyboard.Key;
 import com.android.inputmethod.keyboard.Keyboard;
 import com.android.inputmethod.keyboard.KeyboardId;
@@ -145,7 +144,7 @@ final class EmojiCategory {
             KeyboardId.ELEMENT_EMOJI_CATEGORY13,
             KeyboardId.ELEMENT_EMOJI_CATEGORY14,
             KeyboardId.ELEMENT_EMOJI_CATEGORY15,
-            KeyboardId.ELEMENT_EMOJI_CATEGORY16 };
+            KeyboardId.ELEMENT_EMOJI_CATEGORY16};
 
     private final SharedPreferences mPrefs;
     private final Resources mRes;
@@ -174,30 +173,26 @@ final class EmojiCategory {
 
         int defaultCategoryId = EmojiCategory.ID_SYMBOLS;
         addShownCategoryId(EmojiCategory.ID_RECENTS);
-        if (BuildCompatUtils.EFFECTIVE_SDK_INT >= Build.VERSION_CODES.KITKAT) {
-            if (canShowUnicodeEightEmoji()) {
-                defaultCategoryId = EmojiCategory.ID_EIGHT_SMILEY_PEOPLE;
-                addShownCategoryId(EmojiCategory.ID_EIGHT_SMILEY_PEOPLE);
-                addShownCategoryId(EmojiCategory.ID_EIGHT_ANIMALS_NATURE);
-                addShownCategoryId(EmojiCategory.ID_EIGHT_FOOD_DRINK);
-                addShownCategoryId(EmojiCategory.ID_EIGHT_TRAVEL_PLACES);
-                addShownCategoryId(EmojiCategory.ID_EIGHT_ACTIVITY);
-                addShownCategoryId(EmojiCategory.ID_EIGHT_OBJECTS);
-                addShownCategoryId(EmojiCategory.ID_EIGHT_SYMBOLS);
-                addShownCategoryId(EmojiCategory.ID_FLAGS); // Exclude combinations without glyphs.
-            } else {
-                defaultCategoryId = EmojiCategory.ID_PEOPLE;
-                addShownCategoryId(EmojiCategory.ID_PEOPLE);
-                addShownCategoryId(EmojiCategory.ID_OBJECTS);
-                addShownCategoryId(EmojiCategory.ID_NATURE);
-                addShownCategoryId(EmojiCategory.ID_PLACES);
-                addShownCategoryId(EmojiCategory.ID_SYMBOLS);
-                if (canShowFlagEmoji()) {
-                    addShownCategoryId(EmojiCategory.ID_FLAGS);
-                }
-            }
+        if (canShowUnicodeEightEmoji()) {
+            defaultCategoryId = EmojiCategory.ID_EIGHT_SMILEY_PEOPLE;
+            addShownCategoryId(EmojiCategory.ID_EIGHT_SMILEY_PEOPLE);
+            addShownCategoryId(EmojiCategory.ID_EIGHT_ANIMALS_NATURE);
+            addShownCategoryId(EmojiCategory.ID_EIGHT_FOOD_DRINK);
+            addShownCategoryId(EmojiCategory.ID_EIGHT_TRAVEL_PLACES);
+            addShownCategoryId(EmojiCategory.ID_EIGHT_ACTIVITY);
+            addShownCategoryId(EmojiCategory.ID_EIGHT_OBJECTS);
+            addShownCategoryId(EmojiCategory.ID_EIGHT_SYMBOLS);
+            addShownCategoryId(EmojiCategory.ID_FLAGS); // Exclude combinations without glyphs.
         } else {
+            defaultCategoryId = EmojiCategory.ID_PEOPLE;
+            addShownCategoryId(EmojiCategory.ID_PEOPLE);
+            addShownCategoryId(EmojiCategory.ID_OBJECTS);
+            addShownCategoryId(EmojiCategory.ID_NATURE);
+            addShownCategoryId(EmojiCategory.ID_PLACES);
             addShownCategoryId(EmojiCategory.ID_SYMBOLS);
+            if (canShowFlagEmoji()) {
+                addShownCategoryId(EmojiCategory.ID_FLAGS);
+            }
         }
         addShownCategoryId(EmojiCategory.ID_EMOTICONS);
 
@@ -441,9 +436,9 @@ final class EmojiCategory {
     private static boolean canShowFlagEmoji() {
         Paint paint = new Paint();
         String switzerland = "\uD83C\uDDE8\uD83C\uDDED"; //  U+1F1E8 U+1F1ED Flag for Switzerland
-        try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return paint.hasGlyph(switzerland);
-        } catch (NoSuchMethodError e) {
+        } else {
             // Compare display width of single-codepoint emoji to width of flag emoji to determine
             // whether flag is rendered as single glyph or two adjacent regional indicator symbols.
             float flagWidth = paint.measureText(switzerland);
@@ -457,9 +452,9 @@ final class EmojiCategory {
     private static boolean canShowUnicodeEightEmoji() {
         Paint paint = new Paint();
         String cheese = "\uD83E\uDDC0"; //  U+1F9C0 Cheese wedge
-        try {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return paint.hasGlyph(cheese);
-        } catch (NoSuchMethodError e) {
+        } else {
             float cheeseWidth = paint.measureText(cheese);
             float tofuWidth = paint.measureText("\uFFFE");
             return cheeseWidth > tofuWidth;

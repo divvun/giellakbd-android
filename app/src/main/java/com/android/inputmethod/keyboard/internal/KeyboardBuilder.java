@@ -241,8 +241,8 @@ public class KeyboardBuilder<KP extends KeyboardParams> {
         final TypedArray keyAttr = mResources.obtainAttributes(attr, R.styleable.Keyboard_Key);
         try {
             final KeyboardParams params = mParams;
-            final int height = params.mId.mHeight;
-            final int width = params.mId.mWidth;
+            final int height = params.mId.getMHeight();
+            final int width = params.mId.getMWidth();
             params.mOccupiedHeight = height;
             params.mOccupiedWidth = width;
             params.mTopPadding = (int)keyboardAttr.getFraction(
@@ -644,15 +644,15 @@ public class KeyboardBuilder<KP extends KeyboardParams> {
         try {
             final boolean keyboardLayoutSetMatched = matchString(caseAttr,
                     R.styleable.Keyboard_Case_keyboardLayoutSet,
-                    id.mSubtype.getKeyboardLayoutSetName());
+                    id.getMSubtype().getKeyboardLayoutSetName());
             final boolean keyboardLayoutSetElementMatched = matchTypedValue(caseAttr,
-                    R.styleable.Keyboard_Case_keyboardLayoutSetElement, id.mElementId,
-                    KeyboardId.elementIdToName(id.mElementId));
+                    R.styleable.Keyboard_Case_keyboardLayoutSetElement, id.getMElementId(),
+                    KeyboardId.Companion.elementIdToName(id.getMElementId()));
             final boolean keyboardThemeMacthed = matchTypedValue(caseAttr,
                     R.styleable.Keyboard_Case_keyboardTheme, mParams.mThemeId,
-                    KeyboardTheme.getKeyboardThemeName(mParams.mThemeId));
+                    KeyboardTheme.Companion.getKeyboardThemeName(mParams.mThemeId));
             final boolean modeMatched = matchTypedValue(caseAttr,
-                    R.styleable.Keyboard_Case_mode, id.mMode, KeyboardId.modeName(id.mMode));
+                    R.styleable.Keyboard_Case_mode, id.getMMode(), KeyboardId.Companion.modeName(id.getMMode()));
             final boolean navigateNextMatched = matchBoolean(caseAttr,
                     R.styleable.Keyboard_Case_navigateNext, id.navigateNext());
             final boolean navigatePreviousMatched = matchBoolean(caseAttr,
@@ -660,12 +660,12 @@ public class KeyboardBuilder<KP extends KeyboardParams> {
             final boolean passwordInputMatched = matchBoolean(caseAttr,
                     R.styleable.Keyboard_Case_passwordInput, id.passwordInput());
             final boolean clobberSettingsKeyMatched = matchBoolean(caseAttr,
-                    R.styleable.Keyboard_Case_clobberSettingsKey, id.mClobberSettingsKey);
+                    R.styleable.Keyboard_Case_clobberSettingsKey, id.getMClobberSettingsKey());
             final boolean hasShortcutKeyMatched = matchBoolean(caseAttr,
-                    R.styleable.Keyboard_Case_hasShortcutKey, id.mHasShortcutKey);
+                    R.styleable.Keyboard_Case_hasShortcutKey, id.getMHasShortcutKey());
             final boolean languageSwitchKeyEnabledMatched = matchBoolean(caseAttr,
                     R.styleable.Keyboard_Case_languageSwitchKeyEnabled,
-                    id.mLanguageSwitchKeyEnabled);
+                    id.getMLanguageSwitchKeyEnabled());
             final boolean isMultiLineMatched = matchBoolean(caseAttr,
                     R.styleable.Keyboard_Case_isMultiLine, id.isMultiLine());
             final boolean imeActionMatched = matchInteger(caseAttr,
@@ -677,7 +677,7 @@ public class KeyboardBuilder<KP extends KeyboardParams> {
             final boolean languageCodeMatched = matchLanguageCodes(caseAttr, locale);
             final boolean countryCodeMatched = matchCountryCodes(caseAttr, locale);
             final boolean splitLayoutMatched = matchBoolean(caseAttr,
-                    R.styleable.Keyboard_Case_isSplitLayout, id.mIsSplitLayout);
+                    R.styleable.Keyboard_Case_isSplitLayout, id.getMIsSplitLayout());
             final boolean selected = keyboardLayoutSetMatched && keyboardLayoutSetElementMatched
                     && keyboardThemeMacthed && modeMatched && navigateNextMatched
                     && navigatePreviousMatched && passwordInputMatched && clobberSettingsKeyMatched

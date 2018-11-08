@@ -83,7 +83,7 @@ class InputLogicHandler implements Handler.Callback {
     // In unit tests, we create several instances of LatinIME, which results in several instances
     // of InputLogicHandler. To avoid these handlers lingering, we call this.
     public void destroy() {
-        LooperCompatUtils.quitSafely(mNonUIThreadHandler.getLooper());
+        mNonUIThreadHandler.getLooper().quitSafely();
     }
 
     /**

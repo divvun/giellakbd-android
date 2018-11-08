@@ -8,27 +8,28 @@ android {
 
     defaultConfig {
         applicationId "com.android.inputmethod.latin"
-        minSdkVersion 14
+//        applicationId "se.brendan.testkbd"
+        minSdkVersion 21
         targetSdkVersion 27
 
         versionCode app.versionCode
         versionName app.versionName
     }
 
-    signingConfigs {
-        release {
-            storeFile rootProject.file(app.storeFile)
-            keyAlias app.keyAlias
-            storePassword System.getenv("STORE_PW")
-            keyPassword System.getenv("KEY_PW")
-        }
-    }
+//    signingConfigs {
+//        release {
+//            storeFile rootProject.file(app.storeFile)
+//            keyAlias app.keyAlias
+//            storePassword System.getenv("STORE_PW")
+//            keyPassword System.getenv("KEY_PW")
+//        }
+//    }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.release
+//            signingConfig signingConfigs.release
         }
     }
 

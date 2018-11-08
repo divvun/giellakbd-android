@@ -52,7 +52,7 @@ public final class AdvancedSettingsFragment extends SubScreenFragment {
         // When we are called from the Settings application but we are not already running, some
         // singleton and utility classes may not have been initialized.  We have to call
         // initialization method of these classes here. See {@link LatinIME#onCreate()}.
-        AudioAndHapticFeedbackManager.init(context);
+        AudioAndHapticFeedbackManager.Companion.init(context);
 
         final SharedPreferences prefs = getPreferenceManager().getSharedPreferences();
 

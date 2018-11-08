@@ -22,6 +22,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -159,6 +160,7 @@ public class MoreKeysKeyboardView extends KeyboardView implements MoreKeysPanel 
     public void onDownEvent(final int x, final int y, final int pointerId, final long eventTime) {
         mActivePointerId = pointerId;
         mCurrentKey = detectKey(x, y);
+        Log.d("MoreKeys", mCurrentKey.toString());
     }
 
     @Override
@@ -166,8 +168,10 @@ public class MoreKeysKeyboardView extends KeyboardView implements MoreKeysPanel 
         if (mActivePointerId != pointerId) {
             return;
         }
+        Log.d("MoreKeys", "Received X: " + x + " Y: " + y);
         final boolean hasOldKey = (mCurrentKey != null);
         mCurrentKey = detectKey(x, y);
+        Log.d("MoreKeys", mCurrentKey.toString());
         if (hasOldKey && mCurrentKey == null) {
             // A more keys keyboard is canceled when detecting no key.
             mController.onCancelMoreKeysPanel();
@@ -214,10 +218,12 @@ public class MoreKeysKeyboardView extends KeyboardView implements MoreKeysPanel 
         }
         // A new key is detected.
         if (oldKey != null) {
+            Log.d("MoreKeysOldKey", oldKey.toString());
             updateReleaseKeyGraphics(oldKey);
             invalidateKey(oldKey);
         }
         if (newKey != null) {
+            Log.d("MoreKeysNewKey", newKey.toString());
             updatePressKeyGraphics(newKey);
             invalidateKey(newKey);
         }

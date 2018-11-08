@@ -82,7 +82,7 @@ public final class MainKeyboardAccessibilityDelegate
         final Keyboard lastKeyboard = getKeyboard();
         super.setKeyboard(keyboard);
         final int lastKeyboardMode = mLastKeyboardMode;
-        mLastKeyboardMode = keyboard.mId.mMode;
+        mLastKeyboardMode = keyboard.mId.getMMode();
 
         // Since this method is called even when accessibility is off, make sure
         // to check the state before announcing anything.
@@ -90,17 +90,17 @@ public final class MainKeyboardAccessibilityDelegate
             return;
         }
         // Announce the language name only when the language is changed.
-        if (lastKeyboard == null || !keyboard.mId.mSubtype.equals(lastKeyboard.mId.mSubtype)) {
+        if (lastKeyboard == null || !keyboard.mId.getMSubtype().equals(lastKeyboard.mId.getMSubtype())) {
             announceKeyboardLanguage(keyboard);
             return;
         }
         // Announce the mode only when the mode is changed.
-        if (keyboard.mId.mMode != lastKeyboardMode) {
+        if (keyboard.mId.getMMode() != lastKeyboardMode) {
             announceKeyboardMode(keyboard);
             return;
         }
         // Announce the keyboard type only when the type is changed.
-        if (keyboard.mId.mElementId != lastKeyboard.mId.mElementId) {
+        if (keyboard.mId.getMElementId() != lastKeyboard.mId.getMElementId()) {
             announceKeyboardType(keyboard, lastKeyboard);
             return;
         }
@@ -123,7 +123,7 @@ public final class MainKeyboardAccessibilityDelegate
      */
     private void announceKeyboardLanguage(final Keyboard keyboard) {
         final String languageText = SubtypeLocaleUtils.getSubtypeDisplayNameInSystemLocale(
-                keyboard.mId.mSubtype.getRawSubtype());
+                keyboard.mId.getMSubtype().getRawSubtype());
         sendWindowStateChanged(languageText);
     }
 
@@ -135,7 +135,7 @@ public final class MainKeyboardAccessibilityDelegate
      */
     private void announceKeyboardMode(final Keyboard keyboard) {
         final Context context = mKeyboardView.getContext();
-        final int modeTextResId = KEYBOARD_MODE_RES_IDS.get(keyboard.mId.mMode);
+        final int modeTextResId = KEYBOARD_MODE_RES_IDS.get(keyboard.mId.getMMode());
         if (modeTextResId == 0) {
             return;
         }
@@ -151,9 +151,9 @@ public final class MainKeyboardAccessibilityDelegate
      * @param lastKeyboard The last keyboard.
      */
     private void announceKeyboardType(final Keyboard keyboard, final Keyboard lastKeyboard) {
-        final int lastElementId = lastKeyboard.mId.mElementId;
+        final int lastElementId = lastKeyboard.mId.getMElementId();
         final int resId;
-        switch (keyboard.mId.mElementId) {
+        switch (keyboard.mId.getMElementId()) {
         case KeyboardId.ELEMENT_ALPHABET_AUTOMATIC_SHIFTED:
         case KeyboardId.ELEMENT_ALPHABET:
             if (lastElementId == KeyboardId.ELEMENT_ALPHABET
@@ -291,7 +291,7 @@ public final class MainKeyboardAccessibilityDelegate
             // This long press has registered a code point without showing a more keys keyboard.
             // We should talk back the code point if possible.
             final int codePointOfNoPanelAutoMoreKey = key.getMoreKeys()[0].mCode;
-            final String text = KeyCodeDescriptionMapper.getInstance().getDescriptionForCodePoint(
+            final String text = KeyCodeDescriptionMapper.Companion.getInstance().getDescriptionForCodePoint(
                     mKeyboardView.getContext(), codePointOfNoPanelAutoMoreKey);
             if (text != null) {
                 sendWindowStateChanged(text);

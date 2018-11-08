@@ -35,7 +35,7 @@ public final class UserManagerCompatUtils {
 
     static {
         // We do not try to search the method in Android M and prior.
-        if (BuildCompatUtils.EFFECTIVE_SDK_INT <= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.M) {
             METHOD_isUserUnlocked = null;
         } else {
             METHOD_isUserUnlocked = CompatUtils.getMethod(UserManager.class, "isUserUnlocked");
@@ -66,7 +66,13 @@ public final class UserManagerCompatUtils {
         if (METHOD_isUserUnlocked == null) {
             return LOCK_STATE_UNKNOWN;
         }
-        final UserManager userManager = context.getSystemService(UserManager.class);
+        final UserManager userManager;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.M) {
+            userManager = context.getSystemService(UserManager.class);
+        } else {
+            userManager = null;
+        }
+
         if (userManager == null) {
             return LOCK_STATE_UNKNOWN;
         }

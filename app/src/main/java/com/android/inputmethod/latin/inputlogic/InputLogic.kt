@@ -1130,8 +1130,7 @@ class InputLogic
                 StatsUtils.onBackspaceSelectedText(numCharsDeleted)
             } else {
                 // There is no selection, just delete one character.
-                if (inputTransaction.mSettingsValues.isBeforeJellyBean
-                        || inputTransaction.mSettingsValues.mInputAttributes.isTypeNull
+                if (inputTransaction.mSettingsValues.mInputAttributes.isTypeNull
                         || Constants.NOT_A_CURSOR_POSITION == mConnection.expectedSelectionEnd) {
                     // There are three possible reasons to send a key event: either the field has
                     // type TYPE_NULL, in which case the keyboard should send events, or we are
@@ -1502,10 +1501,9 @@ class InputLogic
         // HACK: We may want to special-case some apps that exhibit bad behavior in case of
         // recorrection. This is a temporary, stopgap measure that will be removed later.
         // TODO: remove this.
-        if (settingsValues.isBrokenByRecorrection
-                // Recorrection is not supported in languages without spaces because we don't know
-                // how to segment them yet.
-                || !settingsValues.mSpacingAndPunctuations.mCurrentLanguageHasSpaces
+        // Recorrection is not supported in languages without spaces because we don't know
+        // how to segment them yet.
+        if (!settingsValues.mSpacingAndPunctuations.mCurrentLanguageHasSpaces
                 // If no suggestions are requested, don't try restarting suggestions.
                 || !settingsValues.needsToLookupSuggestions()
                 // If we are currently in a batch input, we must not resume suggestions, or the result
@@ -1904,15 +1902,7 @@ class InputLogic
         }
 
         // TODO: we should do this also when the editor has TYPE_NULL
-        if (Constants.CODE_ENTER == codePoint && settingsValues.isBeforeJellyBean) {
-            // Backward compatibility mode. Before Jelly bean, the keyboard would simulate
-            // a hardware keyboard event on pressing enter or delete. This is bad for many
-            // reasons (there are race conditions with commits) but some applications are
-            // relying on this behavior so we continue to support it for older apps.
-            sendDownUpKeyEvent(KeyEvent.KEYCODE_ENTER)
-        } else {
-            mConnection.commitText(StringUtils.newSingleCodePointString(codePoint), 1)
-        }
+        mConnection.commitText(StringUtils.newSingleCodePointString(codePoint), 1)
     }
 
     /**
