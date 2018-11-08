@@ -132,7 +132,7 @@ class InputLogicHandler implements Handler.Callback {
                 // Batch input has ended or canceled while the message was being delivered.
                 return;
             }
-            mInputLogic.mWordComposer.setBatchInputPointers(batchPointers);
+            mInputLogic.getWordComposer().setBatchInputPointers(batchPointers);
             final OnGetSuggestedWordsCallback callback = new OnGetSuggestedWordsCallback() {
                 @Override
                 public void onGetSuggestedWords(final SuggestedWords suggestedWords) {
@@ -154,17 +154,17 @@ class InputLogicHandler implements Handler.Callback {
             // Previous suggestions are found in InputLogic#mSuggestedWords.
             // Since these are the most recent ones and we just recomputed
             // new ones to update them, then the previous ones are there.
-            suggestedWordsToShowSuggestions = mInputLogic.mSuggestedWords;
+            suggestedWordsToShowSuggestions = mInputLogic.getMSuggestedWords();
         } else {
             suggestedWordsToShowSuggestions = suggestedWordsForBatchInput;
         }
-        mLatinIME.mHandler.showGesturePreviewAndSuggestionStrip(suggestedWordsToShowSuggestions,
+        mLatinIME.getMHandler().showGesturePreviewAndSuggestionStrip(suggestedWordsToShowSuggestions,
                 isTailBatchInput /* dismissGestureFloatingPreviewText */);
         if (isTailBatchInput) {
             mInBatchInput = false;
             // The following call schedules onEndBatchInputInternal
             // to be called on the UI thread.
-            mLatinIME.mHandler.showTailBatchInputResult(suggestedWordsToShowSuggestions);
+            mLatinIME.getMHandler().showTailBatchInputResult(suggestedWordsToShowSuggestions);
         }
     }
 
