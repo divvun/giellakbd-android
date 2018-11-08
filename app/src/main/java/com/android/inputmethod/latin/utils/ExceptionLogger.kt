@@ -14,11 +14,11 @@ import java.util.*
 class ExceptionLogger {
     companion object {
         private fun currentLocale(context: Context): Locale {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                return context.resources.configuration.locales[0]
+            @Suppress("DEPRECATION")
+            return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                context.resources.configuration.locales[0]
             } else {
-                //noinspection deprecation
-                return context.resources.configuration.locale
+                context.resources.configuration.locale
             }
         }
 
