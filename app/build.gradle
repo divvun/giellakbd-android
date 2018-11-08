@@ -36,14 +36,7 @@ android {
         }
     }
 
-    aaptOptions.noCompress ".dict"
     aaptOptions.additionalParameters("--rename-manifest-package", app.packageName)
-
-    externalNativeBuild {
-        ndkBuild {
-            path '../jni/Android.mk'
-        }
-    }
 
     lintOptions {
         checkReleaseBuilds false

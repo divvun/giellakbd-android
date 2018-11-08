@@ -132,9 +132,6 @@ public interface DictionaryFacilitator {
 
     void closeDictionaries();
 
-    @UsedForTesting
-    ExpandableBinaryDictionary getSubDictForTesting(final String dictName);
-
     // The main dictionaries are loaded asynchronously. Don't cache the return value
     // of these methods.
     boolean hasAtLeastOneInitializedMainDictionary();

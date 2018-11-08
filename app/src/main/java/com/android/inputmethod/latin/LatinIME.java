@@ -39,6 +39,7 @@ import android.os.Debug;
 import android.os.IBinder;
 import android.os.Message;
 import android.preference.PreferenceManager;
+import android.support.annotation.RequiresApi;
 import android.text.InputType;
 import android.util.Log;
 import android.util.PrintWriterPrinter;
@@ -56,13 +57,10 @@ import android.view.inputmethod.InputMethodSubtype;
 
 import com.android.inputmethod.accessibility.AccessibilityUtils;
 import com.android.inputmethod.annotations.UsedForTesting;
-import com.android.inputmethod.compat.BuildCompatUtils;
 import com.android.inputmethod.compat.EditorInfoCompatUtils;
 import com.android.inputmethod.compat.InputMethodServiceCompatUtils;
-import com.android.inputmethod.compat.InputMethodSubtypeCompatUtils;
 import com.android.inputmethod.compat.ViewOutlineProviderCompatUtils;
 import com.android.inputmethod.compat.ViewOutlineProviderCompatUtils.InsetsUpdater;
-import com.android.inputmethod.dictionarypack.DictionaryPackConstants;
 import com.android.inputmethod.event.Event;
 import com.android.inputmethod.event.HardwareEventDecoder;
 import com.android.inputmethod.event.HardwareKeyboardEventDecoder;
@@ -81,7 +79,6 @@ import com.android.inputmethod.latin.define.DebugFlags;
 import com.android.inputmethod.latin.define.ProductionFlags;
 import com.android.inputmethod.latin.inputlogic.InputLogic;
 import com.android.inputmethod.latin.permissions.PermissionsManager;
-import com.android.inputmethod.latin.personalization.PersonalizationHelper;
 import com.android.inputmethod.latin.settings.Settings;
 import com.android.inputmethod.latin.settings.SettingsActivity;
 import com.android.inputmethod.latin.settings.SettingsValues;
@@ -93,7 +90,6 @@ import com.android.inputmethod.latin.utils.DialogUtils;
 import com.android.inputmethod.latin.utils.ExceptionLogger;
 import com.android.inputmethod.latin.utils.ImportantNoticeUtils;
 import com.android.inputmethod.latin.utils.IntentUtils;
-import com.android.inputmethod.latin.utils.JniUtils;
 import com.android.inputmethod.latin.utils.LeakGuardHandlerWrapper;
 import com.android.inputmethod.latin.utils.StatsUtils;
 import com.android.inputmethod.latin.utils.StatsUtilsManager;
@@ -109,9 +105,6 @@ import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 import javax.annotation.Nonnull;
-
-import io.sentry.Sentry;
-import io.sentry.android.AndroidSentryClientFactory;
 
 /**
  * Input method implementation for Qwerty'ish keyboard.
@@ -136,9 +129,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     private static final String SCHEME_PACKAGE = "package";
 
     final Settings mSettings;
-    private final DictionaryFacilitator mDictionaryFacilitator =
-            DictionaryFacilitatorProvider.getDictionaryFacilitator(
-                    false /* isNeededForSpellChecking */);
+    // TODO(bbqsrc): make this not null later.
+    private final DictionaryFacilitator mDictionaryFacilitator = null;
     final InputLogic mInputLogic = new InputLogic(this /* LatinIME */,
             this /* SuggestionStripViewAccessor */, mDictionaryFacilitator);
     // We expect to have only one decoder in almost all cases, hence the default capacity of 1.
@@ -158,10 +150,6 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     // Working variable for {@link #startShowingInputView()} and
     // {@link #onEvaluateInputViewShown()}.
     private boolean mIsExecutingStartShowingInputView;
-
-    // Object for reacting to adding/removing a dictionary pack.
-    private final BroadcastReceiver mDictionaryPackInstallReceiver =
-            new DictionaryPackInstallBroadcastReceiver(this);
 
     private final BroadcastReceiver mDictionaryDumpBroadcastReceiver =
             new DictionaryDumpBroadcastReceiver(this);
@@ -549,7 +537,7 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     // Loading the native library eagerly to avoid unexpected UnsatisfiedLinkError at the initial
     // JNI call as much as possible.
     static {
-        JniUtils.loadNativeLibrary();
+//        JniUtils.loadNativeLibrary();
     }
 
     public LatinIME() {
@@ -588,17 +576,6 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         filter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION);
         registerReceiver(mRingerModeChangeReceiver, filter);
 
-        // Register to receive installation and removal of a dictionary pack.
-        final IntentFilter packageFilter = new IntentFilter();
-        packageFilter.addAction(Intent.ACTION_PACKAGE_ADDED);
-        packageFilter.addAction(Intent.ACTION_PACKAGE_REMOVED);
-        packageFilter.addDataScheme(SCHEME_PACKAGE);
-        registerReceiver(mDictionaryPackInstallReceiver, packageFilter);
-
-        final IntentFilter newDictFilter = new IntentFilter();
-        newDictFilter.addAction(DictionaryPackConstants.NEW_DICTIONARY_INTENT_ACTION);
-        registerReceiver(mDictionaryPackInstallReceiver, newDictFilter);
-
         final IntentFilter dictDumpFilter = new IntentFilter();
         dictDumpFilter.addAction(DictionaryDumpBroadcastReceiver.DICTIONARY_DUMP_INTENT_ACTION);
         registerReceiver(mDictionaryDumpBroadcastReceiver, dictDumpFilter);
@@ -622,18 +599,8 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         if (!mHandler.hasPendingReopenDictionaries()) {
             resetDictionaryFacilitator(locale);
         }
-        refreshPersonalizationDictionarySession(currentSettingsValues);
         resetDictionaryFacilitatorIfNecessary();
         mStatsUtilsManager.onLoadSettings(this /* context */, currentSettingsValues);
-    }
-
-    private void refreshPersonalizationDictionarySession(
-            final SettingsValues currentSettingsValues) {
-        if (!currentSettingsValues.mUsePersonalizedDicts) {
-            // Remove user history dictionaries.
-            PersonalizationHelper.removeAllUserHistoryDictionaries(this);
-            mDictionaryFacilitator.clearUserHistoryDictionary(this);
-        }
     }
 
     // Note that this method is called from a non-UI thread.
@@ -708,7 +675,6 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         mDictionaryFacilitator.closeDictionaries();
         mSettings.onDestroy();
         unregisterReceiver(mRingerModeChangeReceiver);
-        unregisterReceiver(mDictionaryPackInstallReceiver);
         unregisterReceiver(mDictionaryDumpBroadcastReceiver);
         mStatsUtilsManager.onDestroy(this /* context */);
         super.onDestroy();
@@ -716,7 +682,6 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
 
     @UsedForTesting
     public void recycle() {
-        unregisterReceiver(mDictionaryPackInstallReceiver);
         unregisterReceiver(mDictionaryDumpBroadcastReceiver);
         unregisterReceiver(mRingerModeChangeReceiver);
         mInputLogic.recycle();
@@ -1004,7 +969,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
     @Override
     public void onWindowShown() {
         super.onWindowShown();
-        setNavigationBarVisibility(isInputViewShown());
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setNavigationBarVisibility(isInputViewShown());
+        }
     }
 
     @Override
@@ -1014,7 +981,9 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         if (mainKeyboardView != null) {
             mainKeyboardView.closing();
         }
-        setNavigationBarVisibility(false);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            setNavigationBarVisibility(false);
+        }
     }
 
     void onFinishInputInternal() {
@@ -1917,12 +1886,11 @@ public class LatinIME extends InputMethodService implements KeyboardActionListen
         return mRichImm.shouldOfferSwitchingToNextInputMethod(token, fallbackValue);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void setNavigationBarVisibility(final boolean visible) {
-        if (BuildCompatUtils.EFFECTIVE_SDK_INT > Build.VERSION_CODES.M) {
-            // For N and later, IMEs can specify Color.TRANSPARENT to make the navigation bar
-            // transparent.  For other colors the system uses the default color.
-            getWindow().getWindow().setNavigationBarColor(
-                    visible ? Color.BLACK : Color.TRANSPARENT);
-        }
+        // For N and later, IMEs can specify Color.TRANSPARENT to make the navigation bar
+        // transparent.  For other colors the system uses the default color.
+        getWindow().getWindow().setNavigationBarColor(
+                visible ? Color.BLACK : Color.TRANSPARENT);
     }
 }

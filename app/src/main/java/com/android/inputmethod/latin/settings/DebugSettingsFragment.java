@@ -28,7 +28,6 @@ import android.preference.PreferenceGroup;
 import android.preference.TwoStatePreference;
 
 import com.android.inputmethod.latin.DictionaryDumpBroadcastReceiver;
-import com.android.inputmethod.latin.DictionaryFacilitatorImpl;
 import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.utils.ApplicationUtils;
 import com.android.inputmethod.latin.utils.ResourceUtils;
@@ -57,13 +56,6 @@ public final class DebugSettingsFragment extends SubScreenFragment
             removePreference(DebugSettings.PREF_SHOULD_SHOW_LXX_SUGGESTION_UI);
         }
 
-        final PreferenceGroup dictDumpPreferenceGroup =
-                (PreferenceGroup)findPreference(PREF_KEY_DUMP_DICTS);
-        for (final String dictName : DictionaryFacilitatorImpl.DICT_TYPE_TO_CLASS.keySet()) {
-            final Preference pref = new DictDumpPreference(getActivity(), dictName);
-            pref.setOnPreferenceClickListener(this);
-            dictDumpPreferenceGroup.addPreference(pref);
-        }
         final Resources res = getResources();
         setupKeyPreviewAnimationDuration(DebugSettings.PREF_KEY_PREVIEW_SHOW_UP_DURATION,
                 res.getInteger(R.integer.config_key_preview_show_up_duration));
