@@ -45,6 +45,7 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'io.sentry:sentry-android:1.7.14'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    implementation "net.java.dev.jna:jna:4.5.2@aar"
 }
 repositories {
     mavenCentral()

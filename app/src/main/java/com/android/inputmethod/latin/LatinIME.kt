@@ -73,7 +73,10 @@ import com.android.inputmethod.latin.suggestions.SuggestionStripView
 import com.android.inputmethod.latin.suggestions.SuggestionStripViewAccessor
 import com.android.inputmethod.latin.touchinputconsumer.GestureConsumer
 import com.android.inputmethod.latin.utils.*
+import no.divvun.DivvunSpell
+import java.io.File
 import java.io.FileDescriptor
+import java.io.FileOutputStream
 import java.io.PrintWriter
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -510,6 +513,15 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         super.onCreate()
 
         mHandler.onCreate()
+        val inputStream = resources.assets.open("se.zhfst")
+        val outputStream = FileOutputStream(File(this.filesDir, "se.zhfst"))
+        inputStream.copyTo(outputStream)
+        inputStream.close()
+        outputStream.flush()
+        outputStream.close()
+
+        val speller = DivvunSpell("${this.filesDir.absolutePath}/se.zhfst")
+        Log.d("SPELLER", speller.locale)
 
         // TODO: Resolve mutual dependencies of {@link #loadSettings()} and
         // {@link #resetDictionaryFacilitatorIfNecessary()}.
