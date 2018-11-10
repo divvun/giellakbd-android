@@ -128,7 +128,7 @@ final class EmojiAltPhysicalKeyDetector {
         final EmojiHotKeys emojiHotKeys = new EmojiHotKeys("emoji", emojiSwitchSet) {
             @Override
             protected void action() {
-                final KeyboardSwitcher switcher = KeyboardSwitcher.getInstance();
+                final KeyboardSwitcher switcher = KeyboardSwitcher.Companion.getInstance();
                 switcher.onToggleKeyboard(KeyboardSwitcher.KeyboardSwitchState.EMOJI);
             }
         };
@@ -139,7 +139,7 @@ final class EmojiAltPhysicalKeyDetector {
         final EmojiHotKeys symbolsHotKeys = new EmojiHotKeys("symbols", symbolsSwitchSet) {
             @Override
             protected void action() {
-                final KeyboardSwitcher switcher = KeyboardSwitcher.getInstance();
+                final KeyboardSwitcher switcher = KeyboardSwitcher.Companion.getInstance();
                 switcher.onToggleKeyboard(KeyboardSwitcher.KeyboardSwitchState.SYMBOLS_SHIFTED);
             }
         };

@@ -119,7 +119,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     private val isImeSuppressedByHardwareKeyboard: Boolean
         get() {
-            val switcher = KeyboardSwitcher.getInstance()
+            val switcher = KeyboardSwitcher.instance
             return !onEvaluateInputViewShown() && switcher.isImeSuppressedByHardwareKeyboard(
                     mSettings.current, switcher.keyboardSwitchState)
         }
@@ -489,7 +489,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     init {
         mSettings = Settings.getInstance()
-        mKeyboardSwitcher = KeyboardSwitcher.getInstance()
+        mKeyboardSwitcher = KeyboardSwitcher.instance
         mStatsUtilsManager = StatsUtilsManager.getInstance()
         @Suppress("DEPRECATION")
         mIsHardwareAcceleratedDrawingEnabled = enableHardwareAcceleration()
@@ -1221,7 +1221,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     override fun onCodeInput(codePoint: Int, x: Int, y: Int,
                              isKeyRepeat: Boolean) {
         // TODO: this processing does not belong inside LatinIME, the caller should be doing this.
-        val mainKeyboardView = mKeyboardSwitcher.mainKeyboardView
+        val mainKeyboardView = mKeyboardSwitcher.mainKeyboardView ?: return
         // x and y include some padding, but everything down the line (especially native
         // code) needs the coordinates in the keyboard frame.
         // TODO: We should reconsider which coordinate system should be used to represent
@@ -1297,7 +1297,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                                                       dismissGestureFloatingPreviewText: Boolean) {
         showSuggestionStrip(suggestedWords)
         val mainKeyboardView = mKeyboardSwitcher.mainKeyboardView
-        mainKeyboardView.showGestureFloatingPreviewText(suggestedWords,
+        mainKeyboardView?.showGestureFloatingPreviewText(suggestedWords,
                 dismissGestureFloatingPreviewText /* dismissDelayed */)
     }
 
@@ -1590,7 +1590,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     // TODO: Move this method out of {@link LatinIME}.
     private fun showOptionDialog(dialog: AlertDialog) {
-        val windowToken = mKeyboardSwitcher.mainKeyboardView.windowToken ?: return
+        val windowToken = mKeyboardSwitcher.mainKeyboardView?.windowToken ?: return
 
         val window = dialog.window
         val lp = window!!.attributes

@@ -171,7 +171,6 @@ public class MoreKeysKeyboardView extends KeyboardView implements MoreKeysPanel 
         Log.d("MoreKeys", "Received X: " + x + " Y: " + y);
         final boolean hasOldKey = (mCurrentKey != null);
         mCurrentKey = detectKey(x, y);
-        Log.d("MoreKeys", mCurrentKey.toString());
         if (hasOldKey && mCurrentKey == null) {
             // A more keys keyboard is canceled when detecting no key.
             mController.onCancelMoreKeysPanel();
