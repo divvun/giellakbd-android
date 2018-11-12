@@ -522,6 +522,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
         val speller = DivvunSpell("${this.filesDir.absolutePath}/se.zhfst")
         Log.d("SPELLER", speller.locale)
+        Log.d("SPELLER", speller.suggest("same", 10).joinToString(", "))
 
         // TODO: Resolve mutual dependencies of {@link #loadSettings()} and
         // {@link #resetDictionaryFacilitatorIfNecessary()}.
