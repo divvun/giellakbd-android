@@ -18,7 +18,7 @@ class DivvunDictionary: Dictionary(Dictionary.TYPE_MAIN, Locale("se", "")) {
     private val speller: DivvunSpell by lazy { DivvunUtils.getSpeller() }
 
     override fun getSuggestions(composedData: ComposedData?, ngramContext: NgramContext?, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion?, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray?): ArrayList<SuggestedWords.SuggestedWordInfo> {
-        val suggestions = speller.suggest(composedData?.mTypedWord ?: "", NBEST_SUGGESTION_SIZE)
+        val suggestions = speller.suggest(composedData?.mTypedWord ?: "", N_BEST_SUGGESTION_SIZE)
 
         Log.d(tag, suggestions.toString())
 
@@ -39,6 +39,6 @@ class DivvunDictionary: Dictionary(Dictionary.TYPE_MAIN, Locale("se", "")) {
     }
 
     companion object {
-        const val NBEST_SUGGESTION_SIZE = 5L
+        const val N_BEST_SUGGESTION_SIZE = 5L
     }
 }
