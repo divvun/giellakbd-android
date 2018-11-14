@@ -56,35 +56,7 @@ class DivvunSpell @Throws(SpellerInitException::class) constructor(path: String)
             CLibrary.INSTANCE.suggest_vec_free(handle)
         }
     }
-
-    inner class SuggestionIterator internal constructor(spellerHandle: Pointer, word: String, nBest: NativeLong, beam: Float) : ListIterator<String> {
-        private val handle = CLibrary.INSTANCE.speller_suggest(spellerHandle, word, nBest, beam)
-        private val len = CLibrary.INSTANCE.suggest_vec_len(handle)
-        private var i = NativeLong(0)
-
-        private fun value(): String {
-            val rawValue = CLibrary.INSTANCE.suggest_vec_get_value(handle, i)
-            val string = rawValue.getString(0)
-            CLibrary.INSTANCE.suggest_vec_value_free(rawValue)
-            return string
-        }
-
-        override fun hasNext(): Boolean = i.toLong() < len.toLong()
-        override fun nextIndex() = i.toInt() + 1
-        override fun hasPrevious(): Boolean = i.toLong() > 0
-        override fun previousIndex() = i.toInt() - 1
-
-        override fun next(): String {
-            i = NativeLong(nextIndex().toLong())
-            return value()
-        }
-
-        override fun previous(): String {
-            i = NativeLong(previousIndex().toLong())
-            return value()
-        }
-    }
-
+    
     private interface CLibrary : Library {
         companion object {
             val INSTANCE: CLibrary = Native.loadLibrary("hfstospell", CLibrary::class.java)
