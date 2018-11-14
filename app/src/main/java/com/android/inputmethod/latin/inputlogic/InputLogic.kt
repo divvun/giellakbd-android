@@ -45,13 +45,11 @@ import com.android.inputmethod.latin.settings.SettingsValues
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import com.android.inputmethod.latin.settings.SpacingAndPunctuations
 import com.android.inputmethod.latin.suggestions.SuggestionStripViewAccessor
-import com.android.inputmethod.latin.utils.AsyncResultHolder
-import com.android.inputmethod.latin.utils.InputTypeUtils
-import com.android.inputmethod.latin.utils.RecapitalizeStatus
-import com.android.inputmethod.latin.utils.StatsUtils
+import com.android.inputmethod.latin.utils.*
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
+import io.sentry.Sentry
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -1476,6 +1474,7 @@ class InputLogic
                     mSuggestionStripViewAccessor.showSuggestionStrip(suggestedWords)
                 }, {
                     Log.wtf(TAG, it)
+                    Sentry.capture(it)
                 })
     }
 
