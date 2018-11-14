@@ -186,13 +186,13 @@ internal open class InputLogicHandler : Handler.Callback {
 
     open fun getSuggestedWords(inputStyle: Int, sequenceNumber: Int,
                                callback: OnGetSuggestedWordsCallback) {
-        mNonUIThreadHandler!!.obtainMessage(
+        mNonUIThreadHandler?.obtainMessage(
                 MSG_GET_SUGGESTED_WORDS, inputStyle, sequenceNumber, callback).sendToTarget()
     }
 
     open fun getSuggestedWords(inputStyle: Int, sequenceNumber: Int,
                                callback: ((SuggestedWords) -> Unit)) {
-        mNonUIThreadHandler!!.obtainMessage(
+        mNonUIThreadHandler?.obtainMessage(
                 MSG_GET_SUGGESTED_WORDS, inputStyle, sequenceNumber, object: OnGetSuggestedWordsCallback {
             override fun onGetSuggestedWords(suggestedWords: SuggestedWords) {
                 callback(suggestedWords)

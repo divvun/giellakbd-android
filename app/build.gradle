@@ -46,6 +46,9 @@ dependencies {
     implementation 'io.sentry:sentry-android:1.7.14'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "net.java.dev.jna:jna:4.5.2@aar"
+    implementation 'io.reactivex.rxjava2:rxandroid:2.1.0'
+    implementation "io.reactivex.rxjava2:rxjava:2.2.3"
+    implementation 'io.reactivex.rxjava2:rxkotlin:2.3.0'
 }
 repositories {
     mavenCentral()

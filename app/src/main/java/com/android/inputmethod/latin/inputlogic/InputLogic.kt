@@ -49,6 +49,9 @@ import com.android.inputmethod.latin.utils.AsyncResultHolder
 import com.android.inputmethod.latin.utils.InputTypeUtils
 import com.android.inputmethod.latin.utils.RecapitalizeStatus
 import com.android.inputmethod.latin.utils.StatsUtils
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -1426,13 +1429,10 @@ class InputLogic
                 ngramContext, timeStampInSeconds.toLong(), settingsValues.mBlockPotentiallyOffensive)
     }
 
+    private var suggestionStripDisposable: Disposable? = null
+
     fun performUpdateSuggestionStripSync(settingsValues: SettingsValues,
                                          inputStyle: Int) {
-        var startTimeMillis: Long = 0
-        if (DebugFlags.DEBUG_ENABLED) {
-            startTimeMillis = System.currentTimeMillis()
-            Log.d(TAG, "performUpdateSuggestionStripSync()")
-        }
         // Check if we have a suggestion engine attached.
         if (!settingsValues.needsToLookupSuggestions()) {
             if (wordComposer.isComposingWord) {
@@ -1448,38 +1448,35 @@ class InputLogic
             return
         }
 
-        val holder = AsyncResultHolder<SuggestedWords>("Suggest")
-        mInputLogicHandler.getSuggestedWords(inputStyle, SuggestedWords.NOT_A_SEQUENCE_NUMBER) { suggestedWords ->
-            Log.d(TAG, suggestedWords.size().toString())
-            val typedWordString = wordComposer.typedWord
-            val typedWordInfo = SuggestedWordInfo(
-                    typedWordString, "" /* prevWordsContext */,
-                    SuggestedWordInfo.MAX_SCORE,
-                    SuggestedWordInfo.KIND_TYPED, Dictionary.DICTIONARY_USER_TYPED,
-                    SuggestedWordInfo.NOT_AN_INDEX /* indexOfTouchPointOfSecondWord */,
-                    SuggestedWordInfo.NOT_A_CONFIDENCE)
-            // Show new suggestions if we have at least one. Otherwise keep the old
-            // suggestions with the new typed word. Exception: if the length of the
-            // typed word is <= 1 (after a deletion typically) we clear old suggestions.
-            if (suggestedWords.size() > 1 || typedWordString.length <= 1) {
-                holder.set(suggestedWords)
-            } else {
-                holder.set(retrieveOlderSuggestions(typedWordInfo, mSuggestedWords))
+        val s = Single.create<SuggestedWords> { emitter ->
+            mInputLogicHandler.getSuggestedWords(inputStyle, SuggestedWords.NOT_A_SEQUENCE_NUMBER) { suggestedWords ->
+                Log.d(TAG, suggestedWords.size().toString())
+                val typedWordString = wordComposer.typedWord
+                val typedWordInfo = SuggestedWordInfo(
+                        typedWordString, "" /* prevWordsContext */,
+                        SuggestedWordInfo.MAX_SCORE,
+                        SuggestedWordInfo.KIND_TYPED,
+                        Dictionary.DICTIONARY_USER_TYPED,
+                        SuggestedWordInfo.NOT_AN_INDEX /* indexOfTouchPointOfSecondWord */,
+                        SuggestedWordInfo.NOT_A_CONFIDENCE)
+                // Show new suggestions if we have at least one. Otherwise keep the old
+                // suggestions with the new typed word. Exception: if the length of the
+                // typed word is <= 1 (after a deletion typically) we clear old suggestions.
+                if (suggestedWords.size() > 1 || typedWordString.length <= 1) {
+                    emitter.onSuccess(suggestedWords)
+                } else {
+                    emitter.onSuccess(retrieveOlderSuggestions(typedWordInfo, mSuggestedWords))
+                }
             }
         }
 
-        // This line may cause the current thread to wait.
-        // TODO(bbqsrc): this blocks the main thread. A lot. No.
-        // Enabled because it is current the only entry points for the suggestions
-        val suggestedWords = holder.get(null,
-                1000 /*Constants.GET_SUGGESTED_WORDS_TIMEOUT.toLong() */)
-        if (suggestedWords != null) {
-            mSuggestionStripViewAccessor.showSuggestionStrip(suggestedWords)
-        }
-        if (DebugFlags.DEBUG_ENABLED) {
-            val runTimeMillis = System.currentTimeMillis() - startTimeMillis
-            Log.d(TAG, "performUpdateSuggestionStripSync() : $runTimeMillis ms to finish")
-        }
+        suggestionStripDisposable = s
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ suggestedWords ->
+                    mSuggestionStripViewAccessor.showSuggestionStrip(suggestedWords)
+                }, {
+                    Log.wtf(TAG, it)
+                })
     }
 
     /**
@@ -1745,7 +1742,7 @@ class InputLogic
      * @param nthPreviousWord reverse index of the word to get (1-indexed)
      * @return the information of previous words
      */
-    fun getNgramContextFromNthPreviousWordForSuggestion(
+    private fun getNgramContextFromNthPreviousWordForSuggestion(
             spacingAndPunctuations: SpacingAndPunctuations, nthPreviousWord: Int): NgramContext {
         if (spacingAndPunctuations.mCurrentLanguageHasSpaces) {
             // If we are typing in a language with spaces we can just look up the previous
