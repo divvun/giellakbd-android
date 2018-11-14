@@ -40,10 +40,10 @@ public final class MoreSuggestions extends Keyboard {
     }
 
     private static final class MoreSuggestionsParam extends KeyboardParams {
-        private final int[] mWidths = new int[SuggestedWords.MAX_SUGGESTIONS];
-        private final int[] mRowNumbers = new int[SuggestedWords.MAX_SUGGESTIONS];
-        private final int[] mColumnOrders = new int[SuggestedWords.MAX_SUGGESTIONS];
-        private final int[] mNumColumnsInRow = new int[SuggestedWords.MAX_SUGGESTIONS];
+        private final int[] mWidths = new int[SuggestedWords.Companion.getMAX_SUGGESTIONS()];
+        private final int[] mRowNumbers = new int[SuggestedWords.Companion.getMAX_SUGGESTIONS()];
+        private final int[] mColumnOrders = new int[SuggestedWords.Companion.getMAX_SUGGESTIONS()];
+        private final int[] mNumColumnsInRow = new int[SuggestedWords.Companion.getMAX_SUGGESTIONS()];
         private static final int MAX_COLUMNS_IN_ROW = 3;
         private int mNumRows;
         public Drawable mDivider;
@@ -65,12 +65,12 @@ public final class MoreSuggestions extends Keyboard {
             int row = 0;
             int index = fromIndex;
             int rowStartIndex = fromIndex;
-            final int size = Math.min(suggestedWords.size(), SuggestedWords.MAX_SUGGESTIONS);
+            final int size = Math.min(suggestedWords.size(), SuggestedWords.Companion.getMAX_SUGGESTIONS());
             while (index < size) {
                 final String word;
                 if (isIndexSubjectToAutoCorrection(suggestedWords, index)) {
                     // INDEX_OF_AUTO_CORRECTION and INDEX_OF_TYPED_WORD got swapped.
-                    word = suggestedWords.getLabel(SuggestedWords.INDEX_OF_TYPED_WORD);
+                    word = suggestedWords.getLabel(SuggestedWords.Companion.getINDEX_OF_TYPED_WORD());
                 } else {
                     word = suggestedWords.getLabel(index);
                 }
@@ -173,7 +173,7 @@ public final class MoreSuggestions extends Keyboard {
 
     static boolean isIndexSubjectToAutoCorrection(final SuggestedWords suggestedWords,
             final int index) {
-        return suggestedWords.mWillAutoCorrect && index == SuggestedWords.INDEX_OF_AUTO_CORRECTION;
+        return suggestedWords.getMWillAutoCorrect() && index == SuggestedWords.Companion.getINDEX_OF_AUTO_CORRECTION();
     }
 
     public static final class Builder extends KeyboardBuilder<MoreSuggestionsParam> {
@@ -213,8 +213,8 @@ public final class MoreSuggestions extends Keyboard {
                 final String info;
                 if (isIndexSubjectToAutoCorrection(mSuggestedWords, index)) {
                     // INDEX_OF_AUTO_CORRECTION and INDEX_OF_TYPED_WORD got swapped.
-                    word = mSuggestedWords.getLabel(SuggestedWords.INDEX_OF_TYPED_WORD);
-                    info = mSuggestedWords.getDebugString(SuggestedWords.INDEX_OF_TYPED_WORD);
+                    word = mSuggestedWords.getLabel(SuggestedWords.Companion.getINDEX_OF_TYPED_WORD());
+                    info = mSuggestedWords.getDebugString(SuggestedWords.Companion.getINDEX_OF_TYPED_WORD());
                 } else {
                     word = mSuggestedWords.getLabel(index);
                     info = mSuggestedWords.getDebugString(index);

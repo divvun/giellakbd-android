@@ -28,23 +28,15 @@ import android.view.KeyCharacterMap
 import android.view.KeyEvent
 import android.view.inputmethod.CorrectionInfo
 import android.view.inputmethod.EditorInfo
-
 import com.android.inputmethod.compat.SuggestionSpanUtils
 import com.android.inputmethod.event.Event
 import com.android.inputmethod.event.InputTransaction
 import com.android.inputmethod.keyboard.Keyboard
 import com.android.inputmethod.keyboard.KeyboardSwitcher
+import com.android.inputmethod.latin.*
 import com.android.inputmethod.latin.Dictionary
-import com.android.inputmethod.latin.DictionaryFacilitator
-import com.android.inputmethod.latin.LastComposedWord
-import com.android.inputmethod.latin.LatinIME
-import com.android.inputmethod.latin.NgramContext
-import com.android.inputmethod.latin.RichInputConnection
-import com.android.inputmethod.latin.Suggest
 import com.android.inputmethod.latin.Suggest.OnGetSuggestedWordsCallback
-import com.android.inputmethod.latin.SuggestedWords
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
-import com.android.inputmethod.latin.WordComposer
 import com.android.inputmethod.latin.common.Constants
 import com.android.inputmethod.latin.common.InputPointers
 import com.android.inputmethod.latin.common.StringUtils
@@ -57,10 +49,7 @@ import com.android.inputmethod.latin.utils.AsyncResultHolder
 import com.android.inputmethod.latin.utils.InputTypeUtils
 import com.android.inputmethod.latin.utils.RecapitalizeStatus
 import com.android.inputmethod.latin.utils.StatsUtils
-
-import java.util.ArrayList
-import java.util.Locale
-import java.util.TreeSet
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 /**
@@ -86,7 +75,7 @@ class InputLogic
     // Current space state of the input method. This can be any of the above constants.
     private var mSpaceState: Int = 0
     // Never null
-    var mSuggestedWords = SuggestedWords.getEmptyInstance()
+    var mSuggestedWords = SuggestedWords.emptyInstance
     val mSuggest: Suggest
 
     var mLastComposedWord = LastComposedWord.NOT_A_COMPOSED_WORD
@@ -216,7 +205,7 @@ class InputLogic
         mSpaceState = SpaceState.NONE
         mRecapitalizeStatus.disable() // Do not perform recapitalize until the cursor is moved once
         mCurrentlyPressedHardwareKeys.clear()
-        mSuggestedWords = SuggestedWords.getEmptyInstance()
+        mSuggestedWords = SuggestedWords.emptyInstance
         // In some cases (namely, after rotation of the device) editorInfo.initialSelStart is lying
         // so we try using some heuristics to find out about these and fix them.
         mConnection.tryFixLyingCursorPosition()
@@ -337,7 +326,7 @@ class InputLogic
                                  suggestionInfo: SuggestedWordInfo, keyboardShiftState: Int,
                                  currentKeyboardScriptId: Int, handler: LatinIME.UIHandler): InputTransaction {
         val suggestedWords = mSuggestedWords
-        val suggestion = suggestionInfo.mWord
+        val suggestion = suggestionInfo.word
         // If this is a punctuation picked from the suggestion strip, pass it to onCodeInput
         if (suggestion.length == 1 && suggestedWords.isPunctuationSuggestions) {
             // We still want to log a suggestion click.
@@ -372,7 +361,7 @@ class InputLogic
         // however need to reset the suggestion strip right away, because we know we can't take
         // the risk of calling commitCompletion twice because we don't know how the app will react.
         if (suggestionInfo.isKindOf(SuggestedWordInfo.KIND_APP_DEFINED)) {
-            mSuggestedWords = SuggestedWords.getEmptyInstance()
+            mSuggestedWords = SuggestedWords.emptyInstance
             mSuggestionStripViewAccessor.setNeutralSuggestionStrip()
             inputTransaction.requireShiftUpdate(InputTransaction.SHIFT_UPDATE_NOW)
             resetComposingState(true /* alsoResetLastComposedWord */)
@@ -397,7 +386,7 @@ class InputLogic
         StatsUtils.onPickSuggestionManually(
                 mSuggestedWords, suggestionInfo, mDictionaryFacilitator)
         StatsUtils.onWordCommitSuggestionPickedManually(
-                suggestionInfo.mWord, wordComposer.isBatchMode)
+                suggestionInfo.word, wordComposer.isBatchMode)
         return inputTransaction
     }
 
@@ -460,8 +449,10 @@ class InputLogic
             if (!TextUtils.isEmpty(mWordBeingCorrectedByCursor)) {
                 val timeStampInSeconds = TimeUnit.MILLISECONDS.toSeconds(
                         System.currentTimeMillis()).toInt()
-                mWordBeingCorrectedByCursor?.let { performAdditionToUserHistoryDictionary(settingsValues, it,
-                        NgramContext.EMPTY_PREV_WORDS_INFO) }
+                mWordBeingCorrectedByCursor?.let {
+                    performAdditionToUserHistoryDictionary(settingsValues, it,
+                            NgramContext.EMPTY_PREV_WORDS_INFO)
+                }
             }
         } else {
             // resetEntireInputState calls resetCachesUponCursorMove, but forcing the
@@ -554,7 +545,7 @@ class InputLogic
         mWordBeingCorrectedByCursor = null
         mInputLogicHandler.onStartBatchInput()
         handler.showGesturePreviewAndSuggestionStrip(
-                SuggestedWords.getEmptyInstance(), false /* dismissGestureFloatingPreviewText */)
+                SuggestedWords.emptyInstance, false /* dismissGestureFloatingPreviewText */)
         handler.cancelUpdateSuggestionStrip()
         ++mAutoCommitSequenceNumber
         mConnection.beginBatchEdit()
@@ -612,7 +603,7 @@ class InputLogic
     fun onCancelBatchInput(handler: LatinIME.UIHandler) {
         mInputLogicHandler.onCancelBatchInput()
         handler.showGesturePreviewAndSuggestionStrip(
-                SuggestedWords.getEmptyInstance(), true /* dismissGestureFloatingPreviewText */)
+                SuggestedWords.emptyInstance, true /* dismissGestureFloatingPreviewText */)
     }
 
     // TODO: on the long term, this method should become private, but it will be difficult.
@@ -625,7 +616,7 @@ class InputLogic
             } else {
                 // We can't use suggestedWords.getWord(SuggestedWords.INDEX_OF_TYPED_WORD)
                 // because it may differ from wordComposer.mTypedWord.
-                suggestedWordInfo = suggestedWords.mTypedWordInfo
+                suggestedWordInfo = suggestedWords.typedWordInfo
             }
             wordComposer.setAutoCorrection(suggestedWordInfo)
         }
@@ -1443,7 +1434,7 @@ class InputLogic
                 Log.w(TAG, "Called updateSuggestionsOrPredictions but suggestions were not " + "requested!")
             }
             // Clear the suggestions strip.
-            mSuggestionStripViewAccessor.showSuggestionStrip(SuggestedWords.getEmptyInstance())
+            mSuggestionStripViewAccessor.showSuggestionStrip(SuggestedWords.emptyInstance)
             return
         }
 
@@ -1453,8 +1444,8 @@ class InputLogic
         }
 
         val holder = AsyncResultHolder<SuggestedWords>("Suggest")
-        mInputLogicHandler.getSuggestedWords(inputStyle, SuggestedWords.NOT_A_SEQUENCE_NUMBER
-        ) { suggestedWords ->
+        mInputLogicHandler.getSuggestedWords(inputStyle, SuggestedWords.NOT_A_SEQUENCE_NUMBER) { suggestedWords ->
+            Log.d(TAG, suggestedWords.size().toString())
             val typedWordString = wordComposer.typedWord
             val typedWordInfo = SuggestedWordInfo(
                     typedWordString, "" /* prevWordsContext */,
@@ -1474,11 +1465,12 @@ class InputLogic
 
         // This line may cause the current thread to wait.
         // TODO(bbqsrc): this blocks the main thread. A lot. No.
-//        val suggestedWords = holder.get(null,
-//                Constants.GET_SUGGESTED_WORDS_TIMEOUT.toLong())
-//        if (suggestedWords != null) {
-//            mSuggestionStripViewAccessor.showSuggestionStrip(suggestedWords)
-//        }
+        // Enabled because it is current the only entry points for the suggestions
+        val suggestedWords = holder.get(null,
+                1000 /*Constants.GET_SUGGESTED_WORDS_TIMEOUT.toLong() */)
+        if (suggestedWords != null) {
+            mSuggestionStripViewAccessor.showSuggestionStrip(suggestedWords)
+        }
         if (DebugFlags.DEBUG_ENABLED) {
             val runTimeMillis = System.currentTimeMillis() - startTimeMillis
             Log.d(TAG, "performUpdateSuggestionStripSync() : $runTimeMillis ms to finish")
@@ -1498,6 +1490,7 @@ class InputLogic
                                                 forStartInput: Boolean,
             // TODO: remove this argument, put it into settingsValues
                                                 currentKeyboardScriptId: Int) {
+        Log.d("InputLogic", "restartSuggestionsOnWordTouchedByCursor")
         // HACK: We may want to special-case some apps that exhibit bad behavior in case of
         // recorrection. This is a temporary, stopgap measure that will be removed later.
         // TODO: remove this.
@@ -1581,8 +1574,12 @@ class InputLogic
             // If there weren't any suggestion spans on this word, suggestions#size() will be 1
             // if shouldIncludeResumedWordInSuggestions is true, 0 otherwise. In this case, we
             // have no useful suggestions, so we will try to compute some for it instead.
-            mInputLogicHandler.getSuggestedWords(Suggest.SESSION_ID_TYPING,
-                    SuggestedWords.NOT_A_SEQUENCE_NUMBER) { suggestedWords -> doShowSuggestionsAndClearAutoCorrectionIndicator(suggestedWords) }
+            mInputLogicHandler.getSuggestedWords(
+                    Suggest.SESSION_ID_TYPING,
+                    SuggestedWords.NOT_A_SEQUENCE_NUMBER)
+            { suggestedWords ->
+                doShowSuggestionsAndClearAutoCorrectionIndicator(suggestedWords)
+            }
         } else {
             // We found suggestion spans in the word. We'll create the SuggestedWords out of
             // them, and make willAutoCorrect false. We make typedWordValid false, because the
@@ -2005,7 +2002,7 @@ class InputLogic
         val autoCorrectionOrNull = wordComposer.autoCorrectionOrNull
         val typedWord = wordComposer.typedWord
         val stringToCommit = if (autoCorrectionOrNull != null)
-            autoCorrectionOrNull.mWord
+            autoCorrectionOrNull.word
         else
             typedWord
         if (stringToCommit != null) {
@@ -2268,7 +2265,7 @@ class InputLogic
         internal fun retrieveOlderSuggestions(typedWordInfo: SuggestedWordInfo,
                                               previousSuggestedWords: SuggestedWords): SuggestedWords {
             val oldSuggestedWords = if (previousSuggestedWords.isPunctuationSuggestions)
-                SuggestedWords.getEmptyInstance()
+                SuggestedWords.emptyInstance
             else
                 previousSuggestedWords
             val typedWordAndPreviousSuggestions = SuggestedWords.getTypedWordAndPreviousSuggestions(typedWordInfo, oldSuggestedWords)

@@ -73,10 +73,9 @@ import com.android.inputmethod.latin.suggestions.SuggestionStripView
 import com.android.inputmethod.latin.suggestions.SuggestionStripViewAccessor
 import com.android.inputmethod.latin.touchinputconsumer.GestureConsumer
 import com.android.inputmethod.latin.utils.*
-import no.divvun.DivvunSpell
-import java.io.File
+import no.divvun.DivvunUtils
+import no.divvun.dictionary.DivvunDictionaryFacilitator
 import java.io.FileDescriptor
-import java.io.FileOutputStream
 import java.io.PrintWriter
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -88,7 +87,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     internal val mSettings: Settings
     // TODO(bbqsrc): make this not null later.
-    private val mDictionaryFacilitator: DictionaryFacilitator? = null
+    private val mDictionaryFacilitator: DictionaryFacilitator = DivvunDictionaryFacilitator()
     internal val mInputLogic = InputLogic(this /* LatinIME */,
             this /* SuggestionStripViewAccessor */, mDictionaryFacilitator)
     // We expect to have only one decoder in almost all cases, hence the default capacity of 1.
@@ -501,6 +500,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     override fun onCreate() {
         ExceptionLogger.init(this)
+        DivvunUtils.initialize(this)
         Settings.init(this)
         DebugFlags.init(PreferenceManager.getDefaultSharedPreferences(this))
         RichInputMethodManager.init(this)
@@ -513,16 +513,6 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         super.onCreate()
 
         mHandler.onCreate()
-        val inputStream = resources.assets.open("se.zhfst")
-        val outputStream = FileOutputStream(File(this.filesDir, "se.zhfst"))
-        inputStream.copyTo(outputStream)
-        inputStream.close()
-        outputStream.flush()
-        outputStream.close()
-
-        val speller = DivvunSpell("${this.filesDir.absolutePath}/se.zhfst")
-        Log.d("SPELLER", speller.locale)
-        Log.d("SPELLER", speller.suggest("same", 10).joinToString(", "))
 
         // TODO: Resolve mutual dependencies of {@link #loadSettings()} and
         // {@link #resetDictionaryFacilitatorIfNecessary()}.
@@ -1008,6 +998,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     override fun onDisplayCompletions(applicationSpecifiedCompletions: Array<CompletionInfo>?) {
+        Log.d("LatinIME", "onDisplayCompletions")
         if (DebugFlags.DEBUG_ENABLED) {
             Log.i(TAG, "Received completions:")
             if (applicationSpecifiedCompletions != null) {
@@ -1335,6 +1326,8 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         val currentSettingsValues = mSettings.current
         mInputLogic.setSuggestedWords(suggestedWords)
         // TODO: Modify this when we support suggestions with hard keyboard
+
+        Log.d("LatinIME", "suggestionStrip: ${hasSuggestionStripView()}" )
         if (!hasSuggestionStripView()) {
             return
         }
@@ -1380,7 +1373,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                           callback: OnGetSuggestedWordsCallback) {
         val keyboard = mKeyboardSwitcher.keyboard
         if (keyboard == null) {
-            callback.onGetSuggestedWords(SuggestedWords.getEmptyInstance())
+            callback.onGetSuggestedWords(SuggestedWords.emptyInstance)
             return
         }
         mInputLogic.getSuggestedWords(mSettings.current, keyboard,
@@ -1414,7 +1407,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     override fun setNeutralSuggestionStrip() {
         val currentSettings = mSettings.current
         val neutralSuggestions = if (currentSettings.mBigramPredictionEnabled)
-            SuggestedWords.getEmptyInstance()
+            SuggestedWords.emptyInstance
         else
             currentSettings.mSpacingAndPunctuations.mSuggestPuncList
         setSuggestedWords(neutralSuggestions)
@@ -1617,10 +1610,10 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     fun dumpDictionaryForDebug(dictName: String) {
-        if (mDictionaryFacilitator?.isActive == false) {
+        if (mDictionaryFacilitator.isActive == false) {
             resetDictionaryFacilitatorIfNecessary()
         }
-        mDictionaryFacilitator?.dumpDictionaryForDebug(dictName)
+        mDictionaryFacilitator.dumpDictionaryForDebug(dictName)
     }
 
     fun debugDumpStateAndCrashWithException(context: String) {

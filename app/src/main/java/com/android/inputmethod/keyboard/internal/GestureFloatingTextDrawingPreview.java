@@ -100,7 +100,7 @@ public class GestureFloatingTextDrawingPreview extends AbstractDrawingPreview {
     private final RectF mGesturePreviewRectangle = new RectF();
     private int mPreviewTextX;
     private int mPreviewTextY;
-    private SuggestedWords mSuggestedWords = SuggestedWords.getEmptyInstance();
+    private SuggestedWords mSuggestedWords = SuggestedWords.Companion.getEmptyInstance();
     private final int[] mLastPointerCoords = CoordinateUtils.newInstance();
 
     public GestureFloatingTextDrawingPreview(final TypedArray mainKeyboardViewAttr) {
@@ -113,7 +113,7 @@ public class GestureFloatingTextDrawingPreview extends AbstractDrawingPreview {
     }
 
     public void dismissGestureFloatingPreviewText() {
-        setSuggetedWords(SuggestedWords.getEmptyInstance());
+        setSuggetedWords(SuggestedWords.Companion.getEmptyInstance());
     }
 
     public void setSuggetedWords(@Nonnull final SuggestedWords suggestedWords) {

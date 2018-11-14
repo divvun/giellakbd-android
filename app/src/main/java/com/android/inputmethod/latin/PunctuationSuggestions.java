@@ -39,8 +39,8 @@ public final class PunctuationSuggestions extends SuggestedWords {
                 false /* typedWordValid */,
                 false /* hasAutoCorrectionCandidate */,
                 false /* isObsoleteSuggestions */,
-                INPUT_STYLE_NONE /* inputStyle */,
-                SuggestedWords.NOT_A_SEQUENCE_NUMBER);
+                Companion.getINPUT_STYLE_NONE() /* inputStyle */,
+                SuggestedWords.Companion.getNOT_A_SEQUENCE_NUMBER());
     }
 
     /**
@@ -110,15 +110,15 @@ public final class PunctuationSuggestions extends SuggestedWords {
     @Override
     public String toString() {
         return "PunctuationSuggestions: "
-                + " words=" + Arrays.toString(mSuggestedWordInfoList.toArray());
+                + " words=" + Arrays.toString(getMSuggestedWordInfoList().toArray());
     }
 
     private static SuggestedWordInfo newHardCodedWordInfo(final String keySpec) {
         return new SuggestedWordInfo(keySpec, "" /* prevWordsContext */,
-                SuggestedWordInfo.MAX_SCORE,
-                SuggestedWordInfo.KIND_HARDCODED,
+                SuggestedWordInfo.Companion.getMAX_SCORE(),
+                SuggestedWordInfo.Companion.getKIND_HARDCODED(),
                 Dictionary.DICTIONARY_HARDCODED,
-                SuggestedWordInfo.NOT_AN_INDEX /* indexOfTouchPointOfSecondWord */,
-                SuggestedWordInfo.NOT_A_CONFIDENCE /* autoCommitFirstWordConfidence */);
+                SuggestedWordInfo.Companion.getNOT_AN_INDEX() /* indexOfTouchPointOfSecondWord */,
+                SuggestedWordInfo.Companion.getNOT_A_CONFIDENCE() /* autoCommitFirstWordConfidence */);
     }
 }

@@ -200,7 +200,7 @@ public class Event {
      */
     @Nonnull
     public static Event createSuggestionPickedEvent(final SuggestedWordInfo suggestedWordInfo) {
-        return new Event(EVENT_TYPE_SUGGESTION_PICKED, suggestedWordInfo.mWord,
+        return new Event(EVENT_TYPE_SUGGESTION_PICKED, suggestedWordInfo.getWord(),
                 NOT_A_CODE_POINT, NOT_A_KEY_CODE,
                 Constants.SUGGESTION_STRIP_COORDINATE, Constants.SUGGESTION_STRIP_COORDINATE,
                 suggestedWordInfo, FLAG_NONE, null /* next */);
@@ -228,8 +228,8 @@ public class Event {
     @Nonnull
     public static Event createPunctuationSuggestionPickedEvent(
             final SuggestedWordInfo suggestedWordInfo) {
-        final int primaryCode = suggestedWordInfo.mWord.charAt(0);
-        return new Event(EVENT_TYPE_SUGGESTION_PICKED, suggestedWordInfo.mWord, primaryCode,
+        final int primaryCode = suggestedWordInfo.getWord().charAt(0);
+        return new Event(EVENT_TYPE_SUGGESTION_PICKED, suggestedWordInfo.getWord(), primaryCode,
                 NOT_A_KEY_CODE, Constants.SUGGESTION_STRIP_COORDINATE,
                 Constants.SUGGESTION_STRIP_COORDINATE, suggestedWordInfo, FLAG_NONE,
                 null /* next */);

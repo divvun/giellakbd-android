@@ -204,10 +204,10 @@ final class SuggestionStripLayoutHelper {
         final String word = suggestedWords.getLabel(indexInSuggestedWords);
         // TODO: don't use the index to decide whether this is the auto-correction/typed word, as
         // this is brittle
-        final boolean isAutoCorrection = suggestedWords.mWillAutoCorrect
-                && indexInSuggestedWords == SuggestedWords.INDEX_OF_AUTO_CORRECTION;
-        final boolean isTypedWordValid = suggestedWords.mTypedWordValid
-                && indexInSuggestedWords == SuggestedWords.INDEX_OF_TYPED_WORD;
+        final boolean isAutoCorrection = suggestedWords.getMWillAutoCorrect()
+                && indexInSuggestedWords == SuggestedWords.Companion.getINDEX_OF_AUTO_CORRECTION();
+        final boolean isTypedWordValid = suggestedWords.getMTypedWordValid()
+                && indexInSuggestedWords == SuggestedWords.Companion.getINDEX_OF_TYPED_WORD();
         if (!isAutoCorrection && !isTypedWordValid) {
             return word;
         }
@@ -234,10 +234,10 @@ final class SuggestionStripLayoutHelper {
     private int getPositionInSuggestionStrip(final int indexInSuggestedWords,
             final SuggestedWords suggestedWords) {
         final SettingsValues settingsValues = Settings.getInstance().getCurrent();
-        final boolean shouldOmitTypedWord = shouldOmitTypedWord(suggestedWords.mInputStyle,
+        final boolean shouldOmitTypedWord = shouldOmitTypedWord(suggestedWords.getMInputStyle(),
                 settingsValues.getMGestureFloatingPreviewTextEnabled(),
                 settingsValues.getMShouldShowLxxSuggestionUi());
-        return getPositionInSuggestionStrip(indexInSuggestedWords, suggestedWords.mWillAutoCorrect,
+        return getPositionInSuggestionStrip(indexInSuggestedWords, suggestedWords.getMWillAutoCorrect(),
                 settingsValues.getMShouldShowLxxSuggestionUi() && shouldOmitTypedWord,
                 mCenterPositionInStrip, mTypedWordPositionWhenAutocorrect);
     }
@@ -246,9 +246,9 @@ final class SuggestionStripLayoutHelper {
     static boolean shouldOmitTypedWord(final int inputStyle,
             final boolean gestureFloatingPreviewTextEnabled,
             final boolean shouldShowUiToAcceptTypedWord) {
-        final boolean omitTypedWord = (inputStyle == SuggestedWords.INPUT_STYLE_TYPING)
-                || (inputStyle == SuggestedWords.INPUT_STYLE_TAIL_BATCH)
-                || (inputStyle == SuggestedWords.INPUT_STYLE_UPDATE_BATCH
+        final boolean omitTypedWord = (inputStyle == SuggestedWords.Companion.getINPUT_STYLE_TYPING())
+                || (inputStyle == SuggestedWords.Companion.getINPUT_STYLE_TAIL_BATCH())
+                || (inputStyle == SuggestedWords.Companion.getINPUT_STYLE_UPDATE_BATCH()
                         && gestureFloatingPreviewTextEnabled);
         return shouldShowUiToAcceptTypedWord && omitTypedWord;
     }
@@ -258,11 +258,11 @@ final class SuggestionStripLayoutHelper {
             final boolean willAutoCorrect, final boolean omitTypedWord,
             final int centerPositionInStrip, final int typedWordPositionWhenAutoCorrect) {
         if (omitTypedWord) {
-            if (indexInSuggestedWords == SuggestedWords.INDEX_OF_TYPED_WORD) {
+            if (indexInSuggestedWords == SuggestedWords.Companion.getINDEX_OF_TYPED_WORD()) {
                 // Ignore.
                 return -1;
             }
-            if (indexInSuggestedWords == SuggestedWords.INDEX_OF_AUTO_CORRECTION) {
+            if (indexInSuggestedWords == SuggestedWords.Companion.getINDEX_OF_AUTO_CORRECTION()) {
                 // Center in the suggestion strip.
                 return centerPositionInStrip;
             }
@@ -277,11 +277,11 @@ final class SuggestionStripLayoutHelper {
         final int indexToDisplayMostImportantSuggestion;
         final int indexToDisplaySecondMostImportantSuggestion;
         if (willAutoCorrect) {
-            indexToDisplayMostImportantSuggestion = SuggestedWords.INDEX_OF_AUTO_CORRECTION;
-            indexToDisplaySecondMostImportantSuggestion = SuggestedWords.INDEX_OF_TYPED_WORD;
+            indexToDisplayMostImportantSuggestion = SuggestedWords.Companion.getINDEX_OF_AUTO_CORRECTION();
+            indexToDisplaySecondMostImportantSuggestion = SuggestedWords.Companion.getINDEX_OF_TYPED_WORD();
         } else {
-            indexToDisplayMostImportantSuggestion = SuggestedWords.INDEX_OF_TYPED_WORD;
-            indexToDisplaySecondMostImportantSuggestion = SuggestedWords.INDEX_OF_AUTO_CORRECTION;
+            indexToDisplayMostImportantSuggestion = SuggestedWords.Companion.getINDEX_OF_TYPED_WORD();
+            indexToDisplaySecondMostImportantSuggestion = SuggestedWords.Companion.getINDEX_OF_AUTO_CORRECTION();
         }
         if (indexInSuggestedWords == indexToDisplayMostImportantSuggestion) {
             // Center in the suggestion strip.
@@ -304,20 +304,20 @@ final class SuggestionStripLayoutHelper {
             final int indexInSuggestedWords) {
         // Use identity for strings, not #equals : it's the typed word if it's the same object
         final boolean isTypedWord = suggestedWords.getInfo(indexInSuggestedWords).isKindOf(
-                SuggestedWordInfo.KIND_TYPED);
+                SuggestedWordInfo.Companion.getKIND_TYPED());
 
         final int color;
-        if (indexInSuggestedWords == SuggestedWords.INDEX_OF_AUTO_CORRECTION
-                && suggestedWords.mWillAutoCorrect) {
+        if (indexInSuggestedWords == SuggestedWords.Companion.getINDEX_OF_AUTO_CORRECTION()
+                && suggestedWords.getMWillAutoCorrect()) {
             color = mColorAutoCorrect;
-        } else if (isTypedWord && suggestedWords.mTypedWordValid) {
+        } else if (isTypedWord && suggestedWords.getMTypedWordValid()) {
             color = mColorValidTypedWord;
         } else if (isTypedWord) {
             color = mColorTypedWord;
         } else {
             color = mColorSuggested;
         }
-        if (suggestedWords.mIsObsoleteSuggestions && !isTypedWord) {
+        if (suggestedWords.getMIsObsoleteSuggestions() && !isTypedWord) {
             return applyAlpha(color, mAlphaObsoleted);
         }
         return color;

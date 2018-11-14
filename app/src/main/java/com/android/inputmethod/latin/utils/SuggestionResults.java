@@ -76,11 +76,11 @@ public final class SuggestionResults extends TreeSet<SuggestedWordInfo> {
         // that's the order we want our elements in.
         @Override
         public int compare(final SuggestedWordInfo o1, final SuggestedWordInfo o2) {
-            if (o1.mScore > o2.mScore) return -1;
-            if (o1.mScore < o2.mScore) return 1;
-            if (o1.mCodePointCount < o2.mCodePointCount) return -1;
-            if (o1.mCodePointCount > o2.mCodePointCount) return 1;
-            return o1.mWord.compareTo(o2.mWord);
+            if (o1.getMScore() > o2.getMScore()) return -1;
+            if (o1.getMScore() < o2.getMScore()) return 1;
+            if (o1.getMCodePointCount() < o2.getMCodePointCount()) return -1;
+            if (o1.getMCodePointCount() > o2.getMCodePointCount()) return 1;
+            return o1.getWord().compareTo(o2.getWord());
         }
     }
 

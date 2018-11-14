@@ -80,7 +80,7 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
     private final ArrayList<View> mDividerViews = new ArrayList<>();
 
     Listener mListener;
-    private SuggestedWords mSuggestedWords = SuggestedWords.getEmptyInstance();
+    private SuggestedWords mSuggestedWords = SuggestedWords.Companion.getEmptyInstance();
     private int mStartIndexOfMoreSuggestions;
 
     private final SuggestionStripLayoutHelper mLayoutHelper;
@@ -144,7 +144,7 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
         mStripVisibilityGroup = new StripVisibilityGroup(this, mSuggestionsStrip,
                 mImportantNoticeStrip);
 
-        for (int pos = 0; pos < SuggestedWords.MAX_SUGGESTIONS; pos++) {
+        for (int pos = 0; pos < SuggestedWords.Companion.getMAX_SUGGESTIONS(); pos++) {
             final TextView word = new TextView(context, null, R.attr.suggestionWordStyle);
             word.setContentDescription(getResources().getString(R.string.spoken_empty_suggestion));
             word.setOnClickListener(this);

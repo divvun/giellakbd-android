@@ -154,13 +154,13 @@ public final class AccessibilityUtils {
      * @param suggestedWords the list of suggested auto-correction words
      */
     public void setAutoCorrection(final SuggestedWords suggestedWords) {
-        if (suggestedWords.mWillAutoCorrect) {
-            mAutoCorrectionWord = suggestedWords.getWord(SuggestedWords.INDEX_OF_AUTO_CORRECTION);
-            final SuggestedWords.SuggestedWordInfo typedWordInfo = suggestedWords.mTypedWordInfo;
+        if (suggestedWords.getMWillAutoCorrect()) {
+            mAutoCorrectionWord = suggestedWords.getWord(SuggestedWords.Companion.getINDEX_OF_AUTO_CORRECTION());
+            final SuggestedWords.SuggestedWordInfo typedWordInfo = suggestedWords.getTypedWordInfo();
             if (null == typedWordInfo) {
                 mTypedWord = null;
             } else {
-                mTypedWord = typedWordInfo.mWord;
+                mTypedWord = typedWordInfo.getWord();
             }
         } else {
             mAutoCorrectionWord = null;
