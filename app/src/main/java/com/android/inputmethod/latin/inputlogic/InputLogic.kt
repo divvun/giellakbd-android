@@ -346,7 +346,7 @@ class InputLogic
         // for the sequence of language switching.
         inputTransaction.setDidAffectContents()
         mConnection.beginBatchEdit()
-        if (SpaceState.PHANTOM == mSpaceState && suggestion.length > 0
+        if (SpaceState.PHANTOM == mSpaceState && suggestion.isNotEmpty()
                 // In the batch input mode, a manually picked suggested word should just replace
                 // the current batch input text and there is no need for a phantom space.
                 && !wordComposer.isBatchMode) {
@@ -360,6 +360,10 @@ class InputLogic
         // code path as for other kinds, use commitChosenWord, and do everything normally. We will
         // however need to reset the suggestion strip right away, because we know we can't take
         // the risk of calling commitCompletion twice because we don't know how the app will react.
+
+        // TODO(rawa)
+        // Disabled branch for onPickSuggestManually to work
+        /**
         if (suggestionInfo.isKindOf(SuggestedWordInfo.KIND_APP_DEFINED)) {
             mSuggestedWords = SuggestedWords.emptyInstance
             mSuggestionStripViewAccessor.setNeutralSuggestionStrip()
@@ -369,6 +373,7 @@ class InputLogic
             mConnection.endBatchEdit()
             return inputTransaction
         }
+         */
 
         commitChosenWord(settingsValues, suggestion, LastComposedWord.COMMIT_TYPE_MANUAL_PICK,
                 LastComposedWord.NOT_A_SEPARATOR)
