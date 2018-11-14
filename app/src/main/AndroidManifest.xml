@@ -45,8 +45,7 @@
             </intent-filter>
             <meta-data android:name="android.view.im" android:resource="@xml/method" />
         </service>
-
-        <!--service android:name=".spellcheck.AndroidSpellCheckerService"
+        <service android:name="no.divvun.DivvunSpellCheckerService"
                  android:label="@string/spell_checker_service_name"
                  android:permission="android.permission.BIND_TEXT_SERVICE">
             <intent-filter>
@@ -54,7 +53,7 @@
             </intent-filter>
             <meta-data android:name="android.view.textservice.scs"
                     android:resource="@xml/spellchecker" />
-        </service-->
+        </service>
 
         <!--service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
                 android:label="@string/dictionary_service_name">

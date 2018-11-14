@@ -25,38 +25,6 @@
         android:settingsActivity="com.android.inputmethod.latin.spellcheck.SpellCheckerSettingsActivity">
     <subtype
             android:label="@string/subtype_generic"
-            android:subtypeLocale="en"
-    />
-    <subtype
-            android:label="@string/subtype_generic"
-            android:subtypeLocale="en_US"
-    />
-    <subtype
-            android:label="@string/subtype_generic"
-            android:subtypeLocale="en_GB"
-    />
-    <subtype
-            android:label="@string/subtype_generic"
-            android:subtypeLocale="fr"
-    />
-    <subtype
-            android:label="@string/subtype_generic"
-            android:subtypeLocale="de"
-    />
-    <subtype
-            android:label="@string/subtype_generic"
-            android:subtypeLocale="it"
-    />
-    <subtype
-            android:label="@string/subtype_generic"
-            android:subtypeLocale="es"
-    />
-    <subtype
-            android:label="@string/subtype_generic"
-            android:subtypeLocale="ru"
-    />
-    <subtype
-            android:label="@string/subtype_generic"
-            android:subtypeLocale="pt_BR"
+            android:subtypeLocale="se"
     />
 </spell-checker>
