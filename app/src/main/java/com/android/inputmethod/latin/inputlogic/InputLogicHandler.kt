@@ -187,7 +187,7 @@ internal open class InputLogicHandler : Handler.Callback {
     open fun getSuggestedWords(inputStyle: Int, sequenceNumber: Int,
                                callback: OnGetSuggestedWordsCallback) {
         mNonUIThreadHandler?.obtainMessage(
-                MSG_GET_SUGGESTED_WORDS, inputStyle, sequenceNumber, callback).sendToTarget()
+                MSG_GET_SUGGESTED_WORDS, inputStyle, sequenceNumber, callback)?.sendToTarget()
     }
 
     open fun getSuggestedWords(inputStyle: Int, sequenceNumber: Int,
@@ -198,7 +198,7 @@ internal open class InputLogicHandler : Handler.Callback {
                 callback(suggestedWords)
             }
 
-        }).sendToTarget()
+        })?.sendToTarget()
     }
 
     companion object {
