@@ -2,6 +2,7 @@ package no.divvun
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.util.Log
 import java.util.*
 import java.io.File
 import java.io.FileOutputStream
@@ -17,16 +18,23 @@ object DivvunUtils {
     }
 
     fun getSpeller(locale: Locale): DivvunSpell {
-        return getSpeller()
+        Log.d(tag, "getSpeller() for $locale")
+        return getSpeller(resolveSpellerArchive(locale))
     }
-    fun getSpeller(): DivvunSpell {
-        val inputStream = context.resources.assets.open("se.zhfst")
-        val outputStream = FileOutputStream(File(context.filesDir, "se.zhfst"))
+
+    private fun resolveSpellerArchive(locale: Locale): String = when(locale.language) {
+        "se" -> "se.zhfst"
+        else -> "se.zhfst"
+    }
+
+    private fun getSpeller(fileName: String): DivvunSpell {
+        val inputStream = context.resources.assets.open(fileName)
+        val outputStream = FileOutputStream(File(context.filesDir, fileName))
         inputStream.copyTo(outputStream)
         inputStream.close()
         outputStream.flush()
         outputStream.close()
 
-        return DivvunSpell("${context.filesDir.absolutePath}/se.zhfst")
+        return DivvunSpell("${context.filesDir.absolutePath}/$fileName")
     }
 }

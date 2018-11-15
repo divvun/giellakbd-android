@@ -75,7 +75,7 @@ public class DictionaryStats {
     @Override
     public String toString() {
         final StringBuilder builder = new StringBuilder(mDictType);
-        if (mDictType.equals(Dictionary.TYPE_MAIN)) {
+        if (mDictType.equals(Dictionary.Companion.getTYPE_MAIN())) {
             builder.append(" (");
             builder.append(mContentVersion);
             builder.append(")");

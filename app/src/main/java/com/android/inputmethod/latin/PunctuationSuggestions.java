@@ -117,7 +117,7 @@ public final class PunctuationSuggestions extends SuggestedWords {
         return new SuggestedWordInfo(keySpec, "" /* prevWordsContext */,
                 SuggestedWordInfo.Companion.getMAX_SCORE(),
                 SuggestedWordInfo.Companion.getKIND_HARDCODED(),
-                Dictionary.DICTIONARY_HARDCODED,
+                Dictionary.Companion.getDICTIONARY_HARDCODED(),
                 SuggestedWordInfo.Companion.getNOT_AN_INDEX() /* indexOfTouchPointOfSecondWord */,
                 SuggestedWordInfo.Companion.getNOT_A_CONFIDENCE() /* autoCommitFirstWordConfidence */);
     }

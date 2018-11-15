@@ -45,15 +45,15 @@ import javax.annotation.Nullable;
 public interface DictionaryFacilitator {
 
     public static final String[] ALL_DICTIONARY_TYPES = new String[] {
-            Dictionary.TYPE_MAIN,
-            Dictionary.TYPE_CONTACTS,
-            Dictionary.TYPE_USER_HISTORY,
-            Dictionary.TYPE_USER};
+            Dictionary.Companion.getTYPE_MAIN(),
+            Dictionary.Companion.getTYPE_CONTACTS(),
+            Dictionary.Companion.getTYPE_USER_HISTORY(),
+            Dictionary.Companion.getTYPE_USER()};
 
     public static final String[] DYNAMIC_DICTIONARY_TYPES = new String[] {
-            Dictionary.TYPE_CONTACTS,
-            Dictionary.TYPE_USER_HISTORY,
-            Dictionary.TYPE_USER};
+            Dictionary.Companion.getTYPE_CONTACTS(),
+            Dictionary.Companion.getTYPE_USER_HISTORY(),
+            Dictionary.Companion.getTYPE_USER()};
 
     /**
      * The facilitator will put words into the cache whenever it decodes them.

@@ -227,8 +227,8 @@ public class PersonalDictionaryLookup implements Closeable {
 
         mServiceName = serviceName;
         mDictionaryStats = new ArrayList<DictionaryStats>();
-        mDictionaryStats.add(new DictionaryStats(ANY_LOCALE, Dictionary.TYPE_USER, 0));
-        mDictionaryStats.add(new DictionaryStats(ANY_LOCALE, Dictionary.TYPE_USER_SHORTCUT, 0));
+        mDictionaryStats.add(new DictionaryStats(ANY_LOCALE, Dictionary.Companion.getTYPE_USER(), 0));
+        mDictionaryStats.add(new DictionaryStats(ANY_LOCALE, Dictionary.Companion.getTYPE_USER_SHORTCUT(), 0));
 
         // Obtain a content resolver.
         mResolver = context.getContentResolver();
@@ -628,12 +628,12 @@ public class PersonalDictionaryLookup implements Closeable {
         }
 
         List<DictionaryStats> stats = new ArrayList<>();
-        stats.add(new DictionaryStats(ANY_LOCALE, Dictionary.TYPE_USER, dictWords.size()));
+        stats.add(new DictionaryStats(ANY_LOCALE, Dictionary.Companion.getTYPE_USER(), dictWords.size()));
         int numShortcuts = 0;
         for (HashMap<String, String> shortcuts : shortcutsPerLocale.values()) {
             numShortcuts += shortcuts.size();
         }
-        stats.add(new DictionaryStats(ANY_LOCALE, Dictionary.TYPE_USER_SHORTCUT, numShortcuts));
+        stats.add(new DictionaryStats(ANY_LOCALE, Dictionary.Companion.getTYPE_USER_SHORTCUT(), numShortcuts));
         mDictionaryStats = stats;
 
         // Atomically replace the copy of mDictWords and mShortcuts.

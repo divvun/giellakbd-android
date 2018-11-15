@@ -1,10 +1,14 @@
-package no.divvun
+package no.divvun.spellchecker
 
 import android.service.textservice.SpellCheckerService
 import android.util.Log
 import android.view.textservice.SentenceSuggestionsInfo
 import android.view.textservice.SuggestionsInfo
 import android.view.textservice.TextInfo
+import no.divvun.DivvunSpell
+import no.divvun.DivvunUtils
+import no.divvun.createTag
+import java.util.*
 
 class DivvunSpellCheckerService: SpellCheckerService(){
     private val tag = createTag(this)
@@ -20,17 +24,13 @@ class DivvunSpellCheckerService: SpellCheckerService(){
         return DivvunSpellCheckerSession()
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
-
     class DivvunSpellCheckerSession: Session() {
         private val tag = javaClass.simpleName!!
         private lateinit var speller: DivvunSpell
 
         override fun onCreate() {
             Log.d(tag, "onCreate")
-            speller = DivvunUtils.getSpeller()
+            speller = DivvunUtils.getSpeller(Locale(locale))
         }
 
         override fun onGetSuggestions(textInfo: TextInfo?, suggestionsLimit: Int): SuggestionsInfo {

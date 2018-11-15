@@ -45,7 +45,7 @@
             </intent-filter>
             <meta-data android:name="android.view.im" android:resource="@xml/method" />
         </service>
-        <service android:name="no.divvun.DivvunSpellCheckerService"
+        <service android:name="no.divvun.spellchecker.DivvunSpellCheckerService"
                  android:label="@string/spell_checker_service_name"
                  android:permission="android.permission.BIND_TEXT_SERVICE">
             <intent-filter>

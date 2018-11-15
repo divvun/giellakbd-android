@@ -15,7 +15,7 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class DivvunDictionaryFacilitator(): DictionaryFacilitator {
+class DivvunDictionaryFacilitator : DictionaryFacilitator {
     private val tag = createTag(this)
     private var isActive = false
 
@@ -62,7 +62,7 @@ class DivvunDictionaryFacilitator(): DictionaryFacilitator {
 
     override fun getLocale(): Locale {
         Log.d(tag, "getLocale")
-        return dictionary.mLocale
+        return dictionary.mLocale!!
     }
 
     // STUB
@@ -124,8 +124,8 @@ class DivvunDictionaryFacilitator(): DictionaryFacilitator {
         Log.d(tag, "unlearnFromUserHistory")
     }
 
-    override fun getSuggestionResults(composedData: ComposedData?, ngramContext: NgramContext?, keyboard: Keyboard, settingsValuesForSuggestion: SettingsValuesForSuggestion?, sessionId: Int, inputStyle: Int): SuggestionResults {
-        val suggestions = dictionary.getSuggestions(composedData, ngramContext, 0, settingsValuesForSuggestion, sessionId, 0f, null)
+    override fun getSuggestionResults(composedData: ComposedData, ngramContext: NgramContext, keyboard: Keyboard, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, inputStyle: Int): SuggestionResults {
+        val suggestions = dictionary.getSuggestions(composedData, ngramContext, 0, settingsValuesForSuggestion, sessionId, 0f, FloatArray(0))
 
         val suggestionResults = SuggestionResults(suggestions.size, false, false)
 
@@ -135,8 +135,8 @@ class DivvunDictionaryFacilitator(): DictionaryFacilitator {
         return suggestionResults
     }
 
-    override fun isValidSpellingWord(word: String?): Boolean = dictionary.isValidWord(word)
-    override fun isValidSuggestionWord(word: String?): Boolean = dictionary.isValidWord(word)
+    override fun isValidSpellingWord(word: String): Boolean = dictionary.isValidWord(word)
+    override fun isValidSuggestionWord(word: String): Boolean = dictionary.isValidWord(word)
 
     // STUB
     override fun clearUserHistoryDictionary(context: Context?): Boolean {
