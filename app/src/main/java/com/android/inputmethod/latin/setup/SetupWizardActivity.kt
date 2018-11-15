@@ -19,15 +19,14 @@ package com.android.inputmethod.latin.setup
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import android.content.res.Resources
 import android.os.Bundle
 import android.os.Message
 import android.provider.Settings
 import android.view.View
-import android.view.inputmethod.InputMethodInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
 
+import com.android.inputmethod.compat.TextViewCompatUtils
 import com.android.inputmethod.compat.ViewCompatUtils
 import com.android.inputmethod.latin.R
 import com.android.inputmethod.latin.settings.SettingsActivity
@@ -39,16 +38,16 @@ import java.util.ArrayList
 // TODO: Use Fragment to implement welcome screen and setup steps.
 class SetupWizardActivity : Activity(), View.OnClickListener {
 
-    private var mImm: InputMethodManager? = null
+    private lateinit var mImm: InputMethodManager
 
-    private var mSetupWizard: View? = null
-    private var mWelcomeScreen: View? = null
-    private var mSetupScreen: View? = null
-    private var mActionStart: View? = null
-    private var mActionNext: View? = null
+    private lateinit var mSetupWizard: View
+    private lateinit var mWelcomeScreen: View
+    private lateinit var mSetupScreen: View
+    private lateinit var mActionStart: View
+    private lateinit var mActionNext: View
     private lateinit var mStep1Bullet: TextView
-    private var mActionFinish: TextView? = null
-    private var mSetupStepGroup: SetupStepGroup? = null
+    private lateinit var mActionFinish: TextView
+    private lateinit var mSetupStepGroup: SetupStepGroup
     private var mStepNumber: Int = 0
     private var mNeedsToAdjustStepNumberToSystemState: Boolean = false
 
@@ -81,8 +80,8 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         }
 
         companion object {
-            private val MSG_POLLING_IME_SETTINGS = 0
-            private val IME_SETTINGS_POLLING_INTERVAL: Long = 200
+            private const val MSG_POLLING_IME_SETTINGS = 0
+            private const val IME_SETTINGS_POLLING_INTERVAL: Long = 200
         }
     }
 
@@ -90,18 +89,13 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         setTheme(android.R.style.Theme_Translucent_NoTitleBar)
         super.onCreate(savedInstanceState)
 
-        val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        mHandler = SettingsPoolingHandler(this, imm)
-        mImm = imm
+        mImm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        mHandler = SettingsPoolingHandler(this, mImm)
 
         setContentView(R.layout.setup_wizard)
         mSetupWizard = findViewById(R.id.setup_wizard)
 
-        if (savedInstanceState == null) {
-            mStepNumber = determineSetupStepNumberFromLauncher()
-        } else {
-            mStepNumber = savedInstanceState.getInt(STATE_STEP)
-        }
+        mStepNumber = savedInstanceState?.getInt(STATE_STEP) ?: determineSetupStepNumberFromLauncher()
 
         val applicationName = resources.getString(applicationInfo.labelRes)
         mWelcomeScreen = findViewById(R.id.setup_welcome_screen)
@@ -116,7 +110,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         mSetupStepGroup = SetupStepGroup(indicatorView)
 
         mStep1Bullet = findViewById<View>(R.id.setup_step1_bullet) as TextView
-        mStep1Bullet!!.setOnClickListener(this)
+        mStep1Bullet.setOnClickListener(this)
         val step1 = SetupStep(STEP_1, applicationName,
                 mStep1Bullet, findViewById(R.id.setup_step1),
                 R.string.setup_step1_title, R.string.setup_step1_instruction,
@@ -127,7 +121,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
             invokeLanguageAndInputSettings()
             handler!!.startPollingImeSettings()
         })
-        mSetupStepGroup!!.addStep(step1)
+        mSetupStepGroup.addStep(step1)
 
         val step2 = SetupStep(STEP_2, applicationName,
                 findViewById<View>(R.id.setup_step2_bullet) as TextView, findViewById(R.id.setup_step2),
@@ -135,7 +129,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
                 0 /* finishedInstruction */, R.drawable.ic_setup_step2,
                 R.string.setup_step2_action)
         step2.setAction(Runnable { invokeInputMethodPicker() })
-        mSetupStepGroup!!.addStep(step2)
+        mSetupStepGroup.addStep(step2)
 
         val step3 = SetupStep(STEP_3, applicationName,
                 findViewById<View>(R.id.setup_step3_bullet) as TextView, findViewById(R.id.setup_step3),
@@ -143,15 +137,16 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
                 0 /* finishedInstruction */, R.drawable.ic_setup_step3,
                 R.string.setup_step3_action)
         step3.setAction(Runnable { invokeSubtypeEnablerOfThisIme() })
-        mSetupStepGroup!!.addStep(step3)
+        mSetupStepGroup.addStep(step3)
 
         mActionStart = findViewById(R.id.setup_start_label)
-        mActionStart!!.setOnClickListener(this)
+        mActionStart.setOnClickListener(this)
         mActionNext = findViewById(R.id.setup_next)
-        mActionNext!!.setOnClickListener(this)
+        mActionNext.setOnClickListener(this)
         mActionFinish = findViewById<View>(R.id.setup_finish) as TextView
-        mActionFinish!!.setCompoundDrawablesRelativeWithIntrinsicBounds(resources.getDrawable(R.drawable.ic_setup_finish), null, null, null)
-        mActionFinish!!.setOnClickListener(this)
+        TextViewCompatUtils.setCompoundDrawablesRelativeWithIntrinsicBounds(mActionFinish,
+                resources.getDrawable(R.drawable.ic_setup_finish), null, null, null)
+        mActionFinish.setOnClickListener(this)
     }
 
     override fun onClick(v: View) {
@@ -161,14 +156,14 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         }
         val currentStep = determineSetupStepNumber()
         val nextStep: Int
-        if (v === mActionStart) {
-            nextStep = STEP_1
+        nextStep = if (v === mActionStart) {
+            STEP_1
         } else if (v === mActionNext) {
-            nextStep = mStepNumber + 1
+            mStepNumber + 1
         } else if (v === mStep1Bullet && currentStep == STEP_2) {
-            nextStep = STEP_1
+            STEP_1
         } else {
-            nextStep = mStepNumber
+            mStepNumber
         }
         if (mStepNumber != nextStep) {
             mStepNumber = nextStep
@@ -195,7 +190,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         startActivity(intent)
     }
 
-    internal fun invokeLanguageAndInputSettings() {
+    private fun invokeLanguageAndInputSettings() {
         val intent = Intent()
         intent.action = Settings.ACTION_INPUT_METHOD_SETTINGS
         intent.addCategory(Intent.CATEGORY_DEFAULT)
@@ -203,14 +198,14 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         mNeedsToAdjustStepNumberToSystemState = true
     }
 
-    internal fun invokeInputMethodPicker() {
+    private fun invokeInputMethodPicker() {
         // Invoke input method picker.
-        mImm!!.showInputMethodPicker()
+        mImm.showInputMethodPicker()
         mNeedsToAdjustStepNumberToSystemState = true
     }
 
-    internal fun invokeSubtypeEnablerOfThisIme() {
-        val imi = UncachedInputMethodManagerUtils.getInputMethodInfoOf(packageName, mImm!!)
+    private fun invokeSubtypeEnablerOfThisIme() {
+        val imi = UncachedInputMethodManagerUtils.getInputMethodInfoOf(packageName, mImm)
                 ?: return
         val intent = Intent()
         intent.action = Settings.ACTION_INPUT_METHOD_SUBTYPE_SETTINGS
@@ -231,7 +226,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
 
     private fun determineSetupStepNumber(): Int {
         mHandler!!.cancelPollingImeSettings()
-        if (!UncachedInputMethodManagerUtils.isThisImeEnabled(this, mImm!!)) {
+        if (!UncachedInputMethodManagerUtils.isThisImeEnabled(this, mImm)) {
             return STEP_1
         }
         return if (!UncachedInputMethodManagerUtils.isThisImeCurrent(this, mImm)) {
@@ -263,7 +258,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         super.onResume()
         if (mStepNumber == STEP_LAUNCHING_IME_SETTINGS) {
             // Prevent white screen flashing while launching settings activity.
-            mSetupWizard!!.visibility = View.INVISIBLE
+            mSetupWizard.visibility = View.INVISIBLE
             invokeSettingsOfThisIme()
             mStepNumber = STEP_BACK_FROM_IME_SETTINGS
             return
@@ -284,10 +279,6 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         super.onBackPressed()
     }
 
-    override fun onPause() {
-        super.onPause()
-    }
-
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus && mNeedsToAdjustStepNumberToSystemState) {
@@ -298,14 +289,15 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
     }
 
     private fun updateSetupStepView() {
-        mSetupWizard!!.visibility = View.VISIBLE
+        mSetupWizard.visibility = View.VISIBLE
         val welcomeScreen = mStepNumber == STEP_WELCOME
-        mWelcomeScreen!!.visibility = if (welcomeScreen) View.VISIBLE else View.GONE
-        mSetupScreen!!.visibility = if (welcomeScreen) View.GONE else View.VISIBLE
+        mWelcomeScreen.visibility = if (welcomeScreen) View.VISIBLE else View.GONE
+        mSetupScreen.visibility = if (welcomeScreen) View.GONE else View.VISIBLE
+
         val isStepActionAlreadyDone = mStepNumber < determineSetupStepNumber()
-        mSetupStepGroup!!.enableStep(mStepNumber, isStepActionAlreadyDone)
-        mActionNext!!.visibility = if (isStepActionAlreadyDone) View.VISIBLE else View.GONE
-        mActionFinish!!.visibility = if (mStepNumber == STEP_3) View.VISIBLE else View.GONE
+        mSetupStepGroup.enableStep(mStepNumber, isStepActionAlreadyDone)
+        mActionNext.visibility = if (isStepActionAlreadyDone) View.VISIBLE else View.GONE
+        mActionFinish.visibility = if (mStepNumber == STEP_3) View.VISIBLE else View.GONE
     }
 
     internal class SetupStep(val mStepNo: Int, applicationName: String, private val mBulletView: TextView,
@@ -340,7 +332,8 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
                 val paddingEnd = ViewCompatUtils.getPaddingEnd(mActionLabel)
                 ViewCompatUtils.setPaddingRelative(mActionLabel, paddingEnd, 0, paddingEnd, 0)
             } else {
-                mActionLabel.setCompoundDrawablesRelativeWithIntrinsicBounds(res.getDrawable(actionIcon), null, null, null)
+                TextViewCompatUtils.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                        mActionLabel, res.getDrawable(actionIcon), null, null, null)
             }
         }
 
@@ -383,6 +376,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
 
     companion object {
         internal val TAG = SetupWizardActivity::class.java.simpleName
+
         private const val STATE_STEP = "step"
         private const val STEP_WELCOME = 0
         private const val STEP_1 = 1
@@ -392,7 +386,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         private const val STEP_BACK_FROM_IME_SETTINGS = 5
 
         private fun isInSetupSteps(stepNumber: Int): Boolean {
-            return stepNumber >= STEP_1 && stepNumber <= STEP_3
+            return stepNumber in STEP_1..STEP_3
         }
     }
 }
