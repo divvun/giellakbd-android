@@ -101,8 +101,8 @@ public final class MoreSuggestionsView extends MoreKeysKeyboardView {
                     + keyboard.getClass().getName());
             return;
         }
-        final SuggestedWords suggestedWords = ((MoreSuggestions)keyboard).mSuggestedWords;
-        final int index = ((MoreSuggestionKey)key).mSuggestedWordIndex;
+        final SuggestedWords suggestedWords = ((MoreSuggestions) keyboard).getMSuggestedWords();
+        final int index = ((MoreSuggestionKey) key).getMSuggestedWordIndex();
         if (index < 0 || index >= suggestedWords.size()) {
             Log.e(TAG, "Selected suggestion has an illegal index: " + index);
             return;
