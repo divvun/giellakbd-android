@@ -16,9 +16,9 @@
 
 package com.android.inputmethod.latin.accounts;
 
-import android.support.annotation.NonNull;
-
 import javax.annotation.Nullable;
+
+import androidx.annotation.NonNull;
 
 /**
  * Handles changes to account used to sign in to the keyboard.

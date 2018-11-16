@@ -18,9 +18,6 @@ package com.android.inputmethod.accessibility;
 
 import android.content.Context;
 import android.os.SystemClock;
-import android.support.v4.view.AccessibilityDelegateCompat;
-import android.support.v4.view.ViewCompat;
-import android.support.v4.view.accessibility.AccessibilityNodeInfoCompat;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -31,6 +28,10 @@ import com.android.inputmethod.keyboard.Key;
 import com.android.inputmethod.keyboard.KeyDetector;
 import com.android.inputmethod.keyboard.Keyboard;
 import com.android.inputmethod.keyboard.KeyboardView;
+
+import androidx.core.view.AccessibilityDelegateCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.accessibility.AccessibilityNodeInfoCompat;
 
 /**
  * This class represents a delegate that can be registered in a class that extends
@@ -132,11 +133,13 @@ public class KeyboardAccessibilityDelegate<KV extends KeyboardView>
      * @param host The host view for the provider.
      * @return The accessibility node provider for the current keyboard.
      */
+    /**
     @Override
     public KeyboardAccessibilityNodeProvider<KV> getAccessibilityNodeProvider(final View host) {
         return getAccessibilityNodeProvider();
     }
 
+    */
     /**
      * @return A lazily-instantiated node provider for this view delegate.
      */

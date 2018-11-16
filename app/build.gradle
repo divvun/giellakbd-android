@@ -3,14 +3,14 @@ apply plugin: 'kotlin-android'
 apply from: 'local.gradle'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
     buildToolsVersion "28.0.3"
 
     defaultConfig {
         applicationId "com.android.inputmethod.latin"
 //        applicationId "se.brendan.testkbd"
         minSdkVersion 21
-        targetSdkVersion 27
+        targetSdkVersion 28
 
         versionCode app.versionCode
         versionName app.versionName
@@ -42,7 +42,7 @@ android {
 
 dependencies {
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'io.sentry:sentry-android:1.7.14'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
     implementation "net.java.dev.jna:jna:4.5.2@aar"
