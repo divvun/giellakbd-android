@@ -485,7 +485,7 @@
         </attr>
         <!-- This should be aligned with
              {@link com.android.inputmethod.keyboard.KeyboardId#MODE_TEXT} etc. -->
-        <attr name="mode" format="enum|string">
+        <attr name="textMode" format="enum|string">
             <enum name="text" value="0" />
             <enum name="url" value="1" />
             <enum name="email" value="2" />

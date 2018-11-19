@@ -23,7 +23,7 @@
 >
     <switch>
         <case
-            latin:mode="email|url"
+            latin:textMode="email|url"
         >
             <Key
                 latin:keyStyle="comKeyStyle"

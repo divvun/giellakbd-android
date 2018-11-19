@@ -23,14 +23,14 @@
 >
     <switch>
         <case
-            latin:mode="url"
+            latin:textMode="url"
         >
             <Key
                 latin:keySpec="/"
                 latin:keyStyle="settingsMoreKeysStyle" />
         </case>
         <case
-            latin:mode="email"
+            latin:textMode="email"
         >
             <Key
                 latin:keySpec="\@"

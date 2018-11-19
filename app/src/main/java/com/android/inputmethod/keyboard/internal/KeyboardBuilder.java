@@ -652,7 +652,7 @@ public class KeyboardBuilder<KP extends KeyboardParams> {
                     R.styleable.Keyboard_Case_keyboardTheme, mParams.mThemeId,
                     KeyboardTheme.Companion.getKeyboardThemeName(mParams.mThemeId));
             final boolean modeMatched = matchTypedValue(caseAttr,
-                    R.styleable.Keyboard_Case_mode, id.getMMode(), KeyboardId.Companion.modeName(id.getMMode()));
+                    R.styleable.Keyboard_Case_textMode, id.getMMode(), KeyboardId.Companion.modeName(id.getMMode()));
             final boolean navigateNextMatched = matchBoolean(caseAttr,
                     R.styleable.Keyboard_Case_navigateNext, id.navigateNext());
             final boolean navigatePreviousMatched = matchBoolean(caseAttr,
@@ -695,7 +695,7 @@ public class KeyboardBuilder<KP extends KeyboardParams> {
                                 "keyboardLayoutSetElement"),
                         textAttr(caseAttr.getString(
                                 R.styleable.Keyboard_Case_keyboardTheme), "keyboardTheme"),
-                        textAttr(caseAttr.getString(R.styleable.Keyboard_Case_mode), "mode"),
+                        textAttr(caseAttr.getString(R.styleable.Keyboard_Case_textMode), "textMode"),
                         textAttr(caseAttr.getString(R.styleable.Keyboard_Case_imeAction),
                                 "imeAction"),
                         booleanAttr(caseAttr, R.styleable.Keyboard_Case_navigateNext,

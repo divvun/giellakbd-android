@@ -51,7 +51,7 @@
             latin:keyStyle="numKeyStyle" />
         <switch>
             <case
-                latin:mode="date"
+                latin:textMode="date"
             >
                 <Key
                     latin:keySpec="."
@@ -60,7 +60,7 @@
                     latin:keyWidth="fillRight" />
             </case>
             <case
-                latin:mode="time|datetime"
+                latin:textMode="time|datetime"
             >
                 <Key
                     latin:keySpec="."
@@ -96,21 +96,21 @@
     <Row>
         <switch>
             <case
-                latin:mode="date"
+                latin:textMode="date"
             >
                 <Key
                     latin:keySpec="/"
                     latin:keyStyle="numKeyStyle" />
             </case>
             <case
-                latin:mode="time"
+                latin:textMode="time"
             >
                 <Key
                     latin:keySpec=":"
                     latin:keyStyle="numKeyStyle" />
             </case>
             <case
-                latin:mode="datetime"
+                latin:textMode="datetime"
             >
                 <Key
                     latin:keySpec="/ :|/"

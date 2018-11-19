@@ -88,11 +88,11 @@
             <key-style
                 latin:styleName="navigateMoreKeysStyle" />
         </case>
-        <!-- latin:mode="email|url|phone|number|date|time|datetime" -->
+        <!-- latin:textMode="email|url|phone|number|date|time|datetime" -->
         <case
             latin:imeAction="actionNext"
             latin:navigatePrevious="true"
-            latin:mode="email|url|phone|number|date|time|datetime"
+            latin:textMode="email|url|phone|number|date|time|datetime"
         >
             <key-style
                 latin:styleName="navigateMoreKeysStyle"
@@ -100,7 +100,7 @@
         </case>
         <case
             latin:imeAction="actionNext"
-            latin:mode="email|url|phone|number|date|time|datetime"
+            latin:textMode="email|url|phone|number|date|time|datetime"
         >
             <key-style
                 latin:styleName="navigateMoreKeysStyle" />
@@ -108,7 +108,7 @@
         <case
             latin:imeAction="actionPrevious"
             latin:navigateNext="true"
-            latin:mode="email|url|phone|number|date|time|datetime"
+            latin:textMode="email|url|phone|number|date|time|datetime"
         >
             <key-style
                 latin:styleName="navigateMoreKeysStyle"
@@ -116,7 +116,7 @@
         </case>
         <case
             latin:imeAction="actionPrevious"
-            latin:mode="email|url|phone|number|date|time|datetime"
+            latin:textMode="email|url|phone|number|date|time|datetime"
         >
             <key-style
                 latin:styleName="navigateMoreKeysStyle" />
@@ -124,7 +124,7 @@
         <case
             latin:navigateNext="true"
             latin:navigatePrevious="true"
-            latin:mode="email|url|phone|number|date|time|datetime"
+            latin:textMode="email|url|phone|number|date|time|datetime"
         >
             <key-style
                 latin:styleName="navigateMoreKeysStyle"
@@ -132,7 +132,7 @@
         </case>
         <case
             latin:navigateNext="true"
-            latin:mode="email|url|phone|number|date|time|datetime"
+            latin:textMode="email|url|phone|number|date|time|datetime"
         >
             <key-style
                 latin:styleName="navigateMoreKeysStyle"
@@ -140,14 +140,14 @@
         </case>
         <case
             latin:navigatePrevious="true"
-            latin:mode="email|url|phone|number|date|time|datetime"
+            latin:textMode="email|url|phone|number|date|time|datetime"
         >
             <key-style
                 latin:styleName="navigateMoreKeysStyle"
                 latin:parentStyle="navigatePreviousMoreKeysStyle" />
         </case>
         <case
-            latin:mode="email|url|phone|number|date|time|datetime"
+            latin:textMode="email|url|phone|number|date|time|datetime"
         >
             <key-style
                 latin:styleName="navigateMoreKeysStyle" />
@@ -248,7 +248,7 @@
         <!-- Smiley in textShortMessage field.
              This <case> should be after Shift + Enter <case> and before any of action <case>. -->
         <case
-            latin:mode="im"
+            latin:textMode="im"
         >
             <key-style
                 latin:styleName="enterKeyStyle"
