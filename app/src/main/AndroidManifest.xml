@@ -79,10 +79,19 @@
             android:taskAffinity="" >
         </activity>
 
-        <activity android:name="com.android.inputmethod.latin.setup.SetupWizardActivity"
+        <activity android:name="com.android.inputmethod.latin.setup.SetupWizardActivityOld"
                 android:theme="@style/platformActivityTheme"
                 android:label="@string/english_ime_name"
                 android:clearTaskOnLaunch="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name="com.android.inputmethod.latin.setup.SetupWizardActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:label="@string/english_ime_name"
+            android:clearTaskOnLaunch="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/fragment_setup_wizard">
+
+    <fragment
+        android:id="@+id/fragment_setup_wizard"
+        android:name="com.android.inputmethod.latin.setup.SetupWizardFragment">
+    </fragment>
+
+</navigation>
