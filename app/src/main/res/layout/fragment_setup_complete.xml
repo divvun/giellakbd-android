@@ -21,7 +21,7 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/fragment_setup_wizard"
+    android:id="@+id/fragment_setup_complete"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/setup_background"
@@ -31,50 +31,18 @@
     android:paddingBottom="@dimen/setup_vertical_padding">
 
     <TextView
-        android:id="@+id/tv_wizard_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/setup_welcome_title"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
+        android:text="Setup complete!"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Complete"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         />
-
-    <TextView
-        android:id="@+id/tv_wizard_description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/setup_welcome_additional_description"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/tv_wizard_title" />
-
-    <Button
-        android:id="@+id/step1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Do step 1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintVertical_chainStyle="packed"
-        app:layout_constraintTop_toBottomOf="@id/tv_wizard_description"
-        app:layout_constraintBottom_toBottomOf="@id/step2"/>
-    <Button
-        android:id="@+id/step2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Do step 2"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/step1"
-        app:layout_constraintBottom_toTopOf="@id/setup_wizard_next"/>
-
-    <Button
-        android:id="@+id/setup_wizard_next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Next"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
 </androidx.constraintlayout.widget.ConstraintLayout>

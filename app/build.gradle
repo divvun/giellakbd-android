@@ -48,7 +48,7 @@ dependencies {
     implementation "net.java.dev.jna:jna:4.5.2@aar"
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
-
+    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
 
     implementation "android.arch.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "android.arch.navigation:navigation-ui-ktx:$navigationVersion"

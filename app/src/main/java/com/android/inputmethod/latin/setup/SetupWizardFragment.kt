@@ -18,57 +18,48 @@ package com.android.inputmethod.latin.setup
 
 import android.content.Intent
 import android.os.Bundle
-import android.os.Message
 import android.provider.Settings
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.getSystemService
 import androidx.fragment.app.Fragment
 
 import com.android.inputmethod.latin.R
 import com.android.inputmethod.latin.settings.SettingsActivity
-import com.android.inputmethod.latin.utils.LeakGuardHandlerWrapper
 import com.android.inputmethod.latin.utils.UncachedInputMethodManagerUtils
 import kotlinx.android.synthetic.main.fragment_setup_wizard.view.*
+import no.divvun.navigate
 
-// TODO: Use Fragment to implement welcome screen and setup steps.
 class SetupWizardFragment : Fragment() {
     private lateinit var imm: InputMethodManager
-    private lateinit var handler: SettingsPollingHandler
 
     private var imeSettingTriggered = false
+
+    private val windowFocusListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
+        if(hasFocus) {
+            val step = determineSetupStep()
+            updateSetupStep(step)
+        }
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_setup_wizard, container, false)
 
         imm = activity!!.getSystemService<InputMethodManager>()!!
-        handler = SettingsPollingHandler(this, imm)
 
-        val handler = handler
         view.step1.setOnClickListener {
             invokeLanguageAndInputSettings()
-            handler.startPollingImeSettings()
         }
 
         view.step2.setOnClickListener {
             invokeInputMethodPicker()
         }
 
-        /**
-        view.step3.setOnClickListener {
-            invokeSubtypeEnablerOfThisIme()
-        }*/
-
-        // Listener for changes on WindowFocusChanged (return from change of InputMethod
-        view.viewTreeObserver.addOnWindowFocusChangeListener{
-            // Window has focus
-            if(it) {
-                val step = determineSetupStep()
-                updateSetupStep(step)
-            }
+        view.setup_wizard_next.setOnClickListener {
+            navigate(R.id.action_fragment_setup_wizard_to_fragment_setup_complete)
         }
 
         return view
@@ -116,7 +107,6 @@ class SetupWizardFragment : Fragment() {
     }
 
     private fun determineSetupStep(): SetupStep {
-        handler.cancelPollingImeSettings()
         if (!UncachedInputMethodManagerUtils.isThisImeEnabled(activity!!, imm)) {
             return SetupStep.StepIME
         }
@@ -127,37 +117,45 @@ class SetupWizardFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+
+        // Listener for changes on WindowFocusChanged (return from change of InputMethod
+        view!!.viewTreeObserver.addOnWindowFocusChangeListener(windowFocusListener)
+
         val step = determineSetupStep()
         if(step is SetupStep.StepComplete){
-            invokeSettingsOfThisIme()
             if(imeSettingTriggered){
                 activity!!.finish()
                 return
             } else {
                 imeSettingTriggered = true
+                invokeSettingsOfThisIme()
             }
         }
         updateSetupStep(step)
     }
 
-    private fun updateSetupStep(step: SetupStep) {
+    override fun onPause() {
+        super.onPause()
+        view!!.viewTreeObserver.removeOnWindowFocusChangeListener(windowFocusListener)
+    }
 
+    private fun updateSetupStep(step: SetupStep) =
         when(step){
             SetupStep.StepIME -> {
-                view!!.step1.isEnabled = true
-                view!!.step2.isEnabled = true
+                view?.step1?.isEnabled = true
+                view?.step2?.isEnabled = false
             }
             SetupStep.StepSelectInput -> {
-                view!!.step1.isEnabled = false
-                view!!.step2.isEnabled = true
+                view?.step1?.isEnabled = false
+                view?.step2?.isEnabled = true
             }
             SetupStep.StepComplete -> {
-                view!!.step1.isEnabled = false
-                view!!.step2.isEnabled = false
+                view?.step1?.isEnabled = false
+                view?.step2?.isEnabled = false
+                navigate(R.id.action_fragment_setup_wizard_to_fragment_setup_complete)
             }
+            SetupStep.StepSubType -> {}
         }
-        Log.d(tag, "stepNumber: ${determineSetupStep()}")
-    }
 
     sealed class SetupStep {
         object StepIME: SetupStep()
@@ -165,37 +163,4 @@ class SetupWizardFragment : Fragment() {
         object StepSubType: SetupStep()
         object StepComplete: SetupStep()
     }
-
-    private class SettingsPollingHandler(ownerInstance: SetupWizardFragment,
-                                         private val immInHandler: InputMethodManager) : LeakGuardHandlerWrapper<SetupWizardFragment>(ownerInstance) {
-
-        override fun handleMessage(msg: Message) {
-            val setupWizardFragment = ownerInstance ?: return
-            when (msg.what) {
-                MSG_POLLING_IME_SETTINGS -> {
-                    if (UncachedInputMethodManagerUtils.isThisImeEnabled(setupWizardFragment.activity,
-                                    immInHandler)) {
-                        setupWizardFragment.invokeSetupWizardOfThisIme()
-                        return
-                    }
-                    startPollingImeSettings()
-                }
-            }
-        }
-
-        fun startPollingImeSettings() {
-            sendMessageDelayed(obtainMessage(MSG_POLLING_IME_SETTINGS),
-                    IME_SETTINGS_POLLING_INTERVAL)
-        }
-
-        fun cancelPollingImeSettings() {
-            removeMessages(MSG_POLLING_IME_SETTINGS)
-        }
-
-        companion object {
-            private const val MSG_POLLING_IME_SETTINGS = 0
-            private const val IME_SETTINGS_POLLING_INTERVAL: Long = 200
-        }
-    }
-
 }
