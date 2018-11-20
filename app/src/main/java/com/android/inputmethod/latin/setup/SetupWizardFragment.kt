@@ -37,7 +37,6 @@ class SetupWizardFragment : Fragment() {
     private lateinit var imm: InputMethodManager
 
     private var imeSettingTriggered = false
-
     private val windowFocusListener = ViewTreeObserver.OnWindowFocusChangeListener { hasFocus ->
         if(hasFocus) {
             val step = determineSetupStep()
@@ -50,28 +49,20 @@ class SetupWizardFragment : Fragment() {
 
         imm = activity!!.getSystemService<InputMethodManager>()!!
 
-        view.step1.setOnClickListener {
+        view.ssv_wizard_step1.setOnClickListener {
             invokeLanguageAndInputSettings()
         }
 
-        view.step2.setOnClickListener {
+        view.ssv_wizard_step2.setOnClickListener {
             invokeInputMethodPicker()
         }
 
+        /**
         view.setup_wizard_next.setOnClickListener {
             navigate(R.id.action_fragment_setup_wizard_to_fragment_setup_complete)
         }
-
+*/
         return view
-    }
-
-    internal fun invokeSetupWizardOfThisIme() {
-        val intent = Intent()
-        intent.setClass(activity!!, SetupWizardFragment::class.java)
-        intent.flags = (Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
-                or Intent.FLAG_ACTIVITY_SINGLE_TOP
-                or Intent.FLAG_ACTIVITY_CLEAR_TOP)
-        startActivity(intent)
     }
 
     private fun invokeSettingsOfThisIme() {
@@ -91,7 +82,6 @@ class SetupWizardFragment : Fragment() {
     }
 
     private fun invokeInputMethodPicker() {
-        // Invoke input method picker.
         imm.showInputMethodPicker()
     }
 
@@ -139,28 +129,27 @@ class SetupWizardFragment : Fragment() {
         view!!.viewTreeObserver.removeOnWindowFocusChangeListener(windowFocusListener)
     }
 
-    private fun updateSetupStep(step: SetupStep) =
+    private fun updateSetupStep(step: SetupStep) {
         when(step){
             SetupStep.StepIME -> {
-                view?.step1?.isEnabled = true
-                view?.step2?.isEnabled = false
+                view?.ssv_wizard_step1?.isEnabled = true
+                view?.ssv_wizard_step2?.isEnabled = false
             }
             SetupStep.StepSelectInput -> {
-                view?.step1?.isEnabled = false
-                view?.step2?.isEnabled = true
+                view?.ssv_wizard_step1?.isEnabled = false
+                view?.ssv_wizard_step2?.isEnabled = true
             }
             SetupStep.StepComplete -> {
-                view?.step1?.isEnabled = false
-                view?.step2?.isEnabled = false
+                view?.ssv_wizard_step1?.isEnabled = false
+                view?.ssv_wizard_step2?.isEnabled = false
                 navigate(R.id.action_fragment_setup_wizard_to_fragment_setup_complete)
             }
-            SetupStep.StepSubType -> {}
         }
+    }
 
     sealed class SetupStep {
         object StepIME: SetupStep()
         object StepSelectInput: SetupStep()
-        object StepSubType: SetupStep()
         object StepComplete: SetupStep()
     }
 }

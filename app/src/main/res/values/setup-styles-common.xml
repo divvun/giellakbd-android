@@ -21,7 +21,7 @@
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
-    <style name="setupWelcomeDescritpionStyle" parent="setupTitleStyle">
+    <style name="setupWelcomeDescriptionStyle" parent="setupTitleStyle">
         <item name="android:textSize">@dimen/setup_welcome_description_text_size</item>
     </style>
     <style name="setupStepIndicatorStyle">
@@ -38,7 +38,6 @@
     </style>
     <style name="setupStepBaseStyle">
         <item name="android:textColor">@color/setup_text_dark</item>
-        <item name="android:background">@color/setup_step_background</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:paddingLeft">@dimen/setup_step_horizontal_padding</item>

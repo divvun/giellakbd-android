@@ -11,6 +11,7 @@ buildscript {
         ktxVersion              = '1.0.1'
         ankoVersion             = '0.10.3'
         constraintLayoutVersion = '2.0.0-alpha2'
+        materialVersion         = '1.1.0-alpha01'
     }
 
     repositories {
