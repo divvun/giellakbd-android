@@ -132,16 +132,16 @@ class SetupWizardFragment : Fragment() {
     private fun updateSetupStep(step: SetupStep) {
         when(step){
             SetupStep.StepIME -> {
-                view?.ssv_wizard_step1?.isEnabled = true
-                view?.ssv_wizard_step2?.isEnabled = false
+                view?.ssv_wizard_step1?.active = true
+                view?.ssv_wizard_step2?.active = false
             }
             SetupStep.StepSelectInput -> {
-                view?.ssv_wizard_step1?.isEnabled = false
-                view?.ssv_wizard_step2?.isEnabled = true
+                view?.ssv_wizard_step1?.active = false
+                view?.ssv_wizard_step2?.active = true
             }
             SetupStep.StepComplete -> {
-                view?.ssv_wizard_step1?.isEnabled = false
-                view?.ssv_wizard_step2?.isEnabled = false
+                view?.ssv_wizard_step1?.active = false
+                view?.ssv_wizard_step2?.active = false
                 navigate(R.id.action_fragment_setup_wizard_to_fragment_setup_complete)
             }
         }
