@@ -22,10 +22,7 @@ object DivvunUtils {
         return getSpeller(resolveSpellerArchive(locale))
     }
 
-    private fun resolveSpellerArchive(locale: Locale): String = when(locale.language) {
-        "se" -> "se.zhfst"
-        else -> "se.zhfst"
-    }
+    private fun resolveSpellerArchive(locale: Locale): String = "${locale.language}.zhfst"
 
     private fun getSpeller(fileName: String): DivvunSpell {
         val inputStream = context.resources.assets.open(fileName)
