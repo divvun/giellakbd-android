@@ -25,7 +25,7 @@ object DivvunUtils {
     private fun resolveSpellerArchive(locale: Locale): String = "${locale.language}.zhfst"
 
     private fun getSpeller(fileName: String): DivvunSpell {
-        val inputStream = context.resources.assets.open(fileName)
+        val inputStream = context.resources.assets.open("dicts/$fileName")
         val outputStream = FileOutputStream(File(context.filesDir, fileName))
         inputStream.copyTo(outputStream)
         inputStream.close()
