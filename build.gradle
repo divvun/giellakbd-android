@@ -12,21 +12,16 @@ buildscript {
         ankoVersion             = '0.10.3'
         constraintLayoutVersion = '2.0.0-alpha2'
         materialVersion         = '1.1.0-alpha01'
-        rustPluginVersion       = '0.6.0'
     }
 
     repositories {
         jcenter()
         google()
-        maven {
-            url "../rust-android-gradle/samples/maven-repo"
-        }
     }
 
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
-        classpath "org.mozilla.rust-android-gradle:plugin:$rustPluginVersion"
     }
 }
 
