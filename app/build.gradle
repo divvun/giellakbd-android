@@ -2,6 +2,7 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply from: 'local.gradle'
+apply plugin: 'org.mozilla.rust-android-gradle.rust-android'
 
 android {
     compileSdkVersion 28
@@ -41,6 +42,17 @@ android {
     }
 }
 
+cargo {
+    module = "../../hfst-ospell-rs"
+    targets = ["arm", "arm64"]
+    libname = "hfstospell"
+    apiLevel = 21
+
+//    defaultToolchainBuildPrefixDir = com.sun.jna.Platform.RESOURCE_PREFIX
+    profile = 'release'
+    verbose = true
+}
+
 dependencies {
     implementation "androidx.legacy:legacy-support-v4:$legacySupportVersion"
     implementation "io.sentry:sentry-android:$sentryVersion"
@@ -64,4 +76,19 @@ dependencies {
 }
 repositories {
     mavenCentral()
+    maven {
+        url "./maven-repo"
+    }
+}
+
+afterEvaluate {
+    // The `cargoBuild` task isn't available until after evaluation.
+    android.applicationVariants.all { variant ->
+        def productFlavor = ""
+        variant.productFlavors.each {
+            productFlavor += "${it.name.capitalize()}"
+        }
+        def buildType = "${variant.buildType.name.capitalize()}"
+        tasks["generate${productFlavor}${buildType}Assets"].dependsOn(tasks["cargoBuild"])
+    }
 }
