@@ -3,6 +3,10 @@ apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply from: 'local.gradle'
 
+Properties properties = new Properties()
+properties.load(project.rootProject.file('local.properties').newDataInputStream())
+def storePw = properties.getProperty('store.pw')
+def keyPw = properties.getProperty('key.pw')
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
@@ -21,8 +25,8 @@ android {
         release {
             storeFile rootProject.file(app.storeFile)
             keyAlias app.keyAlias
-            storePassword System.getenv("STORE_PW")
-            keyPassword System.getenv("KEY_PW")
+            storePassword storePw
+            keyPassword keyPw
         }
     }
 
