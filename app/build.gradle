@@ -19,14 +19,14 @@ android {
         versionName app.versionName
     }
 
-    signingConfigs {
-        release {
-            // storeFile rootProject.file(app.storeFile)
-            // keyAlias app.keyAlias
-            // storePassword storePw
-            // keyPassword keyPw
-        }
-    }
+    // signingConfigs {
+    //     release {
+    //         // storeFile rootProject.file(app.storeFile)
+    //         // keyAlias app.keyAlias
+    //         // storePassword storePw
+    //         // keyPassword keyPw
+    //     }
+    // }
 
     buildTypes {
         release {
