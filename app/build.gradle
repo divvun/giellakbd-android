@@ -5,8 +5,7 @@ apply from: 'local.gradle'
 
 Properties properties = new Properties()
 properties.load(project.rootProject.file('local.properties').newDataInputStream())
-def storePw = properties.getProperty('store.pw')
-def keyPw = properties.getProperty('key.pw')
+
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
@@ -22,10 +21,10 @@ android {
 
     signingConfigs {
         release {
-            storeFile rootProject.file(app.storeFile)
-            keyAlias app.keyAlias
-            storePassword storePw
-            keyPassword keyPw
+            // storeFile rootProject.file(app.storeFile)
+            // keyAlias app.keyAlias
+            // storePassword storePw
+            // keyPassword keyPw
         }
     }
 
@@ -33,7 +32,7 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.release
+            // signingConfig signingConfigs.release
         }
     }
 
@@ -65,6 +64,13 @@ dependencies {
     // Android Kotlin Extensions
     implementation "androidx.core:core-ktx:$ktxVersion"
 }
+
 repositories {
     mavenCentral()
+}
+
+play {
+    track = "alpha"
+    serviceAccountEmail = properties.getProperty("play.email")
+    serviceAccountCredentials = file(properties.getProperty("play.credentials"))
 }
