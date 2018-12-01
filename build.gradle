@@ -19,14 +19,14 @@ buildscript {
         google()
     }
 
-    plugins {
-        id 'com.github.triplet.play' version '2.0.0'
-    }
-
     dependencies {
         classpath 'com.android.tools.build:gradle:3.2.1'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
     }
+}
+
+plugins {
+    id 'com.github.triplet.play' version '2.0.0'
 }
 
 allprojects {
