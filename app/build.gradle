@@ -1,14 +1,19 @@
+plugins {
+    id 'com.github.triplet.play' version '2.0.0'
+}
+
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply from: 'local.gradle'
+apply plugin: 'com.github.triplet.play'
 
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId "com.android.inputmethod.latin"
+        applicationId app.packageName
         minSdkVersion 21
         targetSdkVersion 28
 
@@ -16,28 +21,32 @@ android {
         versionName app.versionName
     }
 
-    // signingConfigs {
-    //     release {
-    //         // storeFile rootProject.file(app.storeFile)
-    //         // keyAlias app.keyAlias
-    //         // storePassword storePw
-    //         // keyPassword keyPw
-    //     }
-    // }
+    signingConfigs {
+        release {
+            storeFile rootProject.file(app.storeFile)
+            keyAlias app.keyAlias
+            storePassword app.storePassword
+            keyPassword app.keyPassword
+        }
+    }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            // signingConfig signingConfigs.release
+            signingConfig signingConfigs.release
         }
     }
-
-    aaptOptions.additionalParameters("--rename-manifest-package", app.packageName)
 
     lintOptions {
         checkReleaseBuilds false
     }
+}
+
+play {
+    track = "alpha"
+    serviceAccountEmail = app.playEmail
+    serviceAccountCredentials = file(app.playCredentials)
 }
 
 dependencies {
@@ -64,10 +73,4 @@ dependencies {
 
 repositories {
     mavenCentral()
-}
-
-play {
-    track = "alpha"
-    serviceAccountEmail = app.playEmail
-    serviceAccountCredentials = file(app.playCredentials)
 }

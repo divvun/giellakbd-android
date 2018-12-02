@@ -25,15 +25,9 @@ buildscript {
     }
 }
 
-plugins {
-    id 'com.github.triplet.play' version '2.0.0'
-}
-
 allprojects {
     repositories {
         jcenter()
         google()
     }
 }
-
-apply plugin: 'com.github.triplet.play'
