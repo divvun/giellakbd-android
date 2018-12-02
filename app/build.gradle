@@ -1,12 +1,17 @@
 plugins {
     id 'com.github.triplet.play' version '2.0.0'
 }
-
+apply from: 'local.gradle'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply from: 'local.gradle'
 apply plugin: 'com.github.triplet.play'
+
+play {
+    track = "alpha"
+    serviceAccountEmail = app.playEmail
+    serviceAccountCredentials = app.playCredentials != "" ? file(app.playCredentials) : file("/dev/null")
+}
 
 android {
     compileSdkVersion 28
@@ -21,20 +26,22 @@ android {
         versionName app.versionName
     }
 
-    signingConfigs {
-        release {
-            storeFile rootProject.file(app.storeFile)
-            keyAlias app.keyAlias
-            storePassword app.storePassword
-            keyPassword app.keyPassword
+    if (app.storeFile != "") {
+        signingConfigs {
+            release {
+                storeFile app.storeFile != "" ? rootProject.file(app.storeFile) : null
+                keyAlias app.keyAlias
+                storePassword app.storePassword
+                keyPassword app.keyPassword
+            }
         }
-    }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
-            signingConfig signingConfigs.release
+        buildTypes {
+            release {
+                minifyEnabled false
+                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.txt'
+                signingConfig signingConfigs.release
+            }
         }
     }
 
@@ -43,11 +50,6 @@ android {
     }
 }
 
-play {
-    track = "alpha"
-    serviceAccountEmail = app.playEmail
-    serviceAccountCredentials = file(app.playCredentials)
-}
 
 dependencies {
     implementation "androidx.legacy:legacy-support-v4:$legacySupportVersion"
