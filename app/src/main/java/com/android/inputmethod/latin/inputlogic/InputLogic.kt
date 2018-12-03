@@ -228,7 +228,7 @@ class InputLogic
      * @param combiningSpec the spec string for the combining rules
      * @param settingsValues the current settings values
      */
-    fun onSubtypeChanged(combiningSpec: String, settingsValues: SettingsValues) {
+    fun onSubtypeChanged(combiningSpec: String?, settingsValues: SettingsValues) {
         finishInput()
         startInput(combiningSpec, settingsValues)
     }

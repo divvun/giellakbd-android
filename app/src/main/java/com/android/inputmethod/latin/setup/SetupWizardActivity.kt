@@ -50,6 +50,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
     private lateinit var mSetupStepGroup: SetupStepGroup
     private var mStepNumber: Int = 0
     private var mNeedsToAdjustStepNumberToSystemState: Boolean = false
+    private var hasSeenSubtypes = false
 
     private var mHandler: SettingsPoolingHandler? = null
 
@@ -205,6 +206,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
     }
 
     private fun invokeSubtypeEnablerOfThisIme() {
+        hasSeenSubtypes = true
         val imi = UncachedInputMethodManagerUtils.getInputMethodInfoOf(packageName, mImm)
                 ?: return
         val intent = Intent()
@@ -288,6 +290,10 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         }
     }
 
+    private fun isFinishVisible(): Boolean {
+        return mStepNumber == STEP_3 && hasSeenSubtypes
+    }
+
     private fun updateSetupStepView() {
         mSetupWizard.visibility = View.VISIBLE
         val welcomeScreen = mStepNumber == STEP_WELCOME
@@ -297,7 +303,7 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         val isStepActionAlreadyDone = mStepNumber < determineSetupStepNumber()
         mSetupStepGroup.enableStep(mStepNumber, isStepActionAlreadyDone)
         mActionNext.visibility = if (isStepActionAlreadyDone) View.VISIBLE else View.GONE
-        mActionFinish.visibility = if (mStepNumber == STEP_3) View.VISIBLE else View.GONE
+        mActionFinish.visibility = if (isFinishVisible()) View.VISIBLE else View.GONE
     }
 
     internal class SetupStep(val mStepNo: Int, applicationName: String, private val mBulletView: TextView,
