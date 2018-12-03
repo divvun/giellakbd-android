@@ -57,8 +57,6 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation "net.java.dev.jna:jna:4.5.2@aar"
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation "org.jetbrains.anko:anko-commons:$ankoVersion"
-    implementation "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion"
 
     implementation "android.arch.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "android.arch.navigation:navigation-ui-ktx:$navigationVersion"
@@ -66,8 +64,6 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
-
-    implementation "com.google.android.material:material:$materialVersion"
 
     // Android Kotlin Extensions
     implementation "androidx.core:core-ktx:$ktxVersion"

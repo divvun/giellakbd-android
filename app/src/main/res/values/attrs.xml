@@ -599,11 +599,4 @@
         <attr name="minValue" format="integer" />
         <attr name="stepValue" format="integer" />
     </declare-styleable>
-
-    <declare-styleable name="SetupStepView">
-        <attr name="header" format="reference" />
-        <attr name="description" format="reference" />
-        <attr name="icon" format="reference" />
-        <attr name="buttonText" format="reference" />
-    </declare-styleable>
 </resources>

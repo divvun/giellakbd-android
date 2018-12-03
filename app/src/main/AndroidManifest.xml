@@ -78,9 +78,9 @@
         </activity>
 
         <activity android:name="com.android.inputmethod.latin.setup.SetupWizardActivity"
-            android:theme="@style/Theme.MaterialComponents.Light.NoActionBar"
-            android:label="@string/english_ime_name"
-            android:clearTaskOnLaunch="true">
+                android:theme="@style/platformActivityTheme"
+                android:label="@string/english_ime_name"
+                android:clearTaskOnLaunch="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
