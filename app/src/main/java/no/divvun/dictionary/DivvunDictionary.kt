@@ -13,9 +13,9 @@ import no.divvun.DivvunUtils
 import no.divvun.createTag
 import kotlin.collections.ArrayList
 
-class DivvunDictionary: Dictionary(Dictionary.TYPE_MAIN, Locale("se", "")) {
+class DivvunDictionary(locale: Locale?): Dictionary(Dictionary.TYPE_MAIN, locale){
     private val tag = createTag(this)
-    private val speller: DivvunSpell get() { DivvunUtils.getSpeller(mLocale!!) }
+    private val speller: DivvunSpell get() { return DivvunUtils.getSpeller(mLocale!!) }
 
     override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
         val suggestions = speller.suggest(composedData.mTypedWord, N_BEST_SUGGESTION_SIZE)
@@ -23,7 +23,7 @@ class DivvunDictionary: Dictionary(Dictionary.TYPE_MAIN, Locale("se", "")) {
         Log.d(tag, suggestions.toString())
 
         val result = suggestions.mapIndexed { index, suggestion ->
-            SuggestedWordInfo(suggestion, ngramContext!!.extractPrevWordsContext(),
+            SuggestedWordInfo(suggestion, ngramContext.extractPrevWordsContext(),
                     suggestions.size - index, SuggestedWordInfo.KIND_CORRECTION, this,
                     SuggestedWordInfo.NOT_AN_INDEX, SuggestedWordInfo.NOT_A_CONFIDENCE)
         }
