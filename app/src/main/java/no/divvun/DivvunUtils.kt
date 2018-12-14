@@ -9,7 +9,7 @@ import java.io.FileOutputStream
 
 @SuppressLint("StaticFieldLeak")
 object DivvunUtils {
-    private val tag = javaClass.simpleName!!
+    private val TAG = DivvunUtils::class.java.simpleName
 
     private lateinit var context: Context
 
@@ -18,19 +18,22 @@ object DivvunUtils {
     }
 
     fun getSpeller(locale: Locale): DivvunSpell {
-        Log.d(tag, "getSpeller() for $locale")
+        Log.d(TAG, "getSpeller() for $locale")
         return getSpeller(resolveSpellerArchive(locale))
     }
 
     private fun resolveSpellerArchive(locale: Locale): String = "${locale.language}.zhfst"
 
     private fun getSpeller(fileName: String): DivvunSpell {
+        Log.d(TAG, "Loading dicts/$fileName")
         val inputStream = context.resources.assets.open("dicts/$fileName")
+        Log.d(TAG, "Outputting file to ${context.filesDir.absolutePath}/$fileName")
         val outputStream = FileOutputStream(File(context.filesDir, fileName))
         inputStream.copyTo(outputStream)
         inputStream.close()
         outputStream.flush()
         outputStream.close()
+        Log.d(TAG, "$fileName should now exist in the file system")
 
         return DivvunSpell("${context.filesDir.absolutePath}/$fileName")
     }
