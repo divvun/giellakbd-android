@@ -15,12 +15,10 @@ import kotlin.collections.ArrayList
 
 class DivvunDictionary(locale: Locale?): Dictionary(Dictionary.TYPE_MAIN, locale){
     private val tag = createTag(this)
-    private val speller: DivvunSpell by lazy { DivvunUtils.getSpeller(mLocale!!) }
+    private val speller: DivvunSpell? by lazy { DivvunUtils.getSpeller(mLocale) }
 
     override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
-        if (mLocale == null) {
-            return ArrayList()
-        }
+        val speller = this.speller ?: return ArrayList()
         
         val suggestions = speller.suggest(composedData.mTypedWord, N_BEST_SUGGESTION_SIZE)
 
@@ -36,9 +34,7 @@ class DivvunDictionary(locale: Locale?): Dictionary(Dictionary.TYPE_MAIN, locale
     }
 
     override fun isInDictionary(word: String): Boolean {
-        if (mLocale == null) {
-            return true
-        }
+        val speller = this.speller ?: return true
 
         return speller.isCorrect(word)
     }
