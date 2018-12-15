@@ -26,7 +26,7 @@ class DivvunSpellCheckerService: SpellCheckerService(){
 
     class DivvunSpellCheckerSession: Session() {
         private val tag = javaClass.simpleName!!
-        private lateinit var speller: DivvunSpell
+        private var speller: DivvunSpell? = null
 
         override fun onCreate() {
             Log.d(tag, "onCreate")
@@ -34,6 +34,8 @@ class DivvunSpellCheckerService: SpellCheckerService(){
         }
 
         override fun onGetSuggestions(textInfo: TextInfo?, suggestionsLimit: Int): SuggestionsInfo {
+            val speller = this.speller ?: return SuggestionsInfo(SuggestionsInfo.RESULT_ATTR_IN_THE_DICTIONARY, arrayOfNulls(0))
+
             Log.d(tag, "onGetSuggestions()")
 
             // Get the word
