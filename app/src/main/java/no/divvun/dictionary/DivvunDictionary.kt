@@ -40,6 +40,6 @@ class DivvunDictionary(locale: Locale?): Dictionary(Dictionary.TYPE_MAIN, locale
     }
 
     companion object {
-        const val N_BEST_SUGGESTION_SIZE = 5L
+        const val N_BEST_SUGGESTION_SIZE = 3L
     }
 }
