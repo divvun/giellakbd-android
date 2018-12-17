@@ -1568,7 +1568,10 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         val title = getString(R.string.english_ime_input_options)
         // TODO: Should use new string "Select active input modes".
         val languageSelectionTitle = getString(R.string.language_selection_title)
-        val items = arrayOf<CharSequence>(languageSelectionTitle, getString(R.string.english_ime_name))
+        val pkgInfo = packageManager.getPackageInfo(packageName, 0)
+        val appName = String.format("%s v%s (build %s)", getString(R.string.english_ime_name),
+                pkgInfo.versionName, pkgInfo.versionCode)
+        val items = arrayOf<CharSequence>(languageSelectionTitle, appName)
         val imeId = mRichImm?.inputMethodIdOfThisIme
         val listener = OnClickListener { di, position ->
             di.dismiss()
