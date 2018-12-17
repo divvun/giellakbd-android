@@ -25,8 +25,8 @@ class DivvunSpell @Throws(SpellerInitException::class) constructor(path: String)
         get() = CLibrary.INSTANCE.speller_meta_get_locale(handle)
 
 
-    fun suggest(word: String, nBest: Long? = null, beam: Float? = null): List<String> {
-        return SuggestionList(handle, word, NativeLong(nBest ?: 0), beam ?: 0.0f)
+    fun suggest(word: String, nBest: Long? = null, maxWeight: Float? = null, beam: Float? = null): List<String> {
+        return SuggestionList(handle, word, NativeLong(nBest ?: 0), maxWeight ?: 0.0f, beam ?: 0.0f)
     }
 
     fun isCorrect(word: String): Boolean {
@@ -37,8 +37,8 @@ class DivvunSpell @Throws(SpellerInitException::class) constructor(path: String)
         CLibrary.INSTANCE.speller_archive_free(handle)
     }
 
-    inner class SuggestionList internal constructor(spellerHandle: Pointer, word: String, nBest: NativeLong, beam: Float) : AbstractList<String>() {
-        private val handle = CLibrary.INSTANCE.speller_suggest(spellerHandle, word, nBest, beam)
+    inner class SuggestionList internal constructor(spellerHandle: Pointer, word: String, nBest: NativeLong, maxWeight: Float, beam: Float) : AbstractList<String>() {
+        private val handle = CLibrary.INSTANCE.speller_suggest(spellerHandle, word, nBest, maxWeight, beam)
         override val size = CLibrary.INSTANCE.suggest_vec_len(handle).toInt()
 
         override fun get(index: Int): String {
@@ -78,7 +78,7 @@ class DivvunSpell @Throws(SpellerInitException::class) constructor(path: String)
         fun speller_archive_free(handle: Pointer)
         fun speller_str_free(string: Pointer)
         fun speller_meta_get_locale(handle: Pointer): String
-        fun speller_suggest(handle: Pointer, word: String, n_best: NativeLong, beam: Float): Pointer
+        fun speller_suggest(handle: Pointer, word: String, n_best: NativeLong, maxWeight: Float, beam: Float): Pointer
         fun speller_is_correct(handle: Pointer, word: String): Boolean
         fun suggest_vec_free(handle: Pointer)
         fun suggest_vec_len(handle: Pointer): NativeLong
