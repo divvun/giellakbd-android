@@ -2,6 +2,8 @@
 
 A fork of LatinIME for minority languages.
 
+[![Build Status](https://travis-ci.org/divvun/giellakbd-android.svg?branch=master)](https://travis-ci.org/divvun/giellakbd-android)
+
 ## Building
 
 **It is highly recommended to use Divvun's kbdgen tool to generate any keyboards.**
