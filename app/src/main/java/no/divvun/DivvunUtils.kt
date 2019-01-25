@@ -3,6 +3,7 @@ package no.divvun
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import com.android.inputmethod.latin.BuildConfig
 import io.sentry.Sentry
 import io.sentry.event.Event
 import io.sentry.event.EventBuilder
@@ -11,55 +12,73 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
 
-@SuppressLint("StaticFieldLeak")
+//@SuppressLint("StaticFieldLeak")
 object DivvunUtils {
     private val TAG = DivvunUtils::class.java.simpleName
 
-    private lateinit var context: Context
+    private fun dictFileName(locale: Locale) = "${locale.language}.zhfst"
+    private fun cachedDictFileName(locale: Locale) = "${locale.language}_v${BuildConfig.VERSION_NAME}.zhfst"
 
-    fun initialize(context: Context){
-        this.context = context
+    private fun clearOldDicts(context: Context, locale: Locale) {
+        val filesDir = File(context.filesDir.absolutePath)
+
+        val oldDicts = filesDir.listFiles { path ->
+            path.startsWith("${locale.language}_v") &&
+                !path.endsWith("_v${BuildConfig.VERSION_NAME}.zhfst") }
+        if (oldDicts.isNotEmpty()) {
+            oldDicts.forEach {
+                try {
+                    it.delete()
+                } catch (ex: Exception) {
+                    // Do nothing.
+                }
+            }
+        }
     }
 
-    fun getSpeller(locale: Locale?): DivvunSpell? {
+    private fun hasDictInAssets(context: Context, locale: Locale): Boolean {
+        return try {
+            context.resources.assets.open("dicts/${dictFileName(locale)}")
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    private fun writeDict(context: Context, locale: Locale) {
+        val inputStream = context.resources.assets.open("dicts/${dictFileName(locale)}")
+        Log.d(TAG, "Outputting file to ${context.filesDir.absolutePath}/${dictFileName(locale)}")
+        val outputStream = FileOutputStream(File(context.filesDir, cachedDictFileName(locale)))
+        inputStream.copyTo(outputStream)
+        inputStream.close()
+        outputStream.flush()
+        outputStream.close()
+    }
+
+    private fun ensureCached(context: Context, locale: Locale) {
+        // Check for anything prefixed with this language and delete it if it's not the correct version
+
+        clearOldDicts(context, locale)
+        writeDict(context, locale)
+    }
+
+    fun getSpeller(context: Context, locale: Locale?): DivvunSpell? {
         Log.d(TAG, "getSpeller() for $locale")
-        if (locale == null) {
+
+        // We do not trust Java to provide us this non-null.
+        if (locale == null || !hasDictInAssets(context, locale)) {
             return null
         }
-        return getSpeller(resolveSpellerArchive(locale))
-    }
 
-    private fun resolveSpellerArchive(locale: Locale): String = "${locale.language}.zhfst"
-
-    private fun getSpeller(fileName: String): DivvunSpell? {
-        Log.d(TAG, "Loading dicts/$fileName")
-        Sentry.capture(EventBuilder()
-                .withMessage("Loading dicts/$fileName")
-                .withLevel(Event.Level.DEBUG)
-                .build())
         try {
-            val inputStream = context.resources.assets.open("dicts/$fileName")
-            Sentry.capture(EventBuilder()
-                    .withMessage("Outputting file to ${context.filesDir.absolutePath}/$fileName")
-                    .withLevel(Event.Level.DEBUG)
-                    .build())
-            Log.d(TAG, "Outputting file to ${context.filesDir.absolutePath}/$fileName")
-            val outputStream = FileOutputStream(File(context.filesDir, fileName))
-            inputStream.copyTo(outputStream)
-            inputStream.close()
-            outputStream.flush()
-            outputStream.close()
-            Log.d(TAG, "$fileName should now exist in the file system")
-            Sentry.capture(EventBuilder()
-                    .withMessage("$fileName should now exist in the file system")
-                    .withLevel(Event.Level.DEBUG)
-                    .build())
-        } catch (ex: FileNotFoundException) {
+            ensureCached(context, locale)
+        } catch (ex: Exception) {
+            Sentry.capture(ex)
             return null
         }
 
         return try {
-            DivvunSpell("${context.filesDir.absolutePath}/$fileName")
+            DivvunSpell("${context.filesDir.absolutePath}/${cachedDictFileName(locale)}")
         } catch (ex: Exception) {
             Sentry.capture(ex)
             null

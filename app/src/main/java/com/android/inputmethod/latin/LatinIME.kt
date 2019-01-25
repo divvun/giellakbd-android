@@ -500,7 +500,6 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     override fun onCreate() {
         ExceptionLogger.init(this)
-        DivvunUtils.initialize(this)
         Settings.init(this)
         DebugFlags.init(PreferenceManager.getDefaultSharedPreferences(this))
         RichInputMethodManager.init(this)

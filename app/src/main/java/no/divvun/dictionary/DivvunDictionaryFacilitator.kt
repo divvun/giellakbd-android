@@ -19,7 +19,7 @@ class DivvunDictionaryFacilitator() : DictionaryFacilitator {
     private val tag = createTag(this)
     private var isActive = false
 
-    var dictionary = DivvunDictionary(null)
+    var dictionary = DivvunDictionary(null,null)
 
     // STUB
     override fun setValidSpellingWordReadCache(cache: LruCache<String, Boolean>) {
@@ -79,7 +79,9 @@ class DivvunDictionaryFacilitator() : DictionaryFacilitator {
 
     // STUB
     override fun resetDictionaries(context: Context?, newLocale: Locale?, useContactsDict: Boolean, usePersonalizedDicts: Boolean, forceReloadMainDictionary: Boolean, account: String?, dictNamePrefix: String?, listener: DictionaryFacilitator.DictionaryInitializationListener?) {
-        dictionary = DivvunDictionary(newLocale)
+        context?.let {
+            dictionary = DivvunDictionary(it, newLocale)
+        }
     }
 
     // STUB

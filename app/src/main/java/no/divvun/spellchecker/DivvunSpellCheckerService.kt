@@ -1,5 +1,6 @@
 package no.divvun.spellchecker
 
+import android.content.Context
 import android.service.textservice.SpellCheckerService
 import android.util.Log
 import android.view.textservice.SentenceSuggestionsInfo
@@ -16,21 +17,20 @@ class DivvunSpellCheckerService: SpellCheckerService(){
     override fun onCreate() {
         super.onCreate()
         Log.d(tag, "onCreate")
-        DivvunUtils.initialize(this)
     }
 
     override fun createSession(): Session {
         Log.d(tag, "createSession")
-        return DivvunSpellCheckerSession()
+        return DivvunSpellCheckerSession(this)
     }
 
-    class DivvunSpellCheckerSession: Session() {
+    class DivvunSpellCheckerSession(private val context: Context): Session() {
         private val tag = javaClass.simpleName!!
         private var speller: DivvunSpell? = null
 
         override fun onCreate() {
             Log.d(tag, "onCreate")
-            speller = DivvunUtils.getSpeller(Locale(locale))
+            speller = DivvunUtils.getSpeller(context, Locale(locale))
         }
 
         override fun onGetSuggestions(textInfo: TextInfo?, suggestionsLimit: Int): SuggestionsInfo {

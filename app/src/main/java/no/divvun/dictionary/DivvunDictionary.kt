@@ -1,5 +1,6 @@
 package no.divvun.dictionary
 
+import android.content.Context
 import android.util.Log
 import com.android.inputmethod.latin.Dictionary
 import com.android.inputmethod.latin.NgramContext
@@ -13,9 +14,8 @@ import no.divvun.DivvunUtils
 import no.divvun.createTag
 import kotlin.collections.ArrayList
 
-class DivvunDictionary(locale: Locale?): Dictionary(Dictionary.TYPE_MAIN, locale){
-    private val tag = createTag(this)
-    private val speller: DivvunSpell? by lazy { DivvunUtils.getSpeller(mLocale) }
+class DivvunDictionary(private val context: Context?, locale: Locale?): Dictionary(Dictionary.TYPE_MAIN, locale) {
+    private val speller: DivvunSpell? by lazy { context?.let { DivvunUtils.getSpeller(it, mLocale) } }
 
     override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
         val speller = this.speller ?: return ArrayList()
