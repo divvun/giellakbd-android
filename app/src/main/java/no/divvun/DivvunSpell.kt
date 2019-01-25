@@ -59,7 +59,7 @@ class DivvunSpell @Throws(SpellerInitException::class) constructor(path: String)
     
     private interface CLibrary : Library {
         companion object {
-            val INSTANCE: CLibrary = Native.loadLibrary("hfstospell", CLibrary::class.java)
+            val INSTANCE: CLibrary = Native.loadLibrary("divvunspell", CLibrary::class.java)
         }
 
         class token_record_t : Structure() {
