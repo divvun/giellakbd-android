@@ -19,3 +19,7 @@ ext.app = [
     versionName: "0.0.0"
 ]
 ```
+
+## License
+
+Apache 2 license. See LICENSE.
