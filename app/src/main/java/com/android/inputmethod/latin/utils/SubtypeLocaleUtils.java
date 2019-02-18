@@ -233,14 +233,6 @@ public final class SubtypeLocaleUtils {
                     try {
                         return res.getString(exceptionalNameResId);
                     } catch (Resources.NotFoundException e) {
-                        StackTraceElement[] trace = e.getStackTrace();
-
-                        Sentry.capture(new EventBuilder()
-                                .withCulprit(trace[trace.length - 1])
-                                .withMessage("Missing locale name for exceptionalNameResId: " + exceptionalNameResId)
-                                .withLevel(Event.Level.ERROR)
-                        );
-
                         return LocaleUtils
                                 .constructLocaleFromString(localeString)
                                 .getDisplayName(displayLocale);
