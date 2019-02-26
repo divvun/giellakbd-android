@@ -141,6 +141,11 @@ public class ScriptUtils {
             // The Lao block is U+0E80..U+0EFF
             return (codePoint >= 0xE80 && codePoint <= 0xEFF);
         case SCRIPT_LATIN:
+            // Added support for MODIFIER LETTER PRIME
+            if (codePoint == 0x2B9) {
+                return true;
+            }
+
             // Our supported latin script dictionaries (EFIGS) at the moment only include
             // characters in the C0, C1, Latin Extended A and B, IPA extensions unicode
             // blocks. As it happens, those are back-to-back in the code range 0x40 to 0x2AF,
