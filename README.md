@@ -1,6 +1,7 @@
 # giellakbd-android
 
-A fork of LatinIME for minority languages.
+
+A fork of LatinIME (by Google for Android), targeting marginalised languages that also deserve first-class status on mobile operating systems.
 
 [![Build Status](https://travis-ci.org/divvun/giellakbd-android.svg?branch=master)](https://travis-ci.org/divvun/giellakbd-android)
 
