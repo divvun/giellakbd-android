@@ -17,6 +17,7 @@
 package com.android.inputmethod.event;
 
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseIntArray;
 
 import com.android.inputmethod.latin.common.Constants;
@@ -225,8 +226,8 @@ public class DeadKeyCombiner implements Combiner {
         Event lastEvent = null;
         do {
             final int codePoint = Character.codePointBefore(text, index);
-            lastEvent = Event.createHardwareKeypressEvent(codePoint,
-                    originalEvent.mKeyCode, lastEvent, false /* isKeyRepeat */);
+            lastEvent = Event.Companion.createHardwareKeypressEvent(codePoint,
+                    originalEvent.getMKeyCode(), lastEvent, false /* isKeyRepeat */);
             index -= Character.charCount(codePoint);
         } while (index > 0);
         return lastEvent;
@@ -235,20 +236,25 @@ public class DeadKeyCombiner implements Combiner {
     @Override
     @Nonnull
     public Event processEvent(final ArrayList<Event> previousEvents, final Event event) {
+        if(!event.isHardwareEvent()) {
+            // Only handle hardware event
+            return event;
+        }
+
         if (TextUtils.isEmpty(mDeadSequence)) {
             // No dead char is currently being tracked: this is the most common case.
             if (event.isDead()) {
                 // The event was a dead key. Start tracking it.
-                mDeadSequence.appendCodePoint(event.mCodePoint);
-                return Event.createConsumedEvent(event);
+                mDeadSequence.appendCodePoint(event.getMKeyCode());
+                return Event.Companion.createConsumedEvent(event);
             }
             // Regular keystroke when not keeping track of a dead key. Simply said, there are
             // no dead keys at all in the current input, so this combiner has nothing to do and
             // simply returns the event as is. The majority of events will go through this path.
             return event;
         }
-        if (Character.isWhitespace(event.mCodePoint)
-                || event.mCodePoint == mDeadSequence.codePointBefore(mDeadSequence.length())) {
+        if (Character.isWhitespace(event.getMCodePoint())
+                || event.getMKeyCode() == mDeadSequence.codePointBefore(mDeadSequence.length())) {
             // When whitespace or twice the same dead key, we should output the dead sequence as is.
             final Event resultEvent = createEventChainFromSequence(mDeadSequence.toString(),
                     event);
@@ -256,27 +262,27 @@ public class DeadKeyCombiner implements Combiner {
             return resultEvent;
         }
         if (event.isFunctionalKeyEvent()) {
-            if (Constants.CODE_DELETE == event.mKeyCode) {
+            if (Constants.CODE_DELETE == event.getMCodePoint()) {
                 // Remove the last code point
                 final int trimIndex = mDeadSequence.length() - Character.charCount(
                         mDeadSequence.codePointBefore(mDeadSequence.length()));
                 mDeadSequence.setLength(trimIndex);
-                return Event.createConsumedEvent(event);
+                return Event.Companion.createConsumedEvent(event);
             }
             return event;
         }
         if (event.isDead()) {
-            mDeadSequence.appendCodePoint(event.mCodePoint);
-            return Event.createConsumedEvent(event);
+            mDeadSequence.appendCodePoint(event.getMKeyCode());
+            return Event.Companion.createConsumedEvent(event);
         }
         // Combine normally.
         final StringBuilder sb = new StringBuilder();
-        sb.appendCodePoint(event.mCodePoint);
+        sb.appendCodePoint(event.getMKeyCode());
         int codePointIndex = 0;
         while (codePointIndex < mDeadSequence.length()) {
             final int deadCodePoint = mDeadSequence.codePointAt(codePointIndex);
             final char replacementSpacingChar =
-                    Data.getNonstandardCombination(deadCodePoint, event.mCodePoint);
+                    Data.getNonstandardCombination(deadCodePoint, event.getMKeyCode());
             if (Data.NOT_A_CHAR != replacementSpacingChar) {
                 sb.setCharAt(0, replacementSpacingChar);
             } else {

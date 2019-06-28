@@ -48,14 +48,14 @@ public class HardwareKeyboardEventDecoder implements HardwareEventDecoder {
         final int keyCode = keyEvent.getKeyCode();
         final boolean isKeyRepeat = (0 != keyEvent.getRepeatCount());
         if (KeyEvent.KEYCODE_DEL == keyCode) {
-            return Event.createHardwareKeypressEvent(Event.NOT_A_CODE_POINT, Constants.CODE_DELETE,
+            return Event.Companion.createHardwareKeypressEvent(Event.Companion.getNOT_A_CODE_POINT(), Constants.CODE_DELETE,
                     null /* next */, isKeyRepeat);
         }
         if (keyEvent.isPrintingKey() || KeyEvent.KEYCODE_SPACE == keyCode
                 || KeyEvent.KEYCODE_ENTER == keyCode) {
             if (0 != (codePointAndFlags & KeyCharacterMap.COMBINING_ACCENT)) {
                 // A dead key.
-                return Event.createDeadEvent(
+                return Event.Companion.createDeadEvent(
                         codePointAndFlags & KeyCharacterMap.COMBINING_ACCENT_MASK, keyCode,
                         null /* next */);
             }
@@ -65,17 +65,17 @@ public class HardwareKeyboardEventDecoder implements HardwareEventDecoder {
                 // Shift key is being pressed, this should send a CODE_SHIFT_ENTER and let
                 // Latin IME decide what to do with it.
                 if (keyEvent.isShiftPressed()) {
-                    return Event.createHardwareKeypressEvent(Event.NOT_A_CODE_POINT,
+                    return Event.Companion.createHardwareKeypressEvent(Event.Companion.getNOT_A_CODE_POINT(),
                             Constants.CODE_SHIFT_ENTER, null /* next */, isKeyRepeat);
                 }
-                return Event.createHardwareKeypressEvent(Constants.CODE_ENTER, keyCode,
+                return Event.Companion.createHardwareKeypressEvent(Constants.CODE_ENTER, keyCode,
                         null /* next */, isKeyRepeat);
             }
             // If not Enter, then this is just a regular keypress event for a normal character
             // that can be committed right away, taking into account the current state.
-            return Event.createHardwareKeypressEvent(codePointAndFlags, keyCode, null /* next */,
+            return Event.Companion.createHardwareKeypressEvent(codePointAndFlags, keyCode, null /* next */,
                     isKeyRepeat);
         }
-        return Event.createNotHandledEvent();
+        return Event.Companion.createNotHandledEvent();
     }
 }

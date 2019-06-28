@@ -711,7 +711,7 @@ class InputLogic
             }
             Constants.CODE_SHIFT_ENTER -> {
                 val tmpEvent = Event.createSoftwareKeypressEvent(Constants.CODE_ENTER,
-                        event.mKeyCode, event.mX, event.mY, event.isKeyRepeat)
+                        event.mKeyCode, event.mX, event.mY, event.isKeyRepeat, event.isDead)
                 handleNonSpecialCharacterEvent(tmpEvent, inputTransaction, handler)
                 // Shift + Enter is treated as a functional key but it results in adding a new
                 // line, so that does affect the contents of the editor.

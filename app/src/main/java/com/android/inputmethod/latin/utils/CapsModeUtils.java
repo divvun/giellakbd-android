@@ -44,9 +44,9 @@ public final class CapsModeUtils {
      */
     public static String applyAutoCapsMode(final String s, final int capitalizeMode,
             final Locale locale) {
-        if (WordComposer.CAPS_MODE_AUTO_SHIFT_LOCKED == capitalizeMode) {
+        if (WordComposer.Companion.getCAPS_MODE_AUTO_SHIFT_LOCKED() == capitalizeMode) {
             return s.toUpperCase(locale);
-        } else if (WordComposer.CAPS_MODE_AUTO_SHIFTED == capitalizeMode) {
+        } else if (WordComposer.Companion.getCAPS_MODE_AUTO_SHIFTED() == capitalizeMode) {
             return StringUtils.capitalizeFirstCodePoint(s, locale);
         } else {
             return s;
@@ -59,8 +59,8 @@ public final class CapsModeUtils {
      * @return true if this represents an auto-caps mode, false otherwise
      */
     public static boolean isAutoCapsMode(final int mode) {
-        return WordComposer.CAPS_MODE_AUTO_SHIFTED == mode
-                || WordComposer.CAPS_MODE_AUTO_SHIFT_LOCKED == mode;
+        return WordComposer.Companion.getCAPS_MODE_AUTO_SHIFTED() == mode
+                || WordComposer.Companion.getCAPS_MODE_AUTO_SHIFT_LOCKED() == mode;
     }
 
     /**

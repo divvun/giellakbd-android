@@ -28,6 +28,7 @@ import android.graphics.Rect;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.text.TextUtils;
+import android.util.Log;
 
 import com.android.inputmethod.keyboard.internal.KeyDrawParams;
 import com.android.inputmethod.keyboard.internal.KeySpecParser;
@@ -209,6 +210,11 @@ public class Key implements Comparable<Key> {
     /** Key is enabled and responds on press */
     private boolean mEnabled = true;
 
+    private boolean deadKey = false;
+
+    public boolean getDeadKey() {
+        return deadKey;
+    }
     /**
      * Constructor for a key on <code>MoreKeyKeyboard</code>, on <code>MoreSuggestions</code>,
      * and in a <GridRows/>.
@@ -424,6 +430,9 @@ public class Key implements Comparable<Key> {
                 disabledIconId, visualInsetsLeft, visualInsetsRight);
         mKeyVisualAttributes = KeyVisualAttributes.newInstance(keyAttr);
         mHashCode = computeHashCode(this);
+
+        deadKey = keyAttr.getBoolean(R.styleable.Keyboard_Key_deadKey, false);
+        Log.d("Key", "Key " + mHashCode + " with label " + mLabel + " is deadKey: " + deadKey);
     }
 
     /**

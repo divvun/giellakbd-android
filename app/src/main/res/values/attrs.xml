@@ -298,6 +298,7 @@
              They are inserted at the head of moreKeys if none.
              If there are remaining entries of additionalMoreKeys even after all '%' markers have
              been replaced, those remaining entries are appended at the end of moreKeys. -->
+        <attr name="deadKey" format="boolean" />
         <attr name="additionalMoreKeys" format="string" />
         <!-- Maximum column of more keys keyboard -->
         <attr name="maxMoreKeysColumn" format="integer" />
