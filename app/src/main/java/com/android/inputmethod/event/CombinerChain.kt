@@ -21,6 +21,9 @@ import android.text.TextUtils
 import android.util.Log
 
 import com.android.inputmethod.latin.common.Constants
+import com.google.gson.GsonBuilder
+import com.google.gson.reflect.TypeToken
+import no.divvun.domain.*
 
 import java.util.ArrayList
 
@@ -38,6 +41,7 @@ import java.util.ArrayList
  */
 class CombinerChain
 /**
+
  * Create an combiner chain.
  *
  * The combiner chain takes events as inputs and outputs code points and combining state.
@@ -65,9 +69,17 @@ class CombinerChain
         }
 
     init {
+        val gson = GsonBuilder()
+                .registerTypeAdapter(DeadKeyNode.Parent::class.java, DeadKeyNodeDeserializer())
+                .create()
+
+        val type = object : TypeToken<MutableMap<String, Keyboard>>() {}.type
+        val keyboardDescriptors: KeyboardDescriptor = gson.fromJson(json, type)
+
         // The dead key combiner is always active, and always first
         mCombiners.add(DeadKeyCombiner())
-        mCombiners.add(SoftDeadKeyCombiner())
+        mCombiners.add(SoftDeadKeyCombiner(keyboardDescriptors.values.first().transforms))
+
         mCombinedText = StringBuilder(initialText)
         mStateFeedback = SpannableStringBuilder()
     }

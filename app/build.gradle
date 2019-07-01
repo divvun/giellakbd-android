@@ -67,6 +67,8 @@ dependencies {
 
     // Android Kotlin Extensions
     implementation "androidx.core:core-ktx:$ktxVersion"
+
+    implementation 'com.google.code.gson:gson:2.8.5'
 }
 
 repositories {
