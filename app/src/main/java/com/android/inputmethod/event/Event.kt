@@ -16,6 +16,7 @@
 
 package com.android.inputmethod.event
 
+import android.util.Log
 import com.android.inputmethod.annotations.ExternallyReferenced
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.Constants
@@ -182,10 +183,10 @@ data class Event// This method is private - to create a new event, use one of th
                     Constants.EXTERNAL_KEYBOARD_COORDINATE, Constants.EXTERNAL_KEYBOARD_COORDINATE, null, FLAG_DEAD, next)/* text *//* suggestedWordInfo */
         }
 
-        fun createSoftDeadResultEvent(codePoint: Int,
+        fun createSoftDeadResultEvent(text: String,
                                       event: Event): Event {
-            return Event(EVENT_TYPE_INPUT_KEYPRESS, null, codePoint, event.mKeyCode,
-                    event.mX, event.mY, null, FLAG_REPEAT, null)/* text *//* suggestedWordInfo */
+            return Event(EVENT_TYPE_SOFTWARE_GENERATED_STRING, text, NOT_A_CODE_POINT, Constants.CODE_OUTPUT_TEXT,
+                    event.mX, event.mY, event.mSuggestedWordInfo, FLAG_NONE, null)/* text *//* suggestedWordInfo */
         }
 
         /**

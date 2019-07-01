@@ -723,6 +723,10 @@ class InputLogic
                 // line, so that does affect the contents of the editor.
                 inputTransaction.setDidAffectContents()
             }
+            Constants.CODE_OUTPUT_TEXT -> {
+                // TODO Validate correctness of use of CODE_OUTPUT_TEXT (See:
+                mLatinIME.onTextInput(event.textToCommit.toString())
+            }
             else -> throw RuntimeException("Unknown key code : " + event.mKeyCode)
         }// Note: Changing keyboard to shift lock state is handled in
         // {@link KeyboardSwitcher#onEvent(Event)}.

@@ -59,7 +59,7 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
                 val result = currentNode.defaultChild()
                 deadSequence.clear()
                 currentNode = deadKeyRoot
-                return Event.createSoftDeadResultEvent(result.char.toInt(), event)
+                return Event.createSoftDeadResultEvent(result.string, event)
             }
             return event
         }
@@ -76,10 +76,10 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
                     Event.createConsumedEvent(event)
                 }
                 is DeadKeyNode.Leaf -> {
-                    val result = newDeadKeyNode.char
+                    val result = newDeadKeyNode.string
                     deadSequence.clear()
                     currentNode = deadKeyRoot
-                    Event.createSoftDeadResultEvent(result.toInt(), event)
+                    Event.createSoftDeadResultEvent(result, event)
                 }
             }
         } else {
@@ -87,8 +87,7 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
             val result = currentNode.defaultChild()
             deadSequence.clear()
             currentNode = deadKeyRoot
-            Log.d("DeadkeyCombiner", "Event Unknown char: $inputValue using default result: ${result.char}")
-            return Event.createSoftDeadResultEvent(result.char.toInt(), event)
+    return Event.createSoftDeadResultEvent(result.string, event)
         }
     }
 

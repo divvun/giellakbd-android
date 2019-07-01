@@ -16,7 +16,7 @@ data class Keyboard(
 )
 
 sealed class DeadKeyNode {
-    data class Leaf(val char: String) : DeadKeyNode()
+    data class Leaf(val string: String) : DeadKeyNode()
     data class Parent(val children: Map<String, DeadKeyNode>) : DeadKeyNode() {
         constructor(vararg pairs: Pair<String, DeadKeyNode>) : this(mapOf(*pairs))
 
