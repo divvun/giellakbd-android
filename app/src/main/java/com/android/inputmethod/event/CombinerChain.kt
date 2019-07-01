@@ -21,9 +21,6 @@ import android.text.TextUtils
 import android.util.Log
 
 import com.android.inputmethod.latin.common.Constants
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
-import no.divvun.domain.*
 
 import java.util.ArrayList
 
@@ -51,12 +48,11 @@ class CombinerChain
  *
  * @param initialText The text that has already been combined so far.
  */
-(initialText: String) {
+(initialText: String, private val combiners: List<Combiner>) {
     // The already combined text, as described above
-    private val mCombinedText: StringBuilder
+    private val combinedText: StringBuilder = StringBuilder(initialText)
     // The feedback on the composing state, as described above
-    private val mStateFeedback: SpannableStringBuilder
-    private val mCombiners: ArrayList<Combiner> = ArrayList()
+    private val stateFeedback: SpannableStringBuilder = SpannableStringBuilder()
 
     /**
      * Get the char sequence that should be displayed as the composing word. It may include
@@ -64,11 +60,12 @@ class CombinerChain
      */
     val composingWordWithCombiningFeedback: CharSequence
         get() {
-            val s = SpannableStringBuilder(mCombinedText)
-            return s.append(mStateFeedback)
+            val s = SpannableStringBuilder(combinedText)
+            return s.append(stateFeedback)
         }
 
     init {
+        /**
         val gson = GsonBuilder()
                 .registerTypeAdapter(DeadKeyNode.Parent::class.java, DeadKeyNodeDeserializer())
                 .create()
@@ -77,25 +74,24 @@ class CombinerChain
         val keyboardDescriptors: KeyboardDescriptor = gson.fromJson(json, type)
 
         // The dead key combiner is always active, and always first
-        mCombiners.add(DeadKeyCombiner())
-        mCombiners.add(SoftDeadKeyCombiner(keyboardDescriptors.values.first().transforms))
+        combiners.add(DeadKeyCombiner())
+        combiners.add(SoftDeadKeyCombiner(keyboardDescriptors.values.first().transforms))
+        */
 
-        mCombinedText = StringBuilder(initialText)
-        mStateFeedback = SpannableStringBuilder()
     }
 
     fun reset() {
-        mCombinedText.setLength(0)
-        mStateFeedback.clear()
-        for (c in mCombiners) {
+        combinedText.setLength(0)
+        stateFeedback.clear()
+        for (c in combiners) {
             c.reset()
         }
     }
 
     private fun updateStateFeedback() {
-        mStateFeedback.clear()
-        for (i in mCombiners.indices.reversed()) {
-            mStateFeedback.append(mCombiners[i].combiningStateFeedback)
+        stateFeedback.clear()
+        for (i in combiners.indices.reversed()) {
+            stateFeedback.append(combiners[i].combiningStateFeedback)
         }
     }
 
@@ -111,7 +107,7 @@ class CombinerChain
         Log.d("CombinerChain", "Event: $newEvent")
         val modifiablePreviousEvents = ArrayList(previousEvents)
         var event = newEvent
-        for (combiner in mCombiners) {
+        for (combiner in combiners) {
             // A combiner can never return more than one event; it can return several
             // code points, but they should be encapsulated within one event.
             event = combiner.processEvent(modifiablePreviousEvents, event)
@@ -133,15 +129,15 @@ class CombinerChain
         if (null != event) {
             // TODO: figure out the generic way of doing this
             if (Constants.CODE_DELETE == event.mKeyCode) {
-                val length = mCombinedText.length
+                val length = combinedText.length
                 if (length > 0) {
-                    val lastCodePoint = mCombinedText.codePointBefore(length)
-                    mCombinedText.delete(length - Character.charCount(lastCodePoint), length)
+                    val lastCodePoint = combinedText.codePointBefore(length)
+                    combinedText.delete(length - Character.charCount(lastCodePoint), length)
                 }
             } else {
                 val textToCommit = event.textToCommit
                 if (!TextUtils.isEmpty(textToCommit)) {
-                    mCombinedText.append(textToCommit)
+                    combinedText.append(textToCommit)
                 }
             }
         }

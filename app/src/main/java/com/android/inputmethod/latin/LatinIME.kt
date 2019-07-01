@@ -73,7 +73,6 @@ import com.android.inputmethod.latin.suggestions.SuggestionStripView
 import com.android.inputmethod.latin.suggestions.SuggestionStripViewAccessor
 import com.android.inputmethod.latin.touchinputconsumer.GestureConsumer
 import com.android.inputmethod.latin.utils.*
-import no.divvun.DivvunUtils
 import no.divvun.dictionary.DivvunDictionaryFacilitator
 import java.io.FileDescriptor
 import java.io.PrintWriter
@@ -596,10 +595,10 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                 settingsValues.mAccount, "" /* dictNamePrefix */,
                 this /* DictionaryInitializationListener */)
         if (settingsValues.mAutoCorrectionEnabledPerUserSettings) {
-            mInputLogic.mSuggest.setAutoCorrectionThreshold(
+            mInputLogic.suggest.setAutoCorrectionThreshold(
                     settingsValues.mAutoCorrectionThreshold)
         }
-        mInputLogic.mSuggest.setPlausibilityThreshold(settingsValues.mPlausibilityThreshold)
+        mInputLogic.suggest.setPlausibilityThreshold(settingsValues.mPlausibilityThreshold)
     }
 
     /**
@@ -802,7 +801,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         // this case we will need to call loadKeyboard() later, when it's accessible, so that we
         // can go into the correct mode, so we need to do some housekeeping here.
         val needToCallLoadKeyboardLater: Boolean
-        val suggest = mInputLogic.mSuggest
+        val suggest = mInputLogic.suggest
         if (!isImeSuppressedByHardwareKeyboard) {
             // The app calling setText() has the effect of clearing the composing
             // span, so we should reset our state unconditionally, even if restarting is true.

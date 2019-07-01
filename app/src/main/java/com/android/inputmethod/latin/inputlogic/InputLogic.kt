@@ -29,8 +29,7 @@ import android.view.KeyEvent
 import android.view.inputmethod.CorrectionInfo
 import android.view.inputmethod.EditorInfo
 import com.android.inputmethod.compat.SuggestionSpanUtils
-import com.android.inputmethod.event.Event
-import com.android.inputmethod.event.InputTransaction
+import com.android.inputmethod.event.*
 import com.android.inputmethod.keyboard.Keyboard
 import com.android.inputmethod.keyboard.KeyboardSwitcher
 import com.android.inputmethod.latin.*
@@ -50,6 +49,7 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.sentry.Sentry
+import no.divvun.domain.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -65,7 +65,7 @@ class InputLogic
  * dictionary.
  */
 (// TODO : Remove this member when we can.
-        internal val mLatinIME: LatinIME,
+        private val mLatinIME: LatinIME,
         private val mSuggestionStripViewAccessor: SuggestionStripViewAccessor,
         private val mDictionaryFacilitator: DictionaryFacilitator?) {
 
@@ -75,11 +75,12 @@ class InputLogic
     // TODO : make all these fields private as soon as possible.
     // Current space state of the input method. This can be any of the above constants.
     private var mSpaceState: Int = 0
+
     // Never null
     var mSuggestedWords = SuggestedWords.emptyInstance
-    val mSuggest: Suggest
+    val suggest: Suggest
 
-    var mLastComposedWord = LastComposedWord.NOT_A_COMPOSED_WORD
+    private var lastComposedWord = LastComposedWord.NOT_A_COMPOSED_WORD
     // This has package visibility so it can be accessed from InputLogicHandler.
     val wordComposer: WordComposer
     val mConnection: RichInputConnection
@@ -175,10 +176,15 @@ class InputLogic
         get() = wordComposer.size()
 
     init {
-        wordComposer = WordComposer()
+
+
+        val keyboardDescriptor = loadKeyboardDescriptor()
+        // The dead key combiner is always active, and always first
+        val combiners = listOf(DeadKeyCombiner(), SoftDeadKeyCombiner(keyboardDescriptor.transforms))
+        wordComposer = WordComposer(combiners)
         mConnection = RichInputConnection(mLatinIME)
         mInputLogicHandler = InputLogicHandler.NULL_HANDLER
-        mSuggest = Suggest(mDictionaryFacilitator)
+        suggest = Suggest(mDictionaryFacilitator)
     }
 
     /**
@@ -380,7 +386,7 @@ class InputLogic
                 LastComposedWord.NOT_A_SEPARATOR)
         mConnection.endBatchEdit()
         // Don't allow cancellation of manual pick
-        mLastComposedWord.deactivate()
+        lastComposedWord.deactivate()
         // Space state must be updated before calling updateShiftState
         mSpaceState = SpaceState.PHANTOM
         inputTransaction.requireShiftUpdate(InputTransaction.SHIFT_UPDATE_NOW)
@@ -538,7 +544,7 @@ class InputLogic
         if (!inputTransaction.didAutoCorrect() && processedEvent.mKeyCode != Constants.CODE_SHIFT
                 && processedEvent.mKeyCode != Constants.CODE_CAPSLOCK
                 && processedEvent.mKeyCode != Constants.CODE_SWITCH_ALPHA_SYMBOL)
-            mLastComposedWord.deactivate()
+            lastComposedWord.deactivate()
         if (Constants.CODE_DELETE != processedEvent.mKeyCode) {
             mEnteredText = null
         }
@@ -1054,8 +1060,8 @@ class InputLogic
             }
             inputTransaction.setRequiresUpdateSuggestions()
         } else {
-            if (mLastComposedWord.canRevertCommit()) {
-                val lastComposedWord = mLastComposedWord.mTypedWord
+            if (lastComposedWord.canRevertCommit()) {
+                val lastComposedWord = lastComposedWord.mTypedWord
                 revertCommit(inputTransaction, inputTransaction.mSettingsValues)
                 StatsUtils.onRevertAutoCorrect()
                 StatsUtils.onWordCommitUserTyped(lastComposedWord, wordComposer.isBatchMode)
@@ -1608,12 +1614,12 @@ class InputLogic
      */
     private fun revertCommit(inputTransaction: InputTransaction,
                              settingsValues: SettingsValues) {
-        val originallyTypedWord = mLastComposedWord.mTypedWord
+        val originallyTypedWord = lastComposedWord.mTypedWord
         val originallyTypedWordString = originallyTypedWord?.toString() ?: ""
-        val committedWord = mLastComposedWord.mCommittedWord
+        val committedWord = lastComposedWord.mCommittedWord
         val committedWordString = committedWord.toString()
         val cancelLength = committedWord.length
-        val separatorString = mLastComposedWord.mSeparatorString
+        val separatorString = lastComposedWord.mSeparatorString
         // If our separator is a space, we won't actually commit it,
         // but set the space state to PHANTOM so that a space will be inserted
         // on the next keypress
@@ -1685,7 +1691,7 @@ class InputLogic
             setComposingTextInternal(textToCommit, 1)
         }
         // Don't restart suggestion yet. We'll restart if the user deletes the separator.
-        mLastComposedWord = LastComposedWord.NOT_A_COMPOSED_WORD
+        lastComposedWord = LastComposedWord.NOT_A_COMPOSED_WORD
 
         // We have a separator between the word and the cursor: we should show predictions.
         inputTransaction.setRequiresUpdateSuggestions()
@@ -1749,10 +1755,10 @@ class InputLogic
             return mConnection.getNgramContextFromNthPreviousWord(
                     spacingAndPunctuations, nthPreviousWord)
         }
-        return if (LastComposedWord.NOT_A_COMPOSED_WORD == mLastComposedWord) {
+        return if (LastComposedWord.NOT_A_COMPOSED_WORD == lastComposedWord) {
             NgramContext.BEGINNING_OF_SENTENCE
         } else NgramContext(NgramContext.WordInfo(
-                mLastComposedWord.mCommittedWord.toString()))
+                lastComposedWord.mCommittedWord.toString()))
     }
 
     /**
@@ -1831,7 +1837,7 @@ class InputLogic
     private fun resetComposingState(alsoResetLastComposedWord: Boolean) {
         wordComposer.reset()
         if (alsoResetLastComposedWord) {
-            mLastComposedWord = LastComposedWord.NOT_A_COMPOSED_WORD
+            lastComposedWord = LastComposedWord.NOT_A_COMPOSED_WORD
         }
     }
 
@@ -2094,7 +2100,7 @@ class InputLogic
         // what user typed. Note: currently this is done much later in
         // LastComposedWord#didCommitTypedWord by string equality of the remembered
         // strings.
-        mLastComposedWord = wordComposer.commitWord(commitType,
+        lastComposedWord = wordComposer.commitWord(commitType,
                 chosenWord, separatorString, ngramContext)
         if (DebugFlags.DEBUG_ENABLED) {
             val runTimeMillis = System.currentTimeMillis() - startTimeMillis
@@ -2140,7 +2146,7 @@ class InputLogic
                           sequenceNumber: Int, callback: OnGetSuggestedWordsCallback) {
         wordComposer.adviseCapitalizedModeBeforeFetchingSuggestions(
                 getActualCapsMode(settingsValues, keyboardShiftMode))
-        mSuggest.getSuggestedWords(wordComposer,
+        suggest.getSuggestedWords(wordComposer,
                 getNgramContextFromNthPreviousWordForSuggestion(
                         settingsValues.mSpacingAndPunctuations,
                         // Get the word on which we should search the bigrams. If we are composing

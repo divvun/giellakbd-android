@@ -1,8 +1,10 @@
 package no.divvun.domain
 
+import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
+import com.google.gson.reflect.TypeToken
 import java.lang.RuntimeException
 import java.lang.reflect.Type
 
@@ -42,6 +44,18 @@ class DeadKeyNodeDeserializer : JsonDeserializer<DeadKeyNode> {
             else -> throw RuntimeException("Unexpected type: $json")
         }
     }
+}
+
+fun loadKeyboardDescriptor(): Keyboard {
+    val gson = GsonBuilder()
+            .registerTypeAdapter(DeadKeyNode.Parent::class.java, DeadKeyNodeDeserializer())
+            .create()
+
+    val type = object : TypeToken<MutableMap<String, Keyboard>>() {}.type!!
+    val keyboardDescriptors: KeyboardDescriptor = gson.fromJson(json, type)
+
+    // TODO for now just load the first keyboard
+    return keyboardDescriptors.values.first()
 }
 
 const val json =
