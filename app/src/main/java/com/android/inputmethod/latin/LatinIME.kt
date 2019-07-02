@@ -1229,11 +1229,15 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         // TODO: We should reconsider which coordinate system should be used to represent
         // keyboard event. Also we should pull this up -- LatinIME has no business doing
         // this transformation, it should be done already before calling onEvent.
-        val isDeadKey = mainKeyboardView.keyboard!!.getKey(codePoint)!!.deadKey
-        Log.d("LatinIME", "onCodeInput $isDeadKey")
+        val realCodePoint = getCodePointForKeyboard(codePoint)
+
+        // Find out if it is a deadkey
+        val key = mainKeyboardView.keyboard?.getKey(realCodePoint)
+        val isDeadKey = key?.deadKey ?: false
+
         val keyX = mainKeyboardView.getKeyX(x)
         val keyY = mainKeyboardView.getKeyY(y)
-        val event = createSoftwareKeypressEvent(getCodePointForKeyboard(codePoint),
+        val event = createSoftwareKeypressEvent(realCodePoint,
                 keyX, keyY, isKeyRepeat, isDeadKey)
         onEvent(event)
     }
