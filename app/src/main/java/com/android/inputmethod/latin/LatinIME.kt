@@ -33,7 +33,6 @@ import android.os.Debug
 import android.os.IBinder
 import android.os.Message
 import android.preference.PreferenceManager
-import androidx.annotation.RequiresApi
 import android.text.InputType
 import android.util.Log
 import android.util.PrintWriterPrinter
@@ -46,14 +45,12 @@ import android.view.WindowManager
 import android.view.inputmethod.CompletionInfo
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodSubtype
+import androidx.annotation.RequiresApi
 import com.android.inputmethod.accessibility.AccessibilityUtils
 import com.android.inputmethod.annotations.UsedForTesting
 import com.android.inputmethod.compat.EditorInfoCompatUtils
 import com.android.inputmethod.compat.ViewOutlineProviderCompatUtils
-import com.android.inputmethod.event.Event
-import com.android.inputmethod.event.HardwareEventDecoder
-import com.android.inputmethod.event.HardwareKeyboardEventDecoder
-import com.android.inputmethod.event.InputTransaction
+import com.android.inputmethod.event.*
 import com.android.inputmethod.keyboard.KeyboardActionListener
 import com.android.inputmethod.keyboard.KeyboardId
 import com.android.inputmethod.keyboard.KeyboardSwitcher
@@ -74,6 +71,7 @@ import com.android.inputmethod.latin.suggestions.SuggestionStripViewAccessor
 import com.android.inputmethod.latin.touchinputconsumer.GestureConsumer
 import com.android.inputmethod.latin.utils.*
 import no.divvun.dictionary.DivvunDictionaryFacilitator
+import no.divvun.domain.loadKeyboardDescriptor
 import java.io.FileDescriptor
 import java.io.PrintWriter
 import java.util.*
@@ -87,8 +85,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     internal val mSettings: Settings
     // TODO(bbqsrc): make this not null later.
     private val mDictionaryFacilitator: DictionaryFacilitator = DivvunDictionaryFacilitator()
-    internal val mInputLogic = InputLogic(this /* LatinIME */,
-            this /* SuggestionStripViewAccessor */, mDictionaryFacilitator)
+    internal lateinit var mInputLogic: InputLogic
     // We expect to have only one decoder in almost all cases, hence the default capacity of 1.
     // If it turns out we need several, it will get grown seamlessly.
     internal val mHardwareEventDecoders = SparseArray<HardwareEventDecoder>(1)
@@ -511,6 +508,20 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         super.onCreate()
 
         mHandler.onCreate()
+
+        // Init deadkey combiners and InputLogic
+        // The dead key combiner is always active, and always first
+        val combiners: MutableList<Combiner> = mutableListOf(DeadKeyCombiner())
+
+        val locale = mRichImm?.currentSubtypeLocale
+        Log.d("onCreate", "Locale: $locale")
+        if (locale != null) {
+            val keyboardDescriptor = loadKeyboardDescriptor(this, locale)
+            keyboardDescriptor?.let {
+                combiners += SoftDeadKeyCombiner(keyboardDescriptor.transforms)
+            }
+        }
+        mInputLogic = InputLogic(this, this, mDictionaryFacilitator, combiners)
 
         // TODO: Resolve mutual dependencies of {@link #loadSettings()} and
         // {@link #resetDictionaryFacilitatorIfNecessary()}.
@@ -1331,7 +1342,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         mInputLogic.setSuggestedWords(suggestedWords)
         // TODO: Modify this when we support suggestions with hard keyboard
 
-        Log.d("LatinIME", "suggestionStrip: ${hasSuggestionStripView()}" )
+        Log.d("LatinIME", "suggestionStrip: ${hasSuggestionStripView()}")
         if (!hasSuggestionStripView()) {
             return
         }

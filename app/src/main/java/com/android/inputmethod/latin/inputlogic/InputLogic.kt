@@ -67,7 +67,8 @@ class InputLogic
 (// TODO : Remove this member when we can.
         private val mLatinIME: LatinIME,
         private val mSuggestionStripViewAccessor: SuggestionStripViewAccessor,
-        private val mDictionaryFacilitator: DictionaryFacilitator?) {
+        private val mDictionaryFacilitator: DictionaryFacilitator?,
+        private val combiners: List<Combiner>) {
 
     // Never null.
     private var mInputLogicHandler = InputLogicHandler.NULL_HANDLER
@@ -176,11 +177,6 @@ class InputLogic
         get() = wordComposer.size()
 
     init {
-
-
-        val keyboardDescriptor = loadKeyboardDescriptor()
-        // The dead key combiner is always active, and always first
-        val combiners = listOf(DeadKeyCombiner(), SoftDeadKeyCombiner(keyboardDescriptor.transforms))
         wordComposer = WordComposer(combiners)
         mConnection = RichInputConnection(mLatinIME)
         mInputLogicHandler = InputLogicHandler.NULL_HANDLER
