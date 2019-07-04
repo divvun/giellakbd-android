@@ -177,10 +177,10 @@ data class Event// This method is private - to create a new event, use one of th
                     Constants.EXTERNAL_KEYBOARD_COORDINATE, Constants.EXTERNAL_KEYBOARD_COORDINATE, null, if (isKeyRepeat) FLAG_REPEAT else FLAG_NONE, next)/* text *//* suggestedWordInfo */
         }
 
-        fun createSoftwareKeypressTextEvent(text: String,
-                                            next: Event?, isKeyRepeat: Boolean): Event {
-            return Event(EVENT_TYPE_SOFTWARE_GENERATED_STRING, text, 66, NOT_A_KEY_CODE,
-                    Constants.EXTERNAL_KEYBOARD_COORDINATE, Constants.EXTERNAL_KEYBOARD_COORDINATE, null, if (isKeyRepeat) FLAG_REPEAT else FLAG_NONE, next)/* text *//* suggestedWordInfo */
+        fun createSoftwareKeypressTextEvent(text: String): Event {
+            val nonFunctionalCodePoint = 65
+            return Event(EVENT_TYPE_SOFTWARE_GENERATED_STRING, text, nonFunctionalCodePoint, NOT_A_KEY_CODE,
+                    Constants.EXTERNAL_KEYBOARD_COORDINATE, Constants.EXTERNAL_KEYBOARD_COORDINATE, null, FLAG_NONE, null)
         }
 
         // This creates an input event for a dead character. @see {@link #FLAG_DEAD}
