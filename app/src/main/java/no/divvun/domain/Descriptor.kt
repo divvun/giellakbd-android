@@ -1,6 +1,7 @@
 package no.divvun.domain
 
 import android.content.Context
+import com.android.inputmethod.latin.common.StringUtils
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
@@ -8,7 +9,6 @@ import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
 import java.io.IOException
 import java.io.InputStream
-import java.lang.RuntimeException
 import java.lang.reflect.Type
 import java.util.*
 
@@ -42,9 +42,25 @@ class DeadKeyNodeDeserializer : JsonDeserializer<DeadKeyNode> {
 
                 DeadKeyNode.Parent(*children)
             }
-            json.isJsonPrimitive -> DeadKeyNode.Leaf(json.asString)
+            json.isJsonPrimitive -> {
+                val raw = json.asString
+                val parsedValue = raw.parseUnicodeChars()
+                DeadKeyNode.Leaf(parsedValue)
+            }
             else -> throw RuntimeException("Unexpected type: $json")
         }
+    }
+
+    private val unicodeFormat = """\\u\{[0-9A-Fa-f]+\}""".toRegex()
+    private val numberRegex = "[0-9A-Fa-f]+".toRegex()
+
+    fun String.parseUnicodeChars(): String {
+        return unicodeFormat.replace(this) {
+            val match = it.value
+            val result = numberRegex.find(match, 0)
+            StringUtils.newSingleCodePointString(result!!.value.toInt(16))
+        }
+
     }
 }
 

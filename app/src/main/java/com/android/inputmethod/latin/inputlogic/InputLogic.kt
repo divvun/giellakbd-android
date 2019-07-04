@@ -720,7 +720,9 @@ class InputLogic
             }
             Constants.CODE_OUTPUT_TEXT -> {
                 // From the dead result generate a new event with result of dead key
-                val tmpEvent = Event.createSoftwareKeypressTextEvent(event.textToCommit.toString())
+                val deadKeyResult = event.textToCommit.toString()
+
+                val tmpEvent = Event.createSoftwareKeypressTextEvent(deadKeyResult)
                 onCodeInput(inputTransaction.mSettingsValues, tmpEvent, inputTransaction.mShiftState, currentKeyboardScriptId, handler)
             }
             else -> throw RuntimeException("Unknown key code : " + event.mKeyCode)
