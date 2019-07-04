@@ -16,7 +16,6 @@
 
 package com.android.inputmethod.event
 
-import android.util.Log
 import com.android.inputmethod.annotations.ExternallyReferenced
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.Constants
@@ -85,6 +84,9 @@ data class Event// This method is private - to create a new event, use one of th
 
     val isHandled: Boolean
         get() = EVENT_TYPE_NOT_HANDLED != mEventType
+
+    val isSoftwareGeneratedString: Boolean
+        get() = mEventType == EVENT_TYPE_SOFTWARE_GENERATED_STRING
 
     val isHardwareEvent: Boolean = mY == Constants.EXTERNAL_KEYBOARD_COORDINATE || mX == Constants.EXTERNAL_KEYBOARD_COORDINATE
 
@@ -172,6 +174,12 @@ data class Event// This method is private - to create a new event, use one of th
         fun createHardwareKeypressEvent(codePoint: Int, keyCode: Int,
                                         next: Event?, isKeyRepeat: Boolean): Event {
             return Event(EVENT_TYPE_INPUT_KEYPRESS, null, codePoint, keyCode,
+                    Constants.EXTERNAL_KEYBOARD_COORDINATE, Constants.EXTERNAL_KEYBOARD_COORDINATE, null, if (isKeyRepeat) FLAG_REPEAT else FLAG_NONE, next)/* text *//* suggestedWordInfo */
+        }
+
+        fun createSoftwareKeypressTextEvent(text: String,
+                                            next: Event?, isKeyRepeat: Boolean): Event {
+            return Event(EVENT_TYPE_SOFTWARE_GENERATED_STRING, text, 66, NOT_A_KEY_CODE,
                     Constants.EXTERNAL_KEYBOARD_COORDINATE, Constants.EXTERNAL_KEYBOARD_COORDINATE, null, if (isKeyRepeat) FLAG_REPEAT else FLAG_NONE, next)/* text *//* suggestedWordInfo */
         }
 

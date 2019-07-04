@@ -49,7 +49,6 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.sentry.Sentry
-import no.divvun.domain.*
 import java.util.*
 import java.util.concurrent.TimeUnit
 
@@ -720,8 +719,9 @@ class InputLogic
                 inputTransaction.setDidAffectContents()
             }
             Constants.CODE_OUTPUT_TEXT -> {
-                // TODO Validate correctness of use of CODE_OUTPUT_TEXT (See:
-                mLatinIME.onTextInput(event.textToCommit.toString())
+                // From the dead result generate a new event with result of dead key
+                val tmpEvent = Event.createSoftwareKeypressTextEvent(event.textToCommit.toString(), null, false)
+                onCodeInput(inputTransaction.mSettingsValues, tmpEvent, inputTransaction.mShiftState, currentKeyboardScriptId, handler)
             }
             else -> throw RuntimeException("Unknown key code : " + event.mKeyCode)
         }// Note: Changing keyboard to shift lock state is handled in
@@ -892,7 +892,9 @@ class InputLogic
 
             if (swapWeakSpace && trySwapSwapperAndSpace(event, inputTransaction)) {
                 mSpaceState = SpaceState.WEAK
-            } else {
+            } else if(event.isSoftwareGeneratedString){
+                sendCharSequence(event.textToCommit!!)
+            } else  {
                 sendKeyCodePoint(settingsValues, codePoint)
             }
         }
@@ -1907,6 +1909,10 @@ class InputLogic
 
         // TODO: we should do this also when the editor has TYPE_NULL
         mConnection.commitText(StringUtils.newSingleCodePointString(codePoint), 1)
+    }
+
+    private fun sendCharSequence(charSequence: CharSequence) {
+        mConnection.commitText(charSequence, 1)
     }
 
     /**
