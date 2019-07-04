@@ -1231,8 +1231,11 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     // Implementation of {@link KeyboardActionListener}.
-    override fun onCodeInput(codePoint: Int, x: Int, y: Int,
-                             isKeyRepeat: Boolean) {
+    override fun onCodeInput(codePoint: Int,
+                             x: Int,
+                             y: Int,
+                             isKeyRepeat: Boolean,
+                             isDeadKey: Boolean) {
         // TODO: this processing does not belong inside LatinIME, the caller should be doing this.
         val mainKeyboardView = mKeyboardSwitcher.mainKeyboardView ?: return
         // x and y include some padding, but everything down the line (especially native
@@ -1244,7 +1247,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
         // Find out if it is a deadkey
         val key = mainKeyboardView.keyboard?.getKey(realCodePoint)
-        val isDeadKey = key?.deadKey ?: false
+        val isDeadKey = key?.isDeadKey ?: false
 
         val keyX = mainKeyboardView.getKeyX(x)
         val keyY = mainKeyboardView.getKeyY(y)

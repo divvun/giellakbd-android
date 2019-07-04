@@ -61,7 +61,7 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
     public interface Listener {
         public void showImportantNoticeContents();
         public void pickSuggestionManually(SuggestedWordInfo word);
-        public void onCodeInput(int primaryCode, int x, int y, boolean isKeyRepeat);
+        public void onCodeInput(int primaryCode, int x, int y, boolean isKeyRepeat, boolean isDeadKey);
     }
 
     static final boolean DBG = DebugFlags.DEBUG_ENABLED;
@@ -458,7 +458,7 @@ public final class SuggestionStripView extends RelativeLayout implements OnClick
         if (view == mVoiceKey) {
             mListener.onCodeInput(Constants.CODE_SHORTCUT,
                     Constants.SUGGESTION_STRIP_COORDINATE, Constants.SUGGESTION_STRIP_COORDINATE,
-                    false /* isKeyRepeat */);
+                    false, false);
             return;
         }
 

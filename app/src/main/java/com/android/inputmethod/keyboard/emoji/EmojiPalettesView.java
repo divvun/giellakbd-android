@@ -16,8 +16,6 @@
 
 package com.android.inputmethod.keyboard.emoji;
 
-import static com.android.inputmethod.latin.common.Constants.NOT_A_COORDINATE;
-
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
@@ -37,6 +35,8 @@ import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
+import androidx.viewpager.widget.ViewPager;
+
 import com.android.inputmethod.keyboard.Key;
 import com.android.inputmethod.keyboard.KeyboardActionListener;
 import com.android.inputmethod.keyboard.KeyboardLayoutSet;
@@ -50,7 +50,7 @@ import com.android.inputmethod.latin.RichInputMethodSubtype;
 import com.android.inputmethod.latin.common.Constants;
 import com.android.inputmethod.latin.utils.ResourceUtils;
 
-import androidx.viewpager.widget.ViewPager;
+import static com.android.inputmethod.latin.common.Constants.NOT_A_COORDINATE;
 
 /**
  * View class to implement Emoji palettes.
@@ -150,7 +150,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         final String tabId = EmojiCategory.getCategoryName(categoryId, 0 /* categoryPageId */);
         final TabHost.TabSpec tspec = host.newTabSpec(tabId);
         tspec.setContent(R.id.emoji_keyboard_dummy);
-        final ImageView iconView = (ImageView)LayoutInflater.from(getContext()).inflate(
+        final ImageView iconView = (ImageView) LayoutInflater.from(getContext()).inflate(
                 R.layout.emoji_keyboard_tab_icon, null);
         // TODO: Replace background color with its own setting rather than using the
         //       category page indicator background as a workaround.
@@ -163,7 +163,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
 
     @Override
     protected void onFinishInflate() {
-        mTabHost = (TabHost)findViewById(R.id.emoji_category_tabhost);
+        mTabHost = (TabHost) findViewById(R.id.emoji_category_tabhost);
         mTabHost.setup();
         for (final EmojiCategory.CategoryProperties properties
                 : mEmojiCategory.getShownCategories()) {
@@ -182,7 +182,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
 
         mEmojiPalettesAdapter = new EmojiPalettesAdapter(mEmojiCategory, this);
 
-        mEmojiPager = (ViewPager)findViewById(R.id.emoji_keyboard_pager);
+        mEmojiPager = (ViewPager) findViewById(R.id.emoji_keyboard_pager);
         mEmojiPager.setAdapter(mEmojiPalettesAdapter);
         mEmojiPager.setOnPageChangeListener(this);
         mEmojiPager.setOffscreenPageLimit(0);
@@ -190,18 +190,18 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         mEmojiLayoutParams.setPagerProperties(mEmojiPager);
 
         mEmojiCategoryPageIndicatorView =
-                (EmojiCategoryPageIndicatorView)findViewById(R.id.emoji_category_page_id_view);
+                (EmojiCategoryPageIndicatorView) findViewById(R.id.emoji_category_page_id_view);
         mEmojiCategoryPageIndicatorView.setColors(
                 mCategoryPageIndicatorColor, mCategoryPageIndicatorBackground);
         mEmojiLayoutParams.setCategoryPageIdViewProperties(mEmojiCategoryPageIndicatorView);
 
         setCurrentCategoryId(mEmojiCategory.getCurrentCategoryId(), true /* force */);
 
-        final LinearLayout actionBar = (LinearLayout)findViewById(R.id.emoji_action_bar);
+        final LinearLayout actionBar = (LinearLayout) findViewById(R.id.emoji_action_bar);
         mEmojiLayoutParams.setActionBarProperties(actionBar);
 
         // deleteKey depends only on OnTouchListener.
-        mDeleteKey = (ImageButton)findViewById(R.id.emoji_keyboard_delete);
+        mDeleteKey = (ImageButton) findViewById(R.id.emoji_keyboard_delete);
         mDeleteKey.setBackgroundResource(mFunctionalKeyBackgroundId);
         mDeleteKey.setTag(Constants.CODE_DELETE);
         mDeleteKey.setOnTouchListener(mDeleteKeyOnTouchListener);
@@ -213,12 +213,12 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         // if the event is canceled by moving off the finger from the view.
         // The text on alphabet keys are set at
         // {@link #startEmojiPalettes(String,int,float,Typeface)}.
-        mAlphabetKeyLeft = (TextView)findViewById(R.id.emoji_keyboard_alphabet_left);
+        mAlphabetKeyLeft = (TextView) findViewById(R.id.emoji_keyboard_alphabet_left);
         mAlphabetKeyLeft.setBackgroundResource(mFunctionalKeyBackgroundId);
         mAlphabetKeyLeft.setTag(Constants.CODE_ALPHA_FROM_EMOJI);
         mAlphabetKeyLeft.setOnTouchListener(this);
         mAlphabetKeyLeft.setOnClickListener(this);
-        mAlphabetKeyRight = (TextView)findViewById(R.id.emoji_keyboard_alphabet_right);
+        mAlphabetKeyRight = (TextView) findViewById(R.id.emoji_keyboard_alphabet_right);
         mAlphabetKeyRight.setBackgroundResource(mFunctionalKeyBackgroundId);
         mAlphabetKeyRight.setTag(Constants.CODE_ALPHA_FROM_EMOJI);
         mAlphabetKeyRight.setOnTouchListener(this);
@@ -324,7 +324,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
         }
         final int code = (Integer) tag;
         mKeyboardActionListener.onCodeInput(code, NOT_A_COORDINATE, NOT_A_COORDINATE,
-                false /* isKeyRepeat */);
+                false, false);
         mKeyboardActionListener.onReleaseKey(code, false /* withSliding */);
     }
 
@@ -353,7 +353,7 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
             mKeyboardActionListener.onTextInput(key.getOutputText());
         } else {
             mKeyboardActionListener.onCodeInput(code, NOT_A_COORDINATE, NOT_A_COORDINATE,
-                    false /* isKeyRepeat */);
+                    false, key.isDeadKey());
         }
         mKeyboardActionListener.onReleaseKey(code, false /* withSliding */);
     }
@@ -475,8 +475,8 @@ public final class EmojiPalettesView extends LinearLayout implements OnTabChange
 
         private void onTouchUp(final View v) {
             mKeyboardActionListener.onCodeInput(Constants.CODE_DELETE,
-                    NOT_A_COORDINATE, NOT_A_COORDINATE, false /* isKeyRepeat */);
-            mKeyboardActionListener.onReleaseKey(Constants.CODE_DELETE, false /* withSliding */);
+                    NOT_A_COORDINATE, NOT_A_COORDINATE, false, false);
+            mKeyboardActionListener.onReleaseKey(Constants.CODE_DELETE, false);
             v.setPressed(false /* pressed */);
         }
 

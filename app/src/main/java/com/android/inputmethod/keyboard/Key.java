@@ -212,7 +212,7 @@ public class Key implements Comparable<Key> {
 
     private boolean deadKey = false;
 
-    public boolean getDeadKey() {
+    public boolean isDeadKey() {
         return deadKey;
     }
     /**

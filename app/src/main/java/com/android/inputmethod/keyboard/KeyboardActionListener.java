@@ -56,7 +56,7 @@ public interface KeyboardActionListener {
      * @param isKeyRepeat true if this is a key repeat, false otherwise
      */
     // TODO: change this to send an Event object instead
-    public void onCodeInput(int primaryCode, int x, int y, boolean isKeyRepeat);
+    public void onCodeInput(int primaryCode, int x, int y, boolean isKeyRepeat, boolean isDeadKey);
 
     /**
      * Sends a string of characters to the listener.
@@ -109,7 +109,7 @@ public interface KeyboardActionListener {
         @Override
         public void onReleaseKey(int primaryCode, boolean withSliding) {}
         @Override
-        public void onCodeInput(int primaryCode, int x, int y, boolean isKeyRepeat) {}
+        public void onCodeInput(int primaryCode, int x, int y, boolean isKeyRepeat, boolean isDeadKey) {}
         @Override
         public void onTextInput(String text) {}
         @Override

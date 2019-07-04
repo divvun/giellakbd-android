@@ -201,10 +201,10 @@ public class MoreKeysKeyboardView extends KeyboardView implements MoreKeysPanel 
             mListener.onTextInput(mCurrentKey.getOutputText());
         } else if (code != Constants.CODE_UNSPECIFIED) {
             if (getKeyboard().hasProximityCharsCorrection(code)) {
-                mListener.onCodeInput(code, x, y, false /* isKeyRepeat */);
+                mListener.onCodeInput(code, x, y, false, key.isDeadKey());
             } else {
                 mListener.onCodeInput(code, Constants.NOT_A_COORDINATE, Constants.NOT_A_COORDINATE,
-                        false /* isKeyRepeat */);
+                        false, key.isDeadKey());
             }
         }
     }
