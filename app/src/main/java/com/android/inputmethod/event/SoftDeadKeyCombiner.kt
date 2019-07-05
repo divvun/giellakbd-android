@@ -44,7 +44,15 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
                 // The event was a dead key. Start tracking it.
                 firstEvent = event
 
-                currentNode = deadKeyRoot.children[event.codePointChar()] as DeadKeyNode.Parent
+
+                val firstNode = deadKeyRoot.children[event.codePointChar()]
+                if(firstNode == null){
+                    Log.e("SoftDeadKeyCombiner" , "Key code ${event.mKeyCode}, Code Point ${event.mCodePoint} reported deadkey but was not supported")
+                    return event
+
+                }
+                currentNode = firstNode as DeadKeyNode.Parent
+
                 return Event.createConsumedEvent(event)
             }
             // Regular keystroke when not keeping track of a dead key. Simply said, there are
