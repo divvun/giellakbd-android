@@ -1244,15 +1244,16 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         // keyboard event. Also we should pull this up -- LatinIME has no business doing
         // this transformation, it should be done already before calling onEvent.
         val realCodePoint = getCodePointForKeyboard(codePoint)
-
-        // Find out if it is a deadkey
-        val key = mainKeyboardView.keyboard?.getKey(realCodePoint)
-        val isDeadKey = key?.isDeadKey ?: false
+        Log.d("LatinIME", "Is dead Key $isDeadKey")
 
         val keyX = mainKeyboardView.getKeyX(x)
         val keyY = mainKeyboardView.getKeyY(y)
-        val event = createSoftwareKeypressEvent(realCodePoint,
-                keyX, keyY, isKeyRepeat, isDeadKey)
+        val event = createSoftwareKeypressEvent(
+                realCodePoint,
+                keyX,
+                keyY,
+                isKeyRepeat,
+                isDeadKey)
         onEvent(event)
     }
 

@@ -301,7 +301,7 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
                 sListener.onTextInput(key.getOutputText());
             } else if (code != Constants.CODE_UNSPECIFIED) {
                 if (mKeyboard.hasProximityCharsCorrection(code)) {
-                    sListener.onCodeInput(code, x, y, isKeyRepeat, isKeyRepeat);
+                    sListener.onCodeInput(code, x, y, isKeyRepeat, key.isDeadKey());
                 } else {
                     sListener.onCodeInput(code,
                             Constants.NOT_A_COORDINATE, Constants.NOT_A_COORDINATE, isKeyRepeat, key.isDeadKey());
