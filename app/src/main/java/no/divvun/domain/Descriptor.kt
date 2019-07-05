@@ -44,18 +44,18 @@ class DeadKeyNodeDeserializer : JsonDeserializer<DeadKeyNode> {
             }
             json.isJsonPrimitive -> {
                 val raw = json.asString
-                val parsedValue = raw.parseUnicodeChars()
+                val parsedValue = raw.parsedUnicodeString()
                 DeadKeyNode.Leaf(parsedValue)
             }
             else -> throw RuntimeException("Unexpected type: $json")
         }
     }
 
-    private val unicodeFormat = """\\u\{[0-9A-Fa-f]+\}""".toRegex()
+    private val unicodeFormatRegex = """\\u\{[0-9A-Fa-f]+\}""".toRegex()
     private val numberRegex = "[0-9A-Fa-f]+".toRegex()
 
-    fun String.parseUnicodeChars(): String {
-        return unicodeFormat.replace(this) {
+    private fun String.parsedUnicodeString(): String {
+        return unicodeFormatRegex.replace(this) {
             val match = it.value
             val result = numberRegex.find(match, 0)
             StringUtils.newSingleCodePointString(result!!.value.toInt(16))
