@@ -17,11 +17,9 @@
 package com.android.inputmethod.event
 
 import android.util.Log
-
 import com.android.inputmethod.latin.common.Constants
 import no.divvun.domain.DeadKeyNode
-
-import java.util.ArrayList
+import java.util.*
 
 /**
  * A combiner that handles dead keys.
@@ -46,10 +44,9 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
 
 
                 val firstNode = deadKeyRoot.children[event.codePointChar()]
-                if(firstNode == null){
-                    Log.e("SoftDeadKeyCombiner" , "Key code ${event.mKeyCode}, Code Point ${event.mCodePoint} reported deadkey but was not supported")
+                if (firstNode == null) {
+                    Log.e("SoftDeadKeyCombiner", "Key code ${event.mKeyCode}, Code Point ${event.mCodePoint} reported deadkey but was not supported")
                     return event
-
                 }
                 currentNode = firstNode as DeadKeyNode.Parent
 
@@ -65,8 +62,7 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
             if (Constants.CODE_DELETE == event.mKeyCode) {
                 // DeadKeyDeadKeyNode didn't exist use fallback node
                 val result = currentNode.defaultChild()
-                deadSequence.clear()
-                currentNode = deadKeyRoot
+                reset()
                 return Event.createSoftDeadResultEvent(result.string, event)
             }
             return event
@@ -85,22 +81,21 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
                 }
                 is DeadKeyNode.Leaf -> {
                     val result = newDeadKeyNode.string
-                    deadSequence.clear()
-                    currentNode = deadKeyRoot
+                    reset()
                     Event.createSoftDeadResultEvent(result, event)
                 }
             }
         } else {
             // DeadKeyDeadKeyNode didn't exist use fallback node
             val result = currentNode.defaultChild()
-            deadSequence.clear()
-            currentNode = deadKeyRoot
-    return Event.createSoftDeadResultEvent(result.string, event)
+            reset()
+            return Event.createSoftDeadResultEvent(result.string, event)
         }
     }
 
     override fun reset() {
         deadSequence.clear()
+        currentNode = deadKeyRoot
     }
 
     override fun getCombiningStateFeedback(): CharSequence {
