@@ -29,7 +29,9 @@ import android.view.KeyEvent
 import android.view.inputmethod.CorrectionInfo
 import android.view.inputmethod.EditorInfo
 import com.android.inputmethod.compat.SuggestionSpanUtils
-import com.android.inputmethod.event.*
+import com.android.inputmethod.event.Combiner
+import com.android.inputmethod.event.Event
+import com.android.inputmethod.event.InputTransaction
 import com.android.inputmethod.keyboard.Keyboard
 import com.android.inputmethod.keyboard.KeyboardSwitcher
 import com.android.inputmethod.latin.*
@@ -44,7 +46,9 @@ import com.android.inputmethod.latin.settings.SettingsValues
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import com.android.inputmethod.latin.settings.SpacingAndPunctuations
 import com.android.inputmethod.latin.suggestions.SuggestionStripViewAccessor
-import com.android.inputmethod.latin.utils.*
+import com.android.inputmethod.latin.utils.InputTypeUtils
+import com.android.inputmethod.latin.utils.RecapitalizeStatus
+import com.android.inputmethod.latin.utils.StatsUtils
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -367,13 +371,13 @@ class InputLogic
         // Disabled branch for onPickSuggestManually to work
         /**
         if (suggestionInfo.isKindOf(SuggestedWordInfo.KIND_APP_DEFINED)) {
-            mSuggestedWords = SuggestedWords.emptyInstance
-            mSuggestionStripViewAccessor.setNeutralSuggestionStrip()
-            inputTransaction.requireShiftUpdate(InputTransaction.SHIFT_UPDATE_NOW)
-            resetComposingState(true /* alsoResetLastComposedWord */)
-            mConnection.commitCompletion(suggestionInfo.mApplicationSpecifiedCompletionInfo)
-            mConnection.endBatchEdit()
-            return inputTransaction
+        mSuggestedWords = SuggestedWords.emptyInstance
+        mSuggestionStripViewAccessor.setNeutralSuggestionStrip()
+        inputTransaction.requireShiftUpdate(InputTransaction.SHIFT_UPDATE_NOW)
+        resetComposingState(true /* alsoResetLastComposedWord */)
+        mConnection.commitCompletion(suggestionInfo.mApplicationSpecifiedCompletionInfo)
+        mConnection.endBatchEdit()
+        return inputTransaction
         }
          */
 
@@ -497,6 +501,7 @@ class InputLogic
                     event: Event, keyboardShiftMode: Int,
                     currentKeyboardScriptId: Int, handler: LatinIME.UIHandler): InputTransaction {
         mWordBeingCorrectedByCursor = null
+        val infrontOrMiddle = wordComposer.realIsCursorFrontOrMiddleOfComposingWord
         val processedEvent = wordComposer.processEvent(event)
         val inputTransaction = InputTransaction(settingsValues,
                 processedEvent, SystemClock.uptimeMillis(), mSpaceState,
@@ -520,7 +525,8 @@ class InputLogic
         var currentEvent: Event? = processedEvent
         while (null != currentEvent) {
             if (currentEvent.isConsumed) {
-                handleConsumedEvent(currentEvent, inputTransaction)
+                handleConsumedEvent(currentEvent, inputTransaction, currentKeyboardScriptId,
+                        handler, infrontOrMiddle)
             } else if (currentEvent.isFunctionalKeyEvent) {
                 handleFunctionalEvent(currentEvent, inputTransaction, currentKeyboardScriptId,
                         handler)
@@ -651,7 +657,7 @@ class InputLogic
      * @param event The event to handle.
      * @param inputTransaction The transaction in progress.
      */
-    private fun handleConsumedEvent(event: Event, inputTransaction: InputTransaction) {
+    private fun handleConsumedEvent(event: Event, inputTransaction: InputTransaction, currentKeyboardScriptId: Int, handler: LatinIME.UIHandler, isInFrontOrMiddle: Boolean) {
         // A consumed event may have text to commit and an update to the composing state, so
         // we evaluate both. With some combiners, it's possible than an event contains both
         // and we enter both of the following if clauses.
@@ -660,7 +666,19 @@ class InputLogic
             mConnection.commitText(textToCommit, 1)
             inputTransaction.setDidAffectContents()
         }
-        if (wordComposer.isComposingWord) {
+
+        if (isInFrontOrMiddle) {
+            // If we are in the middle of a recorrection, we need to commit the recorrection
+            // first so that we can insert the character at the current cursor position.
+            // We also need to unlearn the original word that is now being corrected.
+            unlearnWord(wordComposer.typedWord, inputTransaction.mSettingsValues, Constants.EVENT_BACKSPACE)
+            resetEntireInputState(mConnection.expectedSelectionStart,
+                    mConnection.expectedSelectionEnd, true /* clearSuggestionStrip */)
+            val eventCopy = Event.createNonConsumedEvent(event)
+            onCodeInput(inputTransaction.mSettingsValues, eventCopy, inputTransaction.mShiftState, currentKeyboardScriptId, handler)
+            inputTransaction.setDidAffectContents()
+            inputTransaction.setRequiresUpdateSuggestions()
+        } else if (wordComposer.isComposingWord) {
             setComposingTextInternal(wordComposer.typedWord, 1)
             inputTransaction.setDidAffectContents()
             inputTransaction.setRequiresUpdateSuggestions()
@@ -894,9 +912,9 @@ class InputLogic
 
             if (swapWeakSpace && trySwapSwapperAndSpace(event, inputTransaction)) {
                 mSpaceState = SpaceState.WEAK
-            } else if(event.isSoftwareGeneratedString){
+            } else if (event.isSoftwareGeneratedString) {
                 sendCharSequence(event.textToCommit!!)
-            } else  {
+            } else {
                 sendKeyCodePoint(settingsValues, codePoint)
             }
         }

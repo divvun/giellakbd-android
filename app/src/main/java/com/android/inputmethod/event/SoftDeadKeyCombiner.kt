@@ -28,7 +28,6 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
 
     private var currentNode: DeadKeyNode.Parent = deadKeyRoot
     private val deadSequence: MutableList<Event> = mutableListOf()
-    lateinit var firstEvent: Event
 
     override fun processEvent(previousEvents: ArrayList<Event>, event: Event): Event {
         if (event.isHardwareEvent) {
@@ -40,8 +39,6 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
             if (event.isDead) {
                 deadSequence.add(event)
                 // The event was a dead key. Start tracking it.
-                firstEvent = event
-
 
                 val firstNode = deadKeyRoot.children[event.codePointChar()]
                 if (firstNode == null) {

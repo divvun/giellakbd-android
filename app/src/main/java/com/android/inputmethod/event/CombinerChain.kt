@@ -50,7 +50,7 @@ class CombinerChain
  */
 (initialText: String, private val combiners: List<Combiner>) {
     // The already combined text, as described above
-    private val combinedText: StringBuilder = StringBuilder(initialText)
+    val combinedText: StringBuilder = StringBuilder(initialText)
     // The feedback on the composing state, as described above
     private val stateFeedback: SpannableStringBuilder = SpannableStringBuilder()
 

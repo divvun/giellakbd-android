@@ -16,21 +16,16 @@
 
 package com.android.inputmethod.latin
 
+import android.util.Log
 import com.android.inputmethod.annotations.UsedForTesting
 import com.android.inputmethod.event.Combiner
 import com.android.inputmethod.event.CombinerChain
 import com.android.inputmethod.event.Event
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
-import com.android.inputmethod.latin.common.ComposedData
-import com.android.inputmethod.latin.common.Constants
-import com.android.inputmethod.latin.common.CoordinateUtils
-import com.android.inputmethod.latin.common.InputPointers
-import com.android.inputmethod.latin.common.StringUtils
+import com.android.inputmethod.latin.common.*
 import com.android.inputmethod.latin.define.DebugFlags
 import com.android.inputmethod.latin.define.DecoderSpecificConstants
-
-import java.util.ArrayList
-import java.util.Collections
+import java.util.*
 
 /**
  * A place to store the currently composing word with information such as adjacent key codes as well
@@ -92,11 +87,22 @@ class WordComposer(private val combiners: List<Combiner>) {
 
     val isCursorFrontOrMiddleOfComposingWord: Boolean
         get() {
+            Log.d("isCursorFrontOrMiddle", "cursorPositionWithinWord: $cursorPositionWithinWord, codePointSize: $codePointSize")
             if (DBG && cursorPositionWithinWord > codePointSize) {
                 throw RuntimeException("Wrong cursor position : " + cursorPositionWithinWord
                         + "in a word of size " + codePointSize)
             }
-            return cursorPositionWithinWord != codePointSize
+            return cursorPositionWithinWord < codePointSize
+        }
+
+    private val realCodePointSize: Int
+        get() {
+            return combinerChain.combinedText.length
+        }
+
+    val realIsCursorFrontOrMiddleOfComposingWord: Boolean
+        get() {
+            return cursorPositionWithinWord < realCodePointSize
         }
 
     /**
@@ -160,6 +166,22 @@ class WordComposer(private val combiners: List<Combiner>) {
                     combiners)
             this.combiningSpec = nonNullCombiningSpec
         }
+    }
+
+    /**
+     * Restart the combiners, possibly with a new spec.
+     * @param combiningSpec The spec string for combining. This is found in the extra value.
+     */
+    fun restartCombining(event: Event) {
+        val nonNullCombiningSpec = combiningSpec ?: ""
+        if (nonNullCombiningSpec != this.combiningSpec) {
+            combinerChain = CombinerChain(
+                    combinerChain.composingWordWithCombiningFeedback.toString(),
+                    combiners)
+            this.combiningSpec = nonNullCombiningSpec
+        }
+        reset()
+        processEvent(event)
     }
 
     /**

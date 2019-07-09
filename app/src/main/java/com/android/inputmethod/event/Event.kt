@@ -288,5 +288,11 @@ data class Event// This method is private - to create a new event, use one of th
             return Event(EVENT_TYPE_NOT_HANDLED, null, NOT_A_CODE_POINT, NOT_A_KEY_CODE,
                     Constants.NOT_A_COORDINATE, Constants.NOT_A_COORDINATE, null, FLAG_NONE, null)/* text *//* suggestedWordInfo */
         }
+
+        fun createNonConsumedEvent(source: Event): Event {
+            return Event(source.mEventType, source.mText, source.mCodePoint, source.mKeyCode,
+                    source.mX, source.mY, source.mSuggestedWordInfo, source.mFlags and FLAG_CONSUMED.inv(),
+                    source.mNextEvent)
+        }
     }
 }
