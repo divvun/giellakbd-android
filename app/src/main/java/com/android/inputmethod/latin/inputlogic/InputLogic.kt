@@ -742,6 +742,10 @@ class InputLogic
 
                 val tmpEvent = Event.createSoftwareKeypressTextEvent(deadKeyResult)
                 onCodeInput(inputTransaction.mSettingsValues, tmpEvent, inputTransaction.mShiftState, currentKeyboardScriptId, handler)
+                // Notify that we affected the contents
+                inputTransaction.setDidAffectContents()
+                // We need to update suggestions due to new character beeing inserted
+                inputTransaction.setRequiresUpdateSuggestions()
             }
             else -> throw RuntimeException("Unknown key code : " + event.mKeyCode)
         }// Note: Changing keyboard to shift lock state is handled in
