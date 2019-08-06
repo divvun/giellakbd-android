@@ -509,6 +509,21 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
         mHandler.onCreate()
 
+        val locale = mRichImm?.currentSubtypeLocale
+
+        // Init deadkey combiners and InputLogic
+        // The dead key combiner is always active, and always first
+        val combiners: MutableList<Combiner> = mutableListOf(DeadKeyCombiner())
+
+        Log.d("onCreate", "Locale: $locale")
+        if (locale != null) {
+            val keyboardDescriptor = loadKeyboardDescriptor(this, locale)
+            keyboardDescriptor?.let {
+                combiners += SoftDeadKeyCombiner(keyboardDescriptor.transforms)
+            }
+        }
+
+        mInputLogic = InputLogic(this, this, mDictionaryFacilitator, combiners)
 
         // TODO: Resolve mutual dependencies of {@link #loadSettings()} and
         // {@link #resetDictionaryFacilitatorIfNecessary()}.
@@ -530,21 +545,8 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     // Has to be package-visible for unit tests
     @UsedForTesting
     internal fun loadSettings() {
+
         val locale = mRichImm?.currentSubtypeLocale
-
-        // Init deadkey combiners and InputLogic
-        // The dead key combiner is always active, and always first
-        val combiners: MutableList<Combiner> = mutableListOf(DeadKeyCombiner())
-
-        Log.d("onCreate", "Locale: $locale")
-        if (locale != null) {
-            val keyboardDescriptor = loadKeyboardDescriptor(this, locale)
-            keyboardDescriptor?.let {
-                combiners += SoftDeadKeyCombiner(keyboardDescriptor.transforms)
-            }
-        }
-
-        mInputLogic = InputLogic(this, this, mDictionaryFacilitator, combiners)
 
         val editorInfo = currentInputEditorInfo
         val inputAttributes = InputAttributes(
