@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/fragment_upload"
+        android:icon="@drawable/vd_cloud_upload"
+        android:title="Upload"
+        android:tooltipText="Upload data to UIT"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/fragment_blacklist"
+        android:icon="@drawable/vd_blacklist"
+        android:title="Blacklist"
+        android:tooltipText="List of forbidden words" />
+</menu>

@@ -1,4 +1,5 @@
 app/local.gradle
+app/src/main/assets/se.zhfst
 
 # Built application files
 *.apk

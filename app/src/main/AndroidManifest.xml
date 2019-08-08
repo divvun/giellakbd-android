@@ -12,7 +12,6 @@
      See the License for the specific language governing permissions and
      limitations under the License.
 -->
-
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.android.inputmethod.latin">
@@ -28,13 +27,20 @@
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
+        android:name="no.divvun.App"
         android:allowBackup="false"
         android:icon="@drawable/ic_launcher_keyboard"
         android:label="@string/english_ime_name"
         android:supportsRtl="true"
-        android:name="no.divvun.App"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity
+            android:name="com.android.inputmethod.ui.personaldictionary.PersonalDictionaryActivity"
+            android:label="@string/title_activity_personal_dictionary"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+            </intent-filter>
+        </activity>
         <!-- Services -->
         <service
             android:name="com.android.inputmethod.latin.LatinIME"
@@ -58,11 +64,11 @@
                 android:name="android.view.textservice.scs"
                 android:resource="@xml/spellchecker" />
         </service>
-
-        <!--service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
+        <!--
+service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
                 android:label="@string/dictionary_service_name">
-        </service-->
-
+        </service
+        -->
         <!-- Activities -->
         <activity
             android:name="com.android.inputmethod.latin.setup.SetupActivity"
@@ -73,18 +79,18 @@
             android:theme="@style/platformActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="com.android.inputmethod.latin.permissions.PermissionsActivity"
+            android:name=".permissions.PermissionsActivity"
             android:exported="false"
             android:taskAffinity=""
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
-            android:name="com.android.inputmethod.latin.setup.SetupWizardActivity"
+            android:name=".setup.SetupWizardActivity"
             android:clearTaskOnLaunch="true"
             android:label="@string/english_ime_name"
             android:theme="@style/platformActivityTheme">
@@ -125,14 +131,13 @@
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
             </intent-filter>
-        </activity-->
-
+        </activity
+        -->
         <!-- Unexported activity used for tests. -->
-        <!--<activity android:name="com.android.inputmethod.latin.settings.TestFragmentActivity"-->
-        <!--android:exported="false" />-->
-
+        <!-- <activity android:name="com.android.inputmethod.latin.settings.TestFragmentActivity" -->
+        <!-- android:exported="false" /> -->
         <!-- Broadcast receivers -->
-        <receiver android:name="com.android.inputmethod.latin.SystemBroadcastReceiver">
+        <receiver android:name=".SystemBroadcastReceiver">
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -140,8 +145,8 @@
                 <action android:name="android.intent.action.LOCALE_CHANGED" />
             </intent-filter>
         </receiver>
-
-        <!--receiver android:name="com.android.inputmethod.latin.DictionaryPackInstallBroadcastReceiver" android:exported="false">
+        <!--
+receiver android:name="com.android.inputmethod.latin.DictionaryPackInstallBroadcastReceiver" android:exported="false">
             <intent-filter>
                 <action android:name="com.android.inputmethod.dictionarypack.aosp.UNKNOWN_CLIENT" />
             </intent-filter>
@@ -154,22 +159,14 @@
                 <action android:name="com.android.inputmethod.dictionarypack.aosp.UPDATE_NOW" />
                 <action android:name="com.android.inputmethod.dictionarypack.aosp.INIT_AND_UPDATE_NOW" />
             </intent-filter>
-        </receiver-->
-
+        </receiver
+        -->
         <!-- Broadcast receiver for AccountManager#LOGIN_ACCOUNTS_CHANGED_ACTION. -->
-        <receiver android:name="com.android.inputmethod.latin.accounts.AccountsChangedReceiver">
+        <receiver android:name=".accounts.AccountsChangedReceiver">
             <intent-filter>
                 <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED" />
             </intent-filter>
         </receiver>
-
-        <!-- Content providers -->
-        <!--provider android:name="com.android.inputmethod.dictionarypack.DictionaryProvider"
-                android:grantUriPermissions="true"
-                android:exported="false"
-                android:authorities="@string/authority"
-                android:multiprocess="false"
-                android:label="@string/dictionary_provider_name">
-        </provider-->
     </application>
+
 </manifest>

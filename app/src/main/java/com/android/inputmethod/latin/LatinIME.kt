@@ -64,6 +64,7 @@ import com.android.inputmethod.latin.define.DebugFlags
 import com.android.inputmethod.latin.define.ProductionFlags
 import com.android.inputmethod.latin.inputlogic.InputLogic
 import com.android.inputmethod.latin.permissions.PermissionsManager
+import com.android.inputmethod.ui.personaldictionary.PersonalDictionaryActivity
 import com.android.inputmethod.latin.settings.Settings
 import com.android.inputmethod.latin.settings.SettingsActivity
 import com.android.inputmethod.latin.suggestions.SuggestionStripView
@@ -1594,14 +1595,32 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         startActivity(intent)
     }
 
+    internal fun launchPersonalDictionary() {
+        mInputLogic.commitTyped(mSettings.current, LastComposedWord.NOT_A_SEPARATOR)
+        requestHideSelf(0)
+        val mainKeyboardView = mKeyboardSwitcher.mainKeyboardView
+        mainKeyboardView?.closing()
+
+        val intent = Intent()
+        intent.setClass(this@LatinIME, PersonalDictionaryActivity::class.java)
+        intent.flags = (Intent.FLAG_ACTIVITY_NEW_TASK
+                or Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED
+                or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        startActivity(intent)
+    }
+
     private fun showSubtypeSelectorAndSettings() {
         val title = getString(R.string.english_ime_input_options)
         // TODO: Should use new string "Select active input modes".
         val languageSelectionTitle = getString(R.string.language_selection_title)
+        val personalDictionary = getString(R.string.personal_dictionary_title)
+
         val pkgInfo = packageManager.getPackageInfo(packageName, 0)
         val appName = String.format("%s v%s (build %s)", getString(R.string.english_ime_name),
                 pkgInfo.versionName, pkgInfo.versionCode)
-        val items = arrayOf<CharSequence>(languageSelectionTitle, appName)
+
+        val items = arrayOf<CharSequence>(languageSelectionTitle, personalDictionary, appName)
+
         val imeId = mRichImm?.inputMethodIdOfThisIme
         val listener = OnClickListener { di, position ->
             di.dismiss()
@@ -1615,7 +1634,8 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                     intent.putExtra(Intent.EXTRA_TITLE, languageSelectionTitle)
                     startActivity(intent)
                 }
-                1 -> launchSettings(SettingsActivity.EXTRA_ENTRY_VALUE_LONG_PRESS_COMMA)
+                1 -> launchPersonalDictionary()
+                2 -> launchSettings(SettingsActivity.EXTRA_ENTRY_VALUE_LONG_PRESS_COMMA)
             }
         }
         val builder = AlertDialog.Builder(

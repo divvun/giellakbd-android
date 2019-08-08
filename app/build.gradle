@@ -6,6 +6,8 @@ apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.github.triplet.play'
+apply plugin: 'kotlin-kapt'
+apply plugin: "androidx.navigation.safeargs.kotlin"
 
 play {
     track = "alpha"
@@ -67,6 +69,18 @@ android {
         exclude("META-INF/*.kotlin_module")
     }
 
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+
+    compileOptions {
+        targetCompatibility '1.8'
+        sourceCompatibility '1.8'
+    }
+}
+
+androidExtensions {
+    experimental = true
 }
 
 
@@ -76,17 +90,19 @@ dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
     implementation "net.java.dev.jna:jna:5.5.0@aar"
-    implementation "android.arch.navigation:navigation-fragment-ktx:$navigationVersion"
-    implementation "android.arch.navigation:navigation-ui-ktx:$navigationVersion"
+
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
 
     implementation "io.reactivex.rxjava2:rxjava:$rxJavaVersion"
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
 
+    implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0'
+
     // Android Kotlin Extensions
     implementation "androidx.core:core-ktx:$ktxVersion"
 
-    implementation 'com.google.code.gson:gson:2.8.5'
 
     implementation('com.github.divvun:pahkat-client-sdk-java:111d0025') {
         exclude group: 'net.java.dev.jna'
@@ -101,6 +117,35 @@ dependencies {
     implementation 'io.arrow-kt:arrow-core:0.10.4'
 
     implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    implementation 'com.google.code.gson:gson:2.8.6'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
+    implementation 'com.google.android.material:material:1.1.0'
+
+    implementation("com.squareup.moshi:moshi:1.8.0")
+
+    implementation "androidx.room:room-runtime:$archRoomVersion"
+    kapt "androidx.room:room-compiler:$archRoomVersion"
+    implementation "androidx.room:room-rxjava2:$archRoomVersion"
+
+    implementation 'com.jakewharton.timber:timber:4.7.1'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.6.1'
+    implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
+    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
+
+    implementation 'com.google.android.material:material:1.1.0-alpha09'
+
+
+    implementation "io.arrow-kt:arrow-syntax:$arrowVersion"
+    kapt "io.arrow-kt:arrow-meta:$arrowVersion"
+    implementation "com.github.lenguyenthanh:RxArrow:$rxArrowVersion"
+
+    implementation 'com.github.rawa.recycler-swipes:recyclerswipes:0.1.2'
+    implementation 'com.github.rawa.recycler-swipes:recyclerswipes-rxbinding:0.1.2'
+
+    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 }
 
 repositories {

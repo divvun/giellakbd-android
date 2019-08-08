@@ -20,11 +20,7 @@ import com.android.inputmethod.annotations.UsedForTesting
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
-
-import java.util.ArrayList
-import java.util.Locale
-import java.util.Arrays
-import java.util.HashSet
+import java.util.*
 
 /**
  * Abstract base class for a dictionary that can do a fuzzy search for words based on a set of key
@@ -193,10 +189,12 @@ abstract class Dictionary(val mDictType: String, // The locale for this dictiona
          * Set out of the dictionary types listed above that are based on data specific to the user,
          * e.g., the user's contacts.
          */
-        private val sUserSpecificDictionaryTypes = HashSet(Arrays.asList(
-                TYPE_USER_TYPED,
-                TYPE_USER,
-                TYPE_CONTACTS,
-                TYPE_USER_HISTORY))
+        private val sUserSpecificDictionaryTypes = HashSet(
+                listOf(
+                        TYPE_USER_TYPED,
+                        TYPE_USER,
+                        TYPE_CONTACTS,
+                        TYPE_USER_HISTORY)
+        )
     }
 }

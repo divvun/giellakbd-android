@@ -10,6 +10,7 @@ import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import com.android.inputmethod.latin.utils.SuggestionResults
 import timber.log.Timber
+import no.divvun.dictionary.personal.PersonalDictionary
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -17,7 +18,8 @@ import java.util.concurrent.TimeUnit
 class DivvunDictionaryFacilitator : DictionaryFacilitator {
     private var isActive = false
 
-    var dictionary = DivvunDictionary(null, null)
+    private var dictionary = DivvunDictionary(null, null)
+    private lateinit var personalDictionary: PersonalDictionary
 
     // STUB
     override fun setValidSpellingWordReadCache(cache: LruCache<String, Boolean>) {
@@ -80,6 +82,7 @@ class DivvunDictionaryFacilitator : DictionaryFacilitator {
         Timber.d("resetDictionaries")
         context?.let {
             dictionary = DivvunDictionary(it, newLocale)
+            personalDictionary = PersonalDictionary(it, newLocale!!)
         }
     }
 
@@ -116,22 +119,37 @@ class DivvunDictionaryFacilitator : DictionaryFacilitator {
     }
 
     // STUB
-    override fun addToUserHistory(suggestion: String?, wasAutoCapitalized: Boolean, ngramContext: NgramContext, timeStampInSeconds: Long, blockPotentiallyOffensive: Boolean) {
+    override fun addToUserHistory(word: String, wasAutoCapitalized: Boolean, ngramContext: NgramContext, timeStampInSeconds: Long, blockPotentiallyOffensive: Boolean) {
         Timber.d("addToUserHistory")
+        if (!dictionary.isInDictionary(word)) {
+            Timber.d("Adding non known word: $word")
+            personalDictionary.learn(word)
+        }
+
+        val previousWords = ngramContext.extractPrevWordsContextArray().toList().filter { it != NgramContext.BEGINNING_OF_SENTENCE_TAG }.takeLast(2)
+        personalDictionary.processContext(previousWords, word)
     }
 
     // STUB
     override fun unlearnFromUserHistory(word: String?, ngramContext: NgramContext, timeStampInSeconds: Long, eventType: Int) {
         Timber.d("unlearnFromUserHistory")
+        word?.let {
+            personalDictionary.unlearn(word)
+        }
     }
 
     override fun getSuggestionResults(composedData: ComposedData, ngramContext: NgramContext, keyboard: Keyboard, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, inputStyle: Int): SuggestionResults {
-        val suggestions = dictionary.getSuggestions(composedData, ngramContext, 0, settingsValuesForSuggestion, sessionId, 0f, FloatArray(0))
+        val divvunSuggestions = dictionary.getSuggestions(composedData, ngramContext, 0, settingsValuesForSuggestion, sessionId, 0f, FloatArray(0))
+        val personalSuggestions = personalDictionary.getSuggestions(composedData, ngramContext, 0, settingsValuesForSuggestion, sessionId, 0f, FloatArray(0))
 
-        val suggestionResults = SuggestionResults(suggestions.size, false, false)
+        val suggestionResults = SuggestionResults(divvunSuggestions.size + personalSuggestions.size, ngramContext.isBeginningOfSentenceContext, true)
 
         // Add all our suggestions
-        suggestionResults.addAll(suggestions)
+        suggestionResults.addAll(divvunSuggestions)
+        suggestionResults.addAll(personalSuggestions)
+
+        Timber.d("Personal suggestions: $personalSuggestions")
+        Timber.d("All suggestions: $suggestionResults")
 
         return suggestionResults
     }

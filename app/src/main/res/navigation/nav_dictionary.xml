@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_dictionary.xml"
+    app:startDestination="@id/languageFragment">
+    <fragment
+        android:id="@+id/languageFragment"
+        android:name="com.android.inputmethod.ui.personaldictionary.language.LanguageFragment"
+        android:label="@string/personal_dictionary_title">
+        <action
+            android:id="@+id/action_languageFragment_to_dictionaryFragment"
+            app:destination="@id/dictionaryFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/dictionaryFragment"
+        android:name="com.android.inputmethod.ui.personaldictionary.dictionary.DictionaryFragment"
+        android:label="{language}">
+        <action
+            android:id="@+id/action_dictionaryFragment_to_wordFragment"
+            app:destination="@id/wordFragment" />
+        <action
+            android:id="@+id/action_dictionaryFragment_to_uploadFragment"
+            app:destination="@id/uploadFragment" />
+        <action
+            android:id="@+id/action_dictionaryFragment_to_addWordDialogFragment"
+            app:destination="@id/addWordDialogFragment" />
+
+        <argument
+            android:name="dictionaryNavArg"
+            app:argType="com.android.inputmethod.ui.personaldictionary.dictionary.DictionaryNavArg" />
+        <argument
+            android:name="language"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_dictionaryFragment_to_blacklistFragment"
+            app:destination="@id/blacklistFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/wordFragment"
+        android:name="com.android.inputmethod.ui.personaldictionary.word.WordFragment"
+        android:label="@string/fragment_title_word">
+        <argument
+            android:name="word"
+            app:argType="string" />
+        <argument
+            android:name="wordNavArg"
+            app:argType="com.android.inputmethod.ui.personaldictionary.word.WordNavArg" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/uploadFragment"
+        android:name="com.android.inputmethod.ui.personaldictionary.upload.UploadFragment"
+        android:label="Upload Dictionary">
+        <argument
+            android:name="uploadNavArg"
+            app:argType="com.android.inputmethod.ui.personaldictionary.upload.UploadNavArg" />
+    </fragment>
+    <dialog
+        android:id="@+id/addWordDialogFragment"
+        android:name="com.android.inputmethod.ui.personaldictionary.addworddialog.AddWordDialogFragment"
+        android:label="">
+
+        <argument
+            android:name="addWordDialogNavArg"
+            app:argType="com.android.inputmethod.ui.personaldictionary.addworddialog.AddWordDialogNavArg" />
+    </dialog>
+
+    <fragment
+        android:id="@+id/blacklistFragment"
+        android:name="com.android.inputmethod.ui.personaldictionary.blacklist.BlacklistFragment"
+        android:label="@string/fragment_title_blacklist">
+        <argument
+            android:name="blacklistNavArg"
+            app:argType="com.android.inputmethod.ui.personaldictionary.blacklist.BlacklistNavArg" />
+        <action
+            android:id="@+id/action_blacklistFragment_to_blacklistWordDialogFragment"
+            app:destination="@id/blacklistWordDialogFragment" />
+    </fragment>
+    <dialog
+        android:id="@+id/blacklistWordDialogFragment"
+        android:name="com.android.inputmethod.ui.personaldictionary.blacklistworddialog.BlacklistWordDialogFragment"
+        android:label="BlacklistWordDialogFragment">
+
+        <argument
+            android:name="blacklistWordDialogNavArg"
+            app:argType="com.android.inputmethod.ui.personaldictionary.blacklistworddialog.BlacklistWordDialogNavArg" />
+    </dialog>
+</navigation>

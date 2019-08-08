@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
 /*
 **
 ** Copyright 2012, The Android Open Source Project
@@ -20,6 +19,18 @@
 
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <!-- Color resources for IceCreamSandwich theme. Base color = 33B5E5 -->
+
+    <color name="primaryColor">#4bc1f3</color>
+    <color name="primaryLightColor">#87f4ff</color>
+    <color name="primaryDarkColor">#0091c0</color>
+    <color name="primaryTextColor">#000000</color>
+
+    <color name="colorSecondary">#4bc1f3</color>
+    <color name="colorDelete">#d32f2f</color>
+    <color name="colorBlock">#ef6c00</color>
+    <color name="colorAllow">#43a047</color>
+
+
     <!-- android:color/holo_blue_light value is #FF33B5E5 -->
     <color name="highlight_color_ics">#FF33B5E5</color>
     <color name="typed_word_color_ics">#D833B5E5</color>

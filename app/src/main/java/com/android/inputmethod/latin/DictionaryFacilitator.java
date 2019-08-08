@@ -44,25 +44,27 @@ import javax.annotation.Nullable;
  */
 public interface DictionaryFacilitator {
 
-    public static final String[] ALL_DICTIONARY_TYPES = new String[] {
+    public static final String[] ALL_DICTIONARY_TYPES = new String[]{
             Dictionary.Companion.getTYPE_MAIN(),
             Dictionary.Companion.getTYPE_CONTACTS(),
             Dictionary.Companion.getTYPE_USER_HISTORY(),
             Dictionary.Companion.getTYPE_USER()};
 
-    public static final String[] DYNAMIC_DICTIONARY_TYPES = new String[] {
+    public static final String[] DYNAMIC_DICTIONARY_TYPES = new String[]{
             Dictionary.Companion.getTYPE_CONTACTS(),
             Dictionary.Companion.getTYPE_USER_HISTORY(),
             Dictionary.Companion.getTYPE_USER()};
 
     /**
      * The facilitator will put words into the cache whenever it decodes them.
+     *
      * @param cache
      */
     void setValidSpellingWordReadCache(final LruCache<String, Boolean> cache);
 
     /**
      * The facilitator will get words from the cache whenever it needs to check their spelling.
+     *
      * @param cache
      */
     void setValidSpellingWordWriteCache(final LruCache<String, Boolean> cache);
@@ -88,7 +90,7 @@ public interface DictionaryFacilitator {
     /**
      * Called every time {@link LatinIME} starts on a new text field.
      * Dot not affect {@link AndroidSpellCheckerService}.
-     *
+     * <p>
      * WARNING: The service methods that call start/finish are very spammy.
      */
     void onStartInput();
@@ -98,7 +100,7 @@ public interface DictionaryFacilitator {
      * May be followed by {@link #onStartInput} again in another text field,
      * or it may be done for a while.
      * Dot not affect {@link AndroidSpellCheckerService}.
-     *
+     * <p>
      * WARNING: The service methods that call start/finish are very spammy.
      */
     void onFinishInput(Context context);
@@ -145,19 +147,20 @@ public interface DictionaryFacilitator {
     void waitForLoadingDictionariesForTesting(final long timeout, final TimeUnit unit)
             throws InterruptedException;
 
-    void addToUserHistory(final String suggestion, final boolean wasAutoCapitalized,
-            @Nonnull final NgramContext ngramContext, final long timeStampInSeconds,
-            final boolean blockPotentiallyOffensive);
+    void addToUserHistory(@Nonnull final String suggestion, final boolean wasAutoCapitalized,
+                          @Nonnull final NgramContext ngramContext, final long timeStampInSeconds,
+                          final boolean blockPotentiallyOffensive);
 
     void unlearnFromUserHistory(final String word,
-            @Nonnull final NgramContext ngramContext, final long timeStampInSeconds,
-            final int eventType);
+                                @Nonnull final NgramContext ngramContext, final long timeStampInSeconds,
+                                final int eventType);
 
     // TODO: Revise the way to fusion suggestion results.
-    @Nonnull SuggestionResults getSuggestionResults(final ComposedData composedData,
-            final NgramContext ngramContext, @Nonnull final Keyboard keyboard,
-            final SettingsValuesForSuggestion settingsValuesForSuggestion, final int sessionId,
-            final int inputStyle);
+    @Nonnull
+    SuggestionResults getSuggestionResults(final ComposedData composedData,
+                                           final NgramContext ngramContext, @Nonnull final Keyboard keyboard,
+                                           final SettingsValuesForSuggestion settingsValuesForSuggestion, final int sessionId,
+                                           final int inputStyle);
 
     boolean isValidSpellingWord(final String word);
 
@@ -169,5 +172,6 @@ public interface DictionaryFacilitator {
 
     void dumpDictionaryForDebug(final String dictName);
 
-    @Nonnull List<DictionaryStats> getDictionaryStats(final Context context);
+    @Nonnull
+    List<DictionaryStats> getDictionaryStats(final Context context);
 }
