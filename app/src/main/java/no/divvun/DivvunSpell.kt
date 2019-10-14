@@ -1,93 +1,161 @@
 package no.divvun
 
 import com.sun.jna.*
-import com.sun.jna.ptr.ByteByReference
-import java.lang.IndexOutOfBoundsException
 
-class SpellerInitException(val errorCode: Byte, message: String?): Exception(message)
+data class CaseHandlingConfig(
+    val startPenalty: Float = 0.0f,
+    val endPenalty: Float = 0.0f,
+    val midPenalty: Float = 0.0f
+)
 
-class DivvunSpell @Throws(SpellerInitException::class) constructor(path: String) {
-    private val handle: Pointer
+data class SpellerConfig(
+    val nBest: Long?,
+    val maxWeight: Float?,
+    val beam: Float?,
+    val caseHandling: CaseHandlingConfig?,
+    val nodePoolSize: Long?
+)
 
-    init {
-        val errorCode = ByteByReference(0)
-        handle = CLibrary.INSTANCE.speller_archive_new(path, errorCode)
+class DivvunSpellException(message: String?): Exception(message)
 
-        if (errorCode.value > 0) {
-            val errPtr = CLibrary.INSTANCE.speller_get_error(errorCode.value)
-            val errString = errPtr.getString(0)
-            CLibrary.INSTANCE.speller_str_free(errPtr)
-            throw SpellerInitException(errorCode.value, errString)
-        }
-    }
-
-    val locale: String
-        get() = CLibrary.INSTANCE.speller_meta_get_locale(handle)
-
-
-    fun suggest(word: String, nBest: Long? = null, maxWeight: Float? = null, beam: Float? = null): List<String> {
-        return SuggestionList(handle, word, NativeLong(nBest ?: 0), maxWeight ?: 0.0f, beam ?: 0.0f)
-    }
-
+class ThfstChunkedBoxSpeller internal constructor(private val handle: Pointer) {
+    @Throws(DivvunSpellException::class)
     fun isCorrect(word: String): Boolean {
-        return CLibrary.INSTANCE.speller_is_correct(handle, word)
+        val res = CLibrary.INSTANCE.divvun_thfst_chunked_box_speller_is_correct(handle, word, CLibrary.errorCallback)
+        CLibrary.assertNoError()
+        return res
     }
 
-    fun finalize() {
-        CLibrary.INSTANCE.speller_archive_free(handle)
+    @Throws(DivvunSpellException::class)
+    fun suggest(word: String): List<String> {
+        val slice = CLibrary.INSTANCE.divvun_thfst_chunked_box_speller_suggest(handle, word, CLibrary.errorCallback)
+        CLibrary.assertNoError()
+        return suggest(slice)
     }
 
-    inner class SuggestionList internal constructor(spellerHandle: Pointer, word: String, nBest: NativeLong, maxWeight: Float, beam: Float) : AbstractList<String>() {
-        private val handle = CLibrary.INSTANCE.speller_suggest(spellerHandle, word, nBest, maxWeight, beam)
-        override val size = CLibrary.INSTANCE.suggest_vec_len(handle).toInt()
+    @Throws(DivvunSpellException::class)
+    fun suggest(word: String, config: SpellerConfig): List<String> {
+        val cConfig = CLibrary.CSpellerConfig.from(config)
+        val slice = CLibrary.INSTANCE.divvun_thfst_chunked_box_speller_suggest_with_config(handle, word, cConfig, CLibrary.errorCallback)
+        CLibrary.assertNoError()
+        return suggest(slice)
+    }
 
-        override fun get(index: Int): String {
-            if (index < 0 || index >= size) {
-                throw IndexOutOfBoundsException()
+    @Throws(DivvunSpellException::class)
+    private fun suggest(slice: CLibrary.SlicePointer): List<String> {
+        val len = CLibrary.INSTANCE.divvun_vec_suggestion_len(slice, CLibrary.errorCallback)
+        CLibrary.assertNoError()
+
+        val out = mutableListOf<String>()
+
+        for (i in 0..len.toLong()) {
+            val value = CLibrary.INSTANCE.divvun_vec_suggestion_get_value(slice, NativeLong(i, true), CLibrary.errorCallback)
+            CLibrary.assertNoError()
+
+            out.add(value.getString(0, "UTF-8"))
+        }
+
+        return out
+    }
+}
+
+class ThfstChunkedBoxSpellerArchive private constructor(private val handle: Pointer) {
+    companion object {
+        @Throws(DivvunSpellException::class)
+        fun open(path: String): ThfstChunkedBoxSpellerArchive {
+            val handle = CLibrary.INSTANCE.divvun_thfst_chunked_box_speller_archive_open(path, CLibrary.errorCallback)
+            CLibrary.assertNoError()
+            return ThfstChunkedBoxSpellerArchive(handle)
+        }
+    }
+
+    fun speller(): ThfstChunkedBoxSpeller {
+        val handle = CLibrary.INSTANCE.divvun_thfst_chunked_box_speller_archive_speller(handle, CLibrary.errorCallback)
+        CLibrary.assertNoError()
+        return ThfstChunkedBoxSpeller(handle)
+    }
+}
+
+private interface CLibrary : Library {
+    interface ErrorCallback : Callback {
+        fun invoke(error: Pointer)
+    }
+
+    companion object {
+        private var lastError: String? = null
+
+        val errorCallback = object : ErrorCallback {
+            override fun invoke(error: Pointer) {
+                if (error != Pointer.NULL) {
+                    lastError = error.getString(0, "UTF-8")
+                }
             }
-
-            val rawValue = CLibrary.INSTANCE.suggest_vec_get_value(handle, NativeLong(index.toLong()))
-            val string = rawValue.getString(0)
-            CLibrary.INSTANCE.suggest_vec_value_free(rawValue)
-            return string
         }
 
-        fun finalize() {
-            CLibrary.INSTANCE.suggest_vec_free(handle)
+        @Throws(DivvunSpellException::class)
+        fun assertNoError() {
+            if (lastError != null) {
+                val message = lastError
+                lastError = null
+                throw DivvunSpellException(message)
+            }
         }
+
+        val INSTANCE: CLibrary = Native.loadLibrary("divvunspell", CLibrary::class.java)
     }
-    
-    private interface CLibrary : Library {
+
+    class CCaseHandlingConfig : Structure() {
         companion object {
-            val INSTANCE: CLibrary = Native.loadLibrary("divvunspell", CLibrary::class.java)
+            fun from(config: CaseHandlingConfig): CCaseHandlingConfig {
+                val c = CCaseHandlingConfig()
+                c.start_penalty = config.startPenalty
+                c.mid_penalty = config.midPenalty
+                c.end_penalty = config.endPenalty
+                return c
+            }
         }
 
-        class token_record_t : Structure() {
-            override fun getFieldOrder() = listOf("type", "start", "end", "value")
+        override fun getFieldOrder() = listOf("n_best", "max_weight", "beam", "case_handling", "node_pool_size")
 
-            var type: Byte = 0
-            var start: NativeLong? = null
-            var end: NativeLong? = null
-            var value: String? = null
-
-            class ByReference : Structure.ByReference
-        }
-
-        fun speller_archive_new(path: String, error: ByteByReference): Pointer
-        fun speller_get_error(code: Byte): Pointer
-        fun speller_archive_free(handle: Pointer)
-        fun speller_str_free(string: Pointer)
-        fun speller_meta_get_locale(handle: Pointer): String
-        fun speller_suggest(handle: Pointer, word: String, n_best: NativeLong, maxWeight: Float, beam: Float): Pointer
-        fun speller_is_correct(handle: Pointer, word: String): Boolean
-        fun suggest_vec_free(handle: Pointer)
-        fun suggest_vec_len(handle: Pointer): NativeLong
-        fun suggest_vec_get_value(handle: Pointer, index: NativeLong): Pointer
-        fun suggest_vec_get_weight(handle: Pointer, index: NativeLong): Float
-        fun suggest_vec_value_free(value: Pointer)
-        fun speller_tokenize(string: String): Pointer
-        fun speller_token_next(handle: Pointer, record: token_record_t.ByReference): Boolean
-        fun speller_tokenizer_free(handle: Pointer)
+        var start_penalty: Float = 0.0f
+        var end_penalty: Float = 0.0f
+        var mid_penalty: Float = 0.0f
     }
 
+    class CSpellerConfig : Structure() {
+        companion object {
+            fun from(config: SpellerConfig): CSpellerConfig {
+                val c = CSpellerConfig()
+                c.n_best = NativeLong(config.nBest ?: 0, true)
+                c.max_weight = config.maxWeight ?: 0.0f
+                c.beam = config.beam ?: 0.0f
+                c.case_handling = config.caseHandling?.let { CCaseHandlingConfig.from(it) } ?: CCaseHandlingConfig()
+                c.node_pool_size = NativeLong(config.nodePoolSize ?: 256, true)
+                return c
+            }
+        }
+
+        override fun getFieldOrder() = listOf("n_best", "max_weight", "beam", "case_handling", "node_pool_size")
+
+        var n_best = NativeLong(0, true)
+        var max_weight = 0.0f
+        var beam = 0.0f
+        var case_handling = CCaseHandlingConfig()
+        var node_pool_size = NativeLong(256, true)
+    }
+
+    class SlicePointer : Structure() {
+        override fun getFieldOrder() = listOf("data", "len")
+
+        var data: Pointer = Pointer.NULL
+        var len: NativeLong? = null
+    }
+
+    fun divvun_thfst_chunked_box_speller_archive_open(path: String, error: ErrorCallback): Pointer
+    fun divvun_thfst_chunked_box_speller_archive_speller(handle: Pointer, error: ErrorCallback): Pointer
+    fun divvun_thfst_chunked_box_speller_is_correct(speller: Pointer, word: String, error: ErrorCallback): Boolean
+    fun divvun_thfst_chunked_box_speller_suggest(speller: Pointer, word: String, error: ErrorCallback): SlicePointer
+    fun divvun_thfst_chunked_box_speller_suggest_with_config(speller: Pointer, word: String, config: CSpellerConfig, error: ErrorCallback): SlicePointer
+    fun divvun_vec_suggestion_len(suggestions: SlicePointer, error: ErrorCallback): NativeLong
+    fun divvun_vec_suggestion_get_value(suggestions: SlicePointer, index: NativeLong, error: ErrorCallback): Pointer
 }

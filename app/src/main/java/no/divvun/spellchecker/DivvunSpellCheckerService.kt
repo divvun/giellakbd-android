@@ -6,8 +6,8 @@ import android.util.Log
 import android.view.textservice.SentenceSuggestionsInfo
 import android.view.textservice.SuggestionsInfo
 import android.view.textservice.TextInfo
-import no.divvun.DivvunSpell
 import no.divvun.DivvunUtils
+import no.divvun.ThfstChunkedBoxSpellerArchive
 import no.divvun.createTag
 import java.util.*
 
@@ -25,16 +25,16 @@ class DivvunSpellCheckerService: SpellCheckerService(){
     }
 
     class DivvunSpellCheckerSession(private val context: Context): Session() {
-        private val tag = javaClass.simpleName!!
-        private var speller: DivvunSpell? = null
+        private val tag = DivvunSpellCheckerSession::class.java.simpleName
+        private var archive: ThfstChunkedBoxSpellerArchive? = null
 
         override fun onCreate() {
             Log.d(tag, "onCreate")
-            speller = DivvunUtils.getSpeller(context, Locale(locale))
+            archive = DivvunUtils.getSpeller(context, Locale(locale))
         }
 
         override fun onGetSuggestions(textInfo: TextInfo?, suggestionsLimit: Int): SuggestionsInfo {
-            val speller = this.speller ?: return SuggestionsInfo(SuggestionsInfo.RESULT_ATTR_IN_THE_DICTIONARY, arrayOfNulls(0))
+            val speller = this.archive?.speller() ?: return SuggestionsInfo(SuggestionsInfo.RESULT_ATTR_IN_THE_DICTIONARY, arrayOfNulls(0))
 
             Log.d(tag, "onGetSuggestions()")
 

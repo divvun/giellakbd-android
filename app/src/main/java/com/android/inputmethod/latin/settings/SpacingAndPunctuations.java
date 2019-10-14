@@ -74,24 +74,6 @@ public final class SpacingAndPunctuations {
         mSuggestPuncList = PunctuationSuggestions.newPunctuationSuggestions(suggestPuncsSpec);
     }
 
-    @UsedForTesting
-    public SpacingAndPunctuations(final SpacingAndPunctuations model,
-            final int[] overrideSortedWordSeparators) {
-        mSortedSymbolsPrecededBySpace = model.mSortedSymbolsPrecededBySpace;
-        mSortedSymbolsFollowedBySpace = model.mSortedSymbolsFollowedBySpace;
-        mSortedSymbolsClusteringTogether = model.mSortedSymbolsClusteringTogether;
-        mSortedWordConnectors = model.mSortedWordConnectors;
-        mSortedWordSeparators = overrideSortedWordSeparators;
-        mSortedSentenceTerminators = model.mSortedSentenceTerminators;
-        mSuggestPuncList = model.mSuggestPuncList;
-        mSentenceSeparator = model.mSentenceSeparator;
-        mAbbreviationMarker = model.mAbbreviationMarker;
-        mSentenceSeparatorAndSpace = model.mSentenceSeparatorAndSpace;
-        mCurrentLanguageHasSpaces = model.mCurrentLanguageHasSpaces;
-        mUsesAmericanTypography = model.mUsesAmericanTypography;
-        mUsesGermanRules = model.mUsesGermanRules;
-    }
-
     public boolean isWordSeparator(final int code) {
         return Arrays.binarySearch(mSortedWordSeparators, code) >= 0;
     }
