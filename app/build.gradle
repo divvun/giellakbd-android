@@ -55,7 +55,7 @@ dependencies {
     implementation "androidx.legacy:legacy-support-v4:$legacySupportVersion"
     implementation "io.sentry:sentry-android:$sentryVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
-    implementation "net.java.dev.jna:jna:4.5.2@aar"
+    implementation "net.java.dev.jna:jna:5.4.0@aar"
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
 
     implementation "android.arch.navigation:navigation-fragment-ktx:$navigationVersion"

@@ -1,15 +1,12 @@
 package no.divvun
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
 import com.android.inputmethod.latin.BuildConfig
 import io.sentry.Sentry
-import io.sentry.event.Event
-import io.sentry.event.EventBuilder
+import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import java.util.*
 import java.io.File
-import java.io.FileNotFoundException
 import java.io.FileOutputStream
 
 //@SuppressLint("StaticFieldLeak")
