@@ -1041,10 +1041,6 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
             final MoreKeySpec[] moreKeys = key.getMoreKeys();
 
             if (moreKeys == null || moreKeys.length == 0) {
-                Sentry.capture(new EventBuilder()
-                        .withMessage("moreKeys null or empty")
-                        .build()
-                );
                 return;
             }
 
