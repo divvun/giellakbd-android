@@ -19,7 +19,7 @@ class DivvunDictionary(private val context: Context?, locale: Locale?): Dictiona
     private val TAG = "DivvunDictionary"
 
     private val archive: ThfstChunkedBoxSpellerArchive? by lazy { context?.let { DivvunUtils.getSpeller(it, mLocale) } }
-    private val speller get() = this.archive?.speller()
+    private val speller by lazy { this.archive?.speller() }
 
     override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
         Log.d(TAG, "getSuggestions")
