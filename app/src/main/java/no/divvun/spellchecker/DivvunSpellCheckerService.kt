@@ -7,9 +7,9 @@ import android.view.textservice.SentenceSuggestionsInfo
 import android.view.textservice.SuggestionsInfo
 import android.view.textservice.TextInfo
 import no.divvun.DivvunUtils
-import no.divvun.divvunspell.HfstZipSpellerArchive
+import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import no.divvun.createTag
-import no.divvun.divvunspell.HfstZipSpeller
+import no.divvun.divvunspell.ThfstChunkedBoxSpeller
 import java.util.*
 
 class DivvunSpellCheckerService: SpellCheckerService(){
@@ -27,8 +27,8 @@ class DivvunSpellCheckerService: SpellCheckerService(){
 
     class DivvunSpellCheckerSession(private val context: Context): Session() {
         private val tag = DivvunSpellCheckerSession::class.java.simpleName
-        private var archive: HfstZipSpellerArchive? = null
-        private var speller: HfstZipSpeller? = null
+        private var archive: ThfstChunkedBoxSpellerArchive? = null
+        private var speller: ThfstChunkedBoxSpeller? = null
 
         override fun onCreate() {
             Log.d(tag, "onCreate")

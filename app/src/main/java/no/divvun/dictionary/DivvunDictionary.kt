@@ -10,15 +10,15 @@ import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import no.divvun.DivvunUtils
 import no.divvun.divvunspell.SpellerConfig
-import no.divvun.divvunspell.HfstZipSpeller
-import no.divvun.divvunspell.HfstZipSpellerArchive
+import no.divvun.divvunspell.ThfstChunkedBoxSpeller
+import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import java.util.*
 import kotlin.collections.ArrayList
 
 class DivvunDictionary(private val context: Context?, locale: Locale?): Dictionary(TYPE_MAIN, locale) {
     private val TAG = "DivvunDictionary"
 
-    private val archive: HfstZipSpellerArchive? by lazy { context?.let { DivvunUtils.getSpeller(it, mLocale) } }
+    private val archive: ThfstChunkedBoxSpellerArchive? by lazy { context?.let { DivvunUtils.getSpeller(it, mLocale) } }
     private val speller get() = this.archive?.speller()
 
     override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
