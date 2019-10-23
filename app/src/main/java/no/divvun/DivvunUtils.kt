@@ -4,7 +4,7 @@ import android.content.Context
 import android.util.Log
 import com.android.inputmethod.latin.BuildConfig
 import io.sentry.Sentry
-import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
+import no.divvun.divvunspell.HfstZipSpellerArchive
 import java.util.*
 import java.io.File
 import java.io.FileOutputStream
@@ -13,15 +13,15 @@ import java.io.FileOutputStream
 object DivvunUtils {
     private val TAG = DivvunUtils::class.java.simpleName
 
-    private fun dictFileName(locale: Locale) = "${locale.language}.bhfst"
-    private fun cachedDictFileName(locale: Locale) = "${locale.language}_v${BuildConfig.VERSION_NAME}.bhfst"
+    private fun dictFileName(locale: Locale) = "${locale.language}.zhfst"
+    private fun cachedDictFileName(locale: Locale) = "${locale.language}_v${BuildConfig.VERSION_NAME}.zhfst"
 
     private fun clearOldDicts(context: Context, locale: Locale) {
         val filesDir = File(context.filesDir.absolutePath)
 
         val oldDicts = filesDir.listFiles { path ->
             path.startsWith("${locale.language}_v") &&
-                !path.endsWith("_v${BuildConfig.VERSION_NAME}.bhfst") }
+                !path.endsWith("_v${BuildConfig.VERSION_NAME}.zhfst") }
         if (oldDicts.isNotEmpty()) {
             oldDicts.forEach {
                 try {
@@ -59,7 +59,7 @@ object DivvunUtils {
         writeDict(context, locale)
     }
 
-    fun getSpeller(context: Context, locale: Locale?): ThfstChunkedBoxSpellerArchive? {
+    fun getSpeller(context: Context, locale: Locale?): HfstZipSpellerArchive? {
         Log.d(TAG, "getSpeller() for $locale")
 
         // We do not trust Java to provide us this non-null.
@@ -75,7 +75,7 @@ object DivvunUtils {
         }
 
         return try {
-            ThfstChunkedBoxSpellerArchive.open("${context.filesDir.absolutePath}/${cachedDictFileName(locale)}")
+            HfstZipSpellerArchive.open("${context.filesDir.absolutePath}/${cachedDictFileName(locale)}")
         } catch (ex: Exception) {
             Sentry.capture(ex)
             null
