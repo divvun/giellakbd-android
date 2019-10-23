@@ -24,12 +24,18 @@ class DivvunDictionary(private val context: Context?, locale: Locale?): Dictiona
     override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
         Log.d(TAG, "getSuggestions")
         val speller = this.speller ?: return ArrayList()
+        val word = composedData.mTypedWord.trim()
+
+        if (word == "") {
+            Log.wtf(TAG, "Word was invalid!")
+            return ArrayList()
+        }
 
         Log.d(TAG, "Got speller")
 
         val suggestions = mutableListOf(composedData.mTypedWord)
         val config = SpellerConfig(nBest = N_BEST_SUGGESTION_SIZE, maxWeight = MAX_WEIGHT)
-        speller.suggest(composedData.mTypedWord, config).forEach {
+        speller.suggest(word, config).forEach {
             suggestions.add(it)
         }
 

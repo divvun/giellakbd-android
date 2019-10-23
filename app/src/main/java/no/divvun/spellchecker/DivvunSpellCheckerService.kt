@@ -42,8 +42,12 @@ class DivvunSpellCheckerService: SpellCheckerService(){
             Log.d(tag, "onGetSuggestions()")
 
             // Get the word
-            val word = textInfo!!.text
+            val word = textInfo!!.text.trim()
             Log.d(tag, "word: $word")
+
+            if (word == "") {
+                return SuggestionsInfo(SuggestionsInfo.RESULT_ATTR_IN_THE_DICTIONARY, arrayOfNulls(0))
+            }
 
             // Check if the word is spelled correctly.
             if (speller.isCorrect(word)) {
