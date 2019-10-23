@@ -18,7 +18,8 @@ import kotlin.collections.ArrayList
 class DivvunDictionary(private val context: Context?, locale: Locale?): Dictionary(TYPE_MAIN, locale) {
     private val TAG = "DivvunDictionary"
 
-    private val speller: ThfstChunkedBoxSpeller? get() = context?.let { DivvunUtils.getSpeller(it, mLocale)?.speller() }
+    private val archive: ThfstChunkedBoxSpellerArchive? = context?.let { DivvunUtils.getSpeller(it, mLocale) }
+    private val speller= this.archive?.speller()
 
     override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
         Log.d(TAG, "getSuggestions")
