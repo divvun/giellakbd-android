@@ -31,6 +31,12 @@ object DivvunUtils {
                 }
             }
         }
+
+        val derp = File("${context.filesDir.absolutePath}/${cachedDictFileName(locale)}")
+
+        if (!derp.exists()) {
+            writeDict(context, locale)
+        }
     }
 
     private fun hasDictInAssets(context: Context, locale: Locale): Boolean {
@@ -38,6 +44,7 @@ object DivvunUtils {
             context.resources.assets.open("dicts/${dictFileName(locale)}")
             true
         } catch (e: Exception) {
+            Log.e(TAG, "hasDictInAssets", e)
             false
         }
     }
@@ -56,8 +63,9 @@ object DivvunUtils {
         // Check for anything prefixed with this language and delete it if it's not the correct version
 
         clearOldDicts(context, locale)
-        writeDict(context, locale)
     }
+
+    val lock: Any = object {}
 
     fun getSpeller(context: Context, locale: Locale?): ThfstChunkedBoxSpellerArchive? {
         Log.d(TAG, "getSpeller() for $locale")
@@ -67,11 +75,13 @@ object DivvunUtils {
             return null
         }
 
-        try {
-            ensureCached(context, locale)
-        } catch (ex: Exception) {
-            Sentry.capture(ex)
-            return null
+        synchronized(lock) {
+            try {
+                ensureCached(context, locale)
+            } catch (ex: Exception) {
+                Sentry.capture(ex)
+                return null
+            }
         }
 
         return try {
