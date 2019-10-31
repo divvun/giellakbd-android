@@ -8,6 +8,8 @@ import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import java.util.*
 import java.io.File
 import java.io.FileOutputStream
+import java.util.zip.GZIPInputStream
+import java.util.zip.GZIPOutputStream
 
 //@SuppressLint("StaticFieldLeak")
 object DivvunUtils {
@@ -65,7 +67,8 @@ object DivvunUtils {
         clearOldDicts(context, locale)
     }
 
-    val lock: Any = object {}
+    private val lock: Any = object {}
+    private val loadedArchives = mutableMapOf<Locale, ThfstChunkedBoxSpellerArchive>()
 
     fun getSpeller(context: Context, locale: Locale?): ThfstChunkedBoxSpellerArchive? {
         Log.d(TAG, "getSpeller() for $locale")
@@ -85,10 +88,18 @@ object DivvunUtils {
         }
 
         return try {
-            ThfstChunkedBoxSpellerArchive.open("${context.filesDir.absolutePath}/${cachedDictFileName(locale)}")
+            if (!loadedArchives.containsKey(locale)) {
+                loadedArchives[locale] = ThfstChunkedBoxSpellerArchive.open("${context.filesDir.absolutePath}/${cachedDictFileName(locale)}")
+            }
+
+            return loadedArchives[locale]
         } catch (ex: Exception) {
             Sentry.capture(ex)
             null
         }
+    }
+
+    fun dumpMemoryMaps() {
+        File("/proc/self/maps").forEachLine { Log.v("/proc/self/maps", it) }
     }
 }

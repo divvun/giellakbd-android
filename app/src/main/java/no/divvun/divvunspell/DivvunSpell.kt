@@ -1,6 +1,11 @@
 package no.divvun.divvunspell
 
+import android.util.Log
 import com.sun.jna.*
+import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import java.nio.file.Paths
 
 data class CaseHandlingConfig(
     val startPenalty: Float = 0.0f,
