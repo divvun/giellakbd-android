@@ -161,11 +161,11 @@ class KeyboardSwitcher private constructor()// Intentional empty constructor for
             Log.w(TAG, "loading keyboard failed: " + e.mKeyboardId, e.cause)
         }
 
-        ExceptionLogger.sentry.recordBreadcrumb(
-                BreadcrumbBuilder()
-                        .setMessage("Current subtype: " + mRichImm.currentSubtype.toString())
-                        .build()
-        )
+//        ExceptionLogger.sentry.recordBreadcrumb(
+//                BreadcrumbBuilder()
+//                        .setMessage("Current subtype: " + mRichImm.currentSubtype.toString())
+//                        .build()
+//        )
     }
 
     fun saveKeyboardState() {

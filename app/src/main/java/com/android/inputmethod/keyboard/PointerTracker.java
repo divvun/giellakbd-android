@@ -1031,10 +1031,10 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
             return;
         }
 
-        ExceptionLogger.getSentry().recordBreadcrumb(new BreadcrumbBuilder()
-                .setMessage("Key: " + key.toString())
-                .build()
-        );
+//        ExceptionLogger.getSentry().recordBreadcrumb(new BreadcrumbBuilder()
+//                .setMessage("Key: " + key.toString())
+//                .build()
+//        );
 
         if (key.hasNoPanelAutoMoreKey()) {
             cancelKeyTracking();

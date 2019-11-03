@@ -326,10 +326,10 @@ public class RichInputMethodManager {
         updateCurrentSubtype(newSubtype);
         updateShortcutIme();
 
-        final String msg = "New subtype: " + mCurrentRichInputMethodSubtype.getNameForLogging();
-        ExceptionLogger.getSentry().recordBreadcrumb(
-                new BreadcrumbBuilder().setMessage(msg).build()
-        );
+//        final String msg = "New subtype: " + mCurrentRichInputMethodSubtype.getNameForLogging();
+//        ExceptionLogger.getSentry().recordBreadcrumb(
+//                new BreadcrumbBuilder().setMessage(msg).build()
+//        );
 
         if (DEBUG) {
             Log.w(TAG, "onSubtypeChanged: " + mCurrentRichInputMethodSubtype.getNameForLogging());
