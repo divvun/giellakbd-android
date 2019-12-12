@@ -11,3 +11,4 @@ public class SlicePointer extends Structure {
 
     public static class ByValue extends SlicePointer implements Structure.ByValue {}
 }
+

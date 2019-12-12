@@ -17,7 +17,7 @@
 <resources xmlns:android="http://schemas.android.com/apk/res/android">
     <style name="setupTitleStyleCommon">
         <item name="android:textColor">@color/setup_text_dark</item>
-        <item name="android:textSize">@dimen/setup_title_text_size</item>
+        <item name="android:textSize">32sp</item>
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
     </style>
