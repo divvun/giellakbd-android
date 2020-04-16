@@ -1,15 +1,13 @@
 package no.divvun
 
 import android.content.Context
-import android.util.Log
 import com.android.inputmethod.latin.BuildConfig
 import io.sentry.Sentry
 import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
-import java.util.*
+import timber.log.Timber
 import java.io.File
 import java.io.FileOutputStream
-import java.util.zip.GZIPInputStream
-import java.util.zip.GZIPOutputStream
+import java.util.*
 
 //@SuppressLint("StaticFieldLeak")
 object DivvunUtils {
@@ -23,7 +21,8 @@ object DivvunUtils {
 
         val oldDicts = filesDir.listFiles { path ->
             path.startsWith("${locale.language}_v") &&
-                !path.endsWith("_v${BuildConfig.VERSION_NAME}.bhfst") }
+                    !path.endsWith("_v${BuildConfig.VERSION_NAME}.bhfst")
+        }
         if (oldDicts.isNotEmpty()) {
             oldDicts.forEach {
                 try {
@@ -46,14 +45,14 @@ object DivvunUtils {
             context.resources.assets.open("dicts/${dictFileName(locale)}")
             true
         } catch (e: Exception) {
-            Log.e(TAG, "hasDictInAssets", e)
+            Timber.e("hasDictInAssets $e")
             false
         }
     }
 
     private fun writeDict(context: Context, locale: Locale) {
         val inputStream = context.resources.assets.open("dicts/${dictFileName(locale)}")
-        Log.d(TAG, "Outputting file to ${context.filesDir.absolutePath}/${dictFileName(locale)}")
+        Timber.d("Outputting file to ${context.filesDir.absolutePath}/${dictFileName(locale)}")
         val outputStream = FileOutputStream(File(context.filesDir, cachedDictFileName(locale)))
         inputStream.copyTo(outputStream)
         inputStream.close()
@@ -71,7 +70,7 @@ object DivvunUtils {
     private val loadedArchives = mutableMapOf<Locale, ThfstChunkedBoxSpellerArchive>()
 
     fun getSpeller(context: Context, locale: Locale?): ThfstChunkedBoxSpellerArchive? {
-        Log.d(TAG, "getSpeller() for $locale")
+        Timber.d("getSpeller() for $locale")
 
         // We do not trust Java to provide us this non-null.
         if (locale == null || !hasDictInAssets(context, locale)) {
@@ -100,6 +99,6 @@ object DivvunUtils {
     }
 
     fun dumpMemoryMaps() {
-        File("/proc/self/maps").forEachLine { Log.v("/proc/self/maps", it) }
+        File("/proc/self/maps").forEachLine { Timber.v("/proc/self/maps, $it") }
     }
 }

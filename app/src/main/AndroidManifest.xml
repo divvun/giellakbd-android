@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2012 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2012 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -28,29 +27,36 @@
     <uses-permission android:name="android.permission.WRITE_USER_DICTIONARY" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <application android:label="@string/english_ime_name"
-            android:icon="@drawable/ic_launcher_keyboard"
-            android:supportsRtl="true"
-            android:allowBackup="false"
+    <application
+        android:allowBackup="false"
+        android:icon="@drawable/ic_launcher_keyboard"
+        android:label="@string/english_ime_name"
+        android:supportsRtl="true"
+        android:name="no.divvun.App"
         tools:ignore="GoogleAppIndexingWarning">
 
         <!-- Services -->
-        <service android:name="com.android.inputmethod.latin.LatinIME"
-                android:label="@string/english_ime_name"
-                android:permission="android.permission.BIND_INPUT_METHOD">
+        <service
+            android:name="com.android.inputmethod.latin.LatinIME"
+            android:label="@string/english_ime_name"
+            android:permission="android.permission.BIND_INPUT_METHOD">
             <intent-filter>
                 <action android:name="android.view.InputMethod" />
             </intent-filter>
-            <meta-data android:name="android.view.im" android:resource="@xml/method" />
+            <meta-data
+                android:name="android.view.im"
+                android:resource="@xml/method" />
         </service>
-        <service android:name="no.divvun.spellchecker.DivvunSpellCheckerService"
-                 android:label="@string/spell_checker_service_name"
-                 android:permission="android.permission.BIND_TEXT_SERVICE">
+        <service
+            android:name="no.divvun.spellchecker.DivvunSpellCheckerService"
+            android:label="@string/spell_checker_service_name"
+            android:permission="android.permission.BIND_TEXT_SERVICE">
             <intent-filter>
                 <action android:name="android.service.textservice.SpellCheckerService" />
             </intent-filter>
-            <meta-data android:name="android.view.textservice.scs"
-                    android:resource="@xml/spellchecker" />
+            <meta-data
+                android:name="android.view.textservice.scs"
+                android:resource="@xml/spellchecker" />
         </service>
 
         <!--service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
@@ -58,12 +64,13 @@
         </service-->
 
         <!-- Activities -->
-        <activity android:name="com.android.inputmethod.latin.setup.SetupActivity"
-                android:theme="@style/platformActivityTheme"
-                android:label="@string/english_ime_name"
-                android:icon="@drawable/ic_launcher_keyboard"
-                android:launchMode="singleTask"
-                android:noHistory="true">
+        <activity
+            android:name="com.android.inputmethod.latin.setup.SetupActivity"
+            android:icon="@drawable/ic_launcher_keyboard"
+            android:label="@string/english_ime_name"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:theme="@style/platformActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -72,34 +79,35 @@
 
         <activity
             android:name="com.android.inputmethod.latin.permissions.PermissionsActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:exported="false"
-            android:taskAffinity="" >
-        </activity>
+            android:taskAffinity=""
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"></activity>
 
-        <activity android:name="com.android.inputmethod.latin.setup.SetupWizardActivity"
-                android:theme="@style/platformActivityTheme"
-                android:label="@string/english_ime_name"
-                android:clearTaskOnLaunch="true">
+        <activity
+            android:name="com.android.inputmethod.latin.setup.SetupWizardActivity"
+            android:clearTaskOnLaunch="true"
+            android:label="@string/english_ime_name"
+            android:theme="@style/platformActivityTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.android.inputmethod.latin.settings.SettingsActivity"
-                android:theme="@style/platformSettingsTheme"
-                android:label="@string/english_ime_name">
+        <activity
+            android:name="com.android.inputmethod.latin.settings.SettingsActivity"
+            android:label="@string/english_ime_name"
+            android:theme="@style/platformSettingsTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
             </intent-filter>
         </activity>
 
         <!--<activity android:name="com.android.inputmethod.latin.spellcheck.SpellCheckerSettingsActivity"-->
-                  <!--android:theme="@style/platformSettingsTheme"-->
-                  <!--android:label="@string/android_spell_checker_settings">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-            <!--</intent-filter>-->
+        <!--android:theme="@style/platformSettingsTheme"-->
+        <!--android:label="@string/android_spell_checker_settings">-->
+        <!--<intent-filter>-->
+        <!--<action android:name="android.intent.action.MAIN" />-->
+        <!--</intent-filter>-->
         <!--</activity>-->
 
         <!--activity android:name="com.android.inputmethod.dictionarypack.DictionarySettingsActivity"
@@ -121,7 +129,7 @@
 
         <!-- Unexported activity used for tests. -->
         <!--<activity android:name="com.android.inputmethod.latin.settings.TestFragmentActivity"-->
-                <!--android:exported="false" />-->
+        <!--android:exported="false" />-->
 
         <!-- Broadcast receivers -->
         <receiver android:name="com.android.inputmethod.latin.SystemBroadcastReceiver">

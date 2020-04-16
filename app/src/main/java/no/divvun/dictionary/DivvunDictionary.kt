@@ -1,7 +1,6 @@
 package no.divvun.dictionary
 
 import android.content.Context
-import android.util.Log
 import com.android.inputmethod.latin.Dictionary
 import com.android.inputmethod.latin.NgramContext
 import com.android.inputmethod.latin.SuggestedWords
@@ -10,28 +9,34 @@ import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import no.divvun.DivvunUtils
 import no.divvun.divvunspell.SpellerConfig
-import no.divvun.divvunspell.ThfstChunkedBoxSpeller
 import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
+import no.divvun.pahkat.PahkatWrapper
+import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DivvunDictionary(private val context: Context?, locale: Locale?): Dictionary(TYPE_MAIN, locale) {
-    private val TAG = "DivvunDictionary"
+class DivvunDictionary(private val context: Context?, locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
 
+//    private val pahkatWrapper: PahkatWrapper? = context?.let { PahkatWrapper(context, ) }
     private val archive: ThfstChunkedBoxSpellerArchive? = context?.let { DivvunUtils.getSpeller(it, mLocale) }
-    private val speller= this.archive?.speller()
+    private val speller = this.archive?.speller()
+
+    init {
+        Timber.d("DivvunDictionaryCreated")
+
+    }
 
     override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
-        Log.d(TAG, "getSuggestions")
+        Timber.d("getSuggestions")
         val speller = this.speller ?: return ArrayList()
         val word = composedData.mTypedWord.trim()
 
         if (word == "") {
-            Log.wtf(TAG, "Word was invalid!")
+            Timber.wtf("Word was invalid!")
             return ArrayList()
         }
 
-        Log.d(TAG, "Got speller")
+        Timber.d("Got speller")
 
         val suggestions = mutableListOf(composedData.mTypedWord)
         val config = SpellerConfig(nBest = N_BEST_SUGGESTION_SIZE, maxWeight = MAX_WEIGHT)
@@ -39,7 +44,7 @@ class DivvunDictionary(private val context: Context?, locale: Locale?): Dictiona
             suggestions.add(it)
         }
 
-        Log.d(TAG, "$suggestions")
+        Timber.d("$suggestions")
 
         val result = suggestions.mapIndexed { index, suggestion ->
             if (index == 0) {

@@ -11,6 +11,7 @@ import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import com.android.inputmethod.latin.utils.SuggestionResults
 import no.divvun.createTag
+import timber.log.Timber
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -23,57 +24,57 @@ class DivvunDictionaryFacilitator() : DictionaryFacilitator {
 
     // STUB
     override fun setValidSpellingWordReadCache(cache: LruCache<String, Boolean>) {
-        Log.d(tag, "setValidSpellingWordReadCache")
+        Timber.d("setValidSpellingWordReadCache")
     }
 
     // STUB
     override fun setValidSpellingWordWriteCache(cache: LruCache<String, Boolean>?) {
-        Log.d(tag, "setValidSpellingWordWriteCache")
+        Timber.d("setValidSpellingWordWriteCache")
     }
 
     override fun isForLocale(locale: Locale?): Boolean {
-        Log.d(tag, "isForLocale $locale")
+        Timber.d("isForLocale $locale")
         return dictionary.mLocale == locale
     }
 
     // STUB
     override fun isForAccount(account: String?): Boolean {
-        Log.d(tag, "isForAccount")
+        Timber.d("isForAccount")
         return false
     }
 
     // STUB
     override fun onStartInput() {
-        Log.d(tag, "onStartInput")
+        Timber.d("onStartInput")
         isActive = true
     }
 
     // STUB
     override fun onFinishInput(context: Context?) {
-        Log.d(tag, "onFinishInput")
+        Timber.d("onFinishInput")
         isActive = false
     }
 
     // STUB
     override fun isActive(): Boolean {
-        Log.d(tag, "isActive")
+        Timber.d("isActive")
         return isActive
     }
 
     override fun getLocale(): Locale {
-        Log.d(tag, "getLocale")
+        Timber.d("getLocale")
         return dictionary.mLocale!!
     }
 
     // STUB
     override fun usesContacts(): Boolean {
-        Log.d(tag, "usesContacts")
+        Timber.d("usesContacts")
         return false
     }
 
     // STUB
     override fun getAccount(): String {
-        Log.d(tag, "getAccount")
+        Timber.d("getAccount")
         return ""
     }
 
@@ -86,44 +87,44 @@ class DivvunDictionaryFacilitator() : DictionaryFacilitator {
 
     // STUB
     override fun resetDictionariesForTesting(context: Context?, locale: Locale?, dictionaryTypes: ArrayList<String>?, dictionaryFiles: HashMap<String, File>?, additionalDictAttributes: MutableMap<String, MutableMap<String, String>>?, account: String?) {
-        Log.d(tag, "resetDictionariesForTesting")
+        Timber.d("resetDictionariesForTesting")
     }
 
     // STUB
     override fun closeDictionaries() {
-        Log.d(tag, "closeDictionaries")
+        Timber.d("closeDictionaries")
     }
 
     // STUB
     override fun hasAtLeastOneInitializedMainDictionary(): Boolean {
-        Log.d(tag, "hasAtLeastOneInitializedMainDictionary")
+        Timber.d("hasAtLeastOneInitializedMainDictionary")
         return dictionary.isInitialized
     }
 
     // STUB
     override fun hasAtLeastOneUninitializedMainDictionary(): Boolean {
-        Log.d(tag, "hasAtLeastOneUninitializedMainDictionary")
+        Timber.d("hasAtLeastOneUninitializedMainDictionary")
         return !dictionary.isInitialized
     }
 
     // STUB
     override fun waitForLoadingMainDictionaries(timeout: Long, unit: TimeUnit?) {
-        Log.d(tag, "waitForLoadingMainDictionaries")
+        Timber.d("waitForLoadingMainDictionaries")
     }
 
     // STUB
     override fun waitForLoadingDictionariesForTesting(timeout: Long, unit: TimeUnit?) {
-        Log.d(tag, "waitForLoadingDictiionariesForTesting")
+        Timber.d("waitForLoadingDictiionariesForTesting")
     }
 
     // STUB
     override fun addToUserHistory(suggestion: String?, wasAutoCapitalized: Boolean, ngramContext: NgramContext, timeStampInSeconds: Long, blockPotentiallyOffensive: Boolean) {
-        Log.d(tag, "addToUserHistory")
+        Timber.d("addToUserHistory")
     }
 
     // STUB
     override fun unlearnFromUserHistory(word: String?, ngramContext: NgramContext, timeStampInSeconds: Long, eventType: Int) {
-        Log.d(tag, "unlearnFromUserHistory")
+        Timber.d("unlearnFromUserHistory")
     }
 
     override fun getSuggestionResults(composedData: ComposedData, ngramContext: NgramContext, keyboard: Keyboard, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, inputStyle: Int): SuggestionResults {
@@ -142,24 +143,24 @@ class DivvunDictionaryFacilitator() : DictionaryFacilitator {
 
     // STUB
     override fun clearUserHistoryDictionary(context: Context?): Boolean {
-        Log.d(tag, "clearUserHistoryDictionary")
+        Timber.d("clearUserHistoryDictionary")
         return true
     }
 
     // STUB
     override fun dump(context: Context?): String {
-        Log.d(tag, "dump")
+        Timber.d("dump")
         return ""
     }
 
     // STUB
     override fun dumpDictionaryForDebug(dictName: String?) {
-        Log.d(tag, "dumpDictionaryForDebug")
+        Timber.d("dumpDictionaryForDebug")
     }
 
     // STUB
     override fun getDictionaryStats(context: Context?): MutableList<DictionaryStats> {
-        Log.d(tag, "getDictionaryStats")
+        Timber.d("getDictionaryStats")
         return mutableListOf()
     }
 
