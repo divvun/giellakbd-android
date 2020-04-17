@@ -7,19 +7,17 @@ import com.android.inputmethod.latin.SuggestedWords
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
-import no.divvun.DivvunUtils
 import no.divvun.divvunspell.SpellerConfig
-import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
-import no.divvun.pahkat.PahkatWrapper
+import no.divvun.packageId
+import no.divvun.packagePath
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
 class DivvunDictionary(private val context: Context?, locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
 
-//    private val pahkatWrapper: PahkatWrapper? = context?.let { PahkatWrapper(context, ) }
-    private val archive: ThfstChunkedBoxSpellerArchive? = context?.let { DivvunUtils.getSpeller(it, mLocale) }
-    private val speller = this.archive?.speller()
+    private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(path = packagePath(it, packageId)) }
+    private val speller = spellerArchiveWatcher?.archive?.speller()
 
     init {
         Timber.d("DivvunDictionaryCreated")

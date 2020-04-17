@@ -44,6 +44,6 @@ inline fun <reified T> Data.into(): T? {
 }
 
 fun List<WorkInfo>.workEnabled() = isNotEmpty() && any { it.state != WorkInfo.State.CANCELLED }
-fun List<WorkInfo>.isRunning() = isNotEmpty() && any { it.state != WorkInfo.State.RUNNING }
+fun List<WorkInfo>.isRunning() = isNotEmpty() && any { it.state == WorkInfo.State.RUNNING }
 
 

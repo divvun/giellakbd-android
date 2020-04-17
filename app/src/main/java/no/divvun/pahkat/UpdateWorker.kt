@@ -25,7 +25,6 @@ const val KEY_PACKAGE_STORE_PATH = "no.divvun.pahkat.client.packageStorePath"
 const val KEY_OBJECT = "no.divvun.pahkat.client.object"
 const val KEY_OBJECT_TYPE = "no.divvun.pahkat.client.objectType"
 
-const val REPO_URL = "https://x.brendan.so/divvun-pahkat-repo/"
 
 class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
     private val packageKeyValue

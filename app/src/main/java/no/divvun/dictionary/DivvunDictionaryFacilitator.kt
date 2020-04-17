@@ -80,6 +80,7 @@ class DivvunDictionaryFacilitator() : DictionaryFacilitator {
 
     // STUB
     override fun resetDictionaries(context: Context?, newLocale: Locale?, useContactsDict: Boolean, usePersonalizedDicts: Boolean, forceReloadMainDictionary: Boolean, account: String?, dictNamePrefix: String?, listener: DictionaryFacilitator.DictionaryInitializationListener?) {
+        Timber.d("resetDictionaries")
         context?.let {
             dictionary = DivvunDictionary(it, newLocale)
         }
