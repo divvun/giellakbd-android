@@ -16,8 +16,8 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
-const val spellerFile = "sms.bhfst"
-const val packageId = "speller-sms"
+const val spellerFile = "smj.bhfst"
+const val packageId = "speller-smj"
 const val packageRepoUrl = "https://x.brendan.so/divvun-pahkat-repo"
 const val REPO_URL = "https://x.brendan.so/divvun-pahkat-repo/"
 
