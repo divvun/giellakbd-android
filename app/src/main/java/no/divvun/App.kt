@@ -2,11 +2,13 @@ package no.divvun
 
 import android.app.Application
 import android.content.Context
+import android.util.Log
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import arrow.core.Either
+import no.divvun.packageobserver.PackageObserver
 import no.divvun.pahkat.*
 import no.divvun.pahkat.client.*
 import no.divvun.pahkat.client.ffi.orThrow
@@ -14,26 +16,31 @@ import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
 
+const val spellerFile = "sms.bhfst"
 const val packageId = "speller-sms"
 const val packageRepoUrl = "https://x.brendan.so/divvun-pahkat-repo"
 const val REPO_URL = "https://x.brendan.so/divvun-pahkat-repo/"
 
 fun prefixPath(context: Context): String = "${context.applicationInfo.dataDir}/no_backup/pahkat"
-fun packagePath(context: Context, pkg: String): String = "${context.applicationInfo.dataDir}/no_backup/pahkat/$pkg/sms.bhfst"
+fun spellerPath(context: Context): String = "${prefixPath(context)}/pkg/$packageId/$spellerFile"
 
 class App : Application() {
+
     override fun onCreate() {
         super.onCreate()
 
         val tree = Timber.DebugTree()
         Timber.plant(tree)
+        Timber.d("onCreate")
 
         // Init PahkatClient
         PahkatClient.enableLogging()
         PahkatClient.Android.init(applicationInfo.dataDir).orThrow()
 
         val prefixPath = prefixPath(this)
+
         initPrefixPackageStore(prefixPath)
+
         val key = PackageKey(
                 packageRepoUrl,
                 packageId,
@@ -41,11 +48,13 @@ class App : Application() {
         )
 
         ensurePeriodicPackageUpdates(this, prefixPath, key)
+
+        PackageObserver.init(spellerPath(this))
     }
 
 
     private fun initPrefixPackageStore(prefixPath: String) {
-        Timber.d("Env: ${System.getenv().map { "${it.key}: ${it.value}" }.joinToString(", ")}")
+        // Timber.d("Env: ${System.getenv().map { "${it.key}: ${it.value}" }.joinToString(", ")}")
 
         val prefix = when (val result = PrefixPackageStore.openOrCreate(prefixPath)) {
             is Either.Left -> {
@@ -83,3 +92,4 @@ class App : Application() {
         return workName
     }
 }
+

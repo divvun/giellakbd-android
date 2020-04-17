@@ -8,16 +8,17 @@ import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import no.divvun.divvunspell.SpellerConfig
-import no.divvun.packageId
-import no.divvun.packagePath
+import no.divvun.packageobserver.SpellerArchiveWatcher
+import no.divvun.spellerPath
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
 class DivvunDictionary(private val context: Context?, locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
 
-    private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(path = packagePath(it, packageId)) }
-    private val speller = spellerArchiveWatcher?.archive?.speller()
+    private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(spellerPath(it)) }
+    private val speller
+        get() = spellerArchiveWatcher?.archive?.speller()
 
     init {
         Timber.d("DivvunDictionaryCreated")
@@ -33,7 +34,6 @@ class DivvunDictionary(private val context: Context?, locale: Locale?) : Diction
             Timber.wtf("Word was invalid!")
             return ArrayList()
         }
-
         Timber.d("Got speller")
 
         val suggestions = mutableListOf(composedData.mTypedWord)

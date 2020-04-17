@@ -1,39 +1,42 @@
 package no.divvun.divvunspell
 
-import android.util.Log
-import com.sun.jna.*
-import java.io.File
-import java.nio.file.Files
-import java.nio.file.Path
-import java.nio.file.Paths
+import com.sun.jna.NativeLong
+import com.sun.jna.Pointer
 
 data class CaseHandlingConfig(
-    val startPenalty: Float = 0.0f,
-    val endPenalty: Float = 0.0f,
-    val midPenalty: Float = 0.0f
+        val startPenalty: Float = 0.0f,
+        val endPenalty: Float = 0.0f,
+        val midPenalty: Float = 0.0f
 )
 
 data class SpellerConfig(
-    val nBest: Long? = null,
-    val maxWeight: Float? = null,
-    val beam: Float? = null,
-    val caseHandling: CaseHandlingConfig? = null,
-    val nodePoolSize: Long? = null
+        val nBest: Long? = null,
+        val maxWeight: Float? = null,
+        val beam: Float? = null,
+        val caseHandling: CaseHandlingConfig? = null,
+        val nodePoolSize: Long? = null
 )
 
-class DivvunSpellException(message: String?): Exception(message)
+class DivvunSpellException(message: String?) : Exception(message)
 
 class ThfstChunkedBoxSpeller internal constructor(private val handle: Pointer) {
     @Throws(DivvunSpellException::class)
     fun isCorrect(word: String): Boolean {
-        val res = CLibrary.divvun_thfst_chunked_box_speller_is_correct(handle, word, errorCallback)
+        if(word.isEmpty()) {
+            return false
+        }
+        val res = word.withSlice {
+            CLibrary.divvun_thfst_chunked_box_speller_is_correct(handle, it, errorCallback)
+        }
         assertNoError()
         return res
     }
 
     @Throws(DivvunSpellException::class)
     fun suggest(word: String): List<String> {
-        val slice = CLibrary.divvun_thfst_chunked_box_speller_suggest(handle, word, errorCallback)
+        val slice = word.withSlice {
+            CLibrary.divvun_thfst_chunked_box_speller_suggest(handle, it, errorCallback)
+        }
         println("MMM " + slice)
         assertNoError()
         return suggest(slice)
@@ -44,7 +47,9 @@ class ThfstChunkedBoxSpeller internal constructor(private val handle: Pointer) {
 //        val cConfig = se.brendan.divvunspell.CSpellerConfig.from(config)
 //        val slice = se.brendan.divvunspell.CLibrary.divvun_thfst_chunked_box_speller_suggest_with_config(handle, word, cConfig, se.brendan.divvunspell.errorCallback)
 
-        val slice = CLibrary.divvun_thfst_chunked_box_speller_suggest(handle, word, errorCallback)
+        val slice = word.withSlice {
+            CLibrary.divvun_thfst_chunked_box_speller_suggest(handle, it, errorCallback)
+        }
         assertNoError()
         return suggest(slice)
     }
@@ -70,7 +75,10 @@ class ThfstChunkedBoxSpellerArchive private constructor(private val handle: Poin
     companion object {
         @Throws(DivvunSpellException::class)
         fun open(path: String): ThfstChunkedBoxSpellerArchive {
-            val handle = CLibrary.divvun_thfst_chunked_box_speller_archive_open(path, errorCallback)
+
+            val handle = path.withSlice {
+                CLibrary.divvun_thfst_chunked_box_speller_archive_open(it, errorCallback)
+            }
             assertNoError()
             return ThfstChunkedBoxSpellerArchive(handle)
         }
@@ -96,4 +104,9 @@ private fun assertNoError() {
         lastError = null
         throw DivvunSpellException(message)
     }
+}
+
+fun <T> String.withSlice(callback: (SlicePointer.ByValue) -> T): T {
+    val s = SlicePointer.ByValue.encode(this)
+    return callback(s)
 }

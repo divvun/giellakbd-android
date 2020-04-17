@@ -72,6 +72,7 @@ import com.android.inputmethod.latin.touchinputconsumer.GestureConsumer
 import com.android.inputmethod.latin.utils.*
 import no.divvun.dictionary.DivvunDictionaryFacilitator
 import no.divvun.domain.loadKeyboardDescriptor
+import timber.log.Timber
 import java.io.FileDescriptor
 import java.io.PrintWriter
 import java.util.*
@@ -160,6 +161,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         private var mAppliedEditorInfo: EditorInfo? = null
 
         fun onCreate() {
+            Timber.d("onCreate")
             val latinIme = ownerInstance ?: return
             val res = latinIme.resources
             mDelayInMillisecondsToUpdateSuggestions = res.getInteger(
@@ -631,7 +633,8 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     override fun onDestroy() {
-        mDictionaryFacilitator?.closeDictionaries()
+        Timber.d("onDestroy")
+        mDictionaryFacilitator.closeDictionaries()
         mSettings.onDestroy()
         unregisterReceiver(mRingerModeChangeReceiver)
         unregisterReceiver(mDictionaryDumpBroadcastReceiver)
