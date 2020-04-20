@@ -14,7 +14,9 @@ object PackageObserver {
     fun init(context: Context, path: String) {
         Timber.d("Init")
         context.workManager().getWorkInfosByTagLiveData(WORKMANAGER_TAG_UPDATE).observeForever {
+            Timber.d("WorkInfos $it")
             val workInfo = it.firstOrNull() ?: return@observeForever
+            Timber.d("WorkInfo $workInfo")
 
             if (workInfo.state == WorkInfo.State.ENQUEUED) {
                 val spellerFile = File(path)
