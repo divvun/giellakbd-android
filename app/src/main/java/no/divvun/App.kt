@@ -46,6 +46,8 @@ class App : Application() {
         )
 
         PackageObserver.init(this, spellerPath(this))
+
+//        workManager().cancelUniqueWork(key.workName())
         ensurePeriodicPackageUpdates(this, prefixPath, key)
     }
 
@@ -70,10 +72,9 @@ class App : Application() {
             prefixPath: String,
             key: PackageKey
     ): String {
-        val req = PeriodicWorkRequestBuilder<UpdateWorker>(1, TimeUnit.HOURS)
+        val req = PeriodicWorkRequestBuilder<UpdateWorker>(1, TimeUnit.DAYS)
                 .addTag(WORKMANAGER_TAG_UPDATE)
                 .setInputData(key.workData(prefixPath))
-                .keepResultsForAtLeast(1, TimeUnit.DAYS)
                 .setConstraints(
                         Constraints.Builder()
                                 .setRequiredNetworkType(NetworkType.UNMETERED)
