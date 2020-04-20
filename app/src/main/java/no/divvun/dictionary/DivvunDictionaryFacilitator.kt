@@ -1,7 +1,6 @@
 package no.divvun.dictionary
 
 import android.content.Context
-import android.util.Log
 import android.util.LruCache
 import com.android.inputmethod.keyboard.Keyboard
 import com.android.inputmethod.latin.DictionaryFacilitator
@@ -20,7 +19,7 @@ class DivvunDictionaryFacilitator() : DictionaryFacilitator {
     private val tag = createTag(this)
     private var isActive = false
 
-    var dictionary = DivvunDictionary(null,null)
+    var dictionary = DivvunDictionary(null, null)
 
     // STUB
     override fun setValidSpellingWordReadCache(cache: LruCache<String, Boolean>) {
@@ -134,7 +133,7 @@ class DivvunDictionaryFacilitator() : DictionaryFacilitator {
         val suggestionResults = SuggestionResults(suggestions.size, false, false)
 
         // Add all our suggestions
-       suggestionResults.addAll(suggestions)
+        suggestionResults.addAll(suggestions)
 
         return suggestionResults
     }

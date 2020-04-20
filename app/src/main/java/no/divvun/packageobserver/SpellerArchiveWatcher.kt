@@ -1,12 +1,8 @@
 package no.divvun.packageobserver
 
-import android.os.Handler
-import android.os.SystemClock
-import android.util.Log
 import io.sentry.Sentry
 import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import timber.log.Timber
-import java.util.concurrent.Executor
 
 class SpellerArchiveWatcher(private val spellerPath: String) : OnPackageUpdateListener {
     var archive: ThfstChunkedBoxSpellerArchive? = null

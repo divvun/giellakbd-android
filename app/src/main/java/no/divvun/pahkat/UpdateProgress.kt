@@ -1,10 +1,7 @@
 package no.divvun.pahkat
 
-import android.content.Context
-import androidx.work.Data
-import androidx.work.WorkManager
 import no.divvun.pahkat.client.PackageKey
-import java.io.*
+import java.io.Serializable
 
 sealed class UpdateProgress : Serializable {
     sealed class Download : Serializable, UpdateProgress() {

@@ -2,18 +2,16 @@ package no.divvun.spellchecker
 
 import android.content.Context
 import android.service.textservice.SpellCheckerService
-import android.util.Log
 import android.view.textservice.SentenceSuggestionsInfo
 import android.view.textservice.SuggestionsInfo
 import android.view.textservice.TextInfo
 import no.divvun.DivvunUtils
-import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
-import no.divvun.createTag
 import no.divvun.divvunspell.ThfstChunkedBoxSpeller
+import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import timber.log.Timber
 import java.util.*
 
-class DivvunSpellCheckerService: SpellCheckerService(){
+class DivvunSpellCheckerService : SpellCheckerService() {
     override fun onCreate() {
         super.onCreate()
         Timber.d("onCreate")
@@ -24,7 +22,7 @@ class DivvunSpellCheckerService: SpellCheckerService(){
         return DivvunSpellCheckerSession(this)
     }
 
-    class DivvunSpellCheckerSession(private val context: Context): Session() {
+    class DivvunSpellCheckerSession(private val context: Context) : Session() {
         private var archive: ThfstChunkedBoxSpellerArchive? = null
         private var speller: ThfstChunkedBoxSpeller? = null
 
@@ -35,7 +33,8 @@ class DivvunSpellCheckerService: SpellCheckerService(){
         }
 
         override fun onGetSuggestions(textInfo: TextInfo?, suggestionsLimit: Int): SuggestionsInfo {
-            val speller = this.speller ?: return SuggestionsInfo(SuggestionsInfo.RESULT_ATTR_IN_THE_DICTIONARY, arrayOfNulls(0))
+            val speller = this.speller
+                    ?: return SuggestionsInfo(SuggestionsInfo.RESULT_ATTR_IN_THE_DICTIONARY, arrayOfNulls(0))
 
             Timber.d("onGetSuggestions()")
 

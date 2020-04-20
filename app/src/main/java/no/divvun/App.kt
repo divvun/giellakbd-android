@@ -2,7 +2,6 @@ package no.divvun
 
 import android.app.Application
 import android.content.Context
-import android.util.Log
 import androidx.work.Constraints
 import androidx.work.ExistingPeriodicWorkPolicy
 import androidx.work.NetworkType

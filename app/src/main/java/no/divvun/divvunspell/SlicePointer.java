@@ -12,7 +12,7 @@ import java.util.Arrays;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-@Structure.FieldOrder({ "data", "len" })
+@Structure.FieldOrder({"data", "len"})
 public class SlicePointer extends Structure {
     public volatile Pointer data;
     public volatile NativeLong len;

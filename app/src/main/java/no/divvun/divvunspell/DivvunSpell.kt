@@ -22,7 +22,7 @@ class DivvunSpellException(message: String?) : Exception(message)
 class ThfstChunkedBoxSpeller internal constructor(private val handle: Pointer) {
     @Throws(DivvunSpellException::class)
     fun isCorrect(word: String): Boolean {
-        if(word.isEmpty()) {
+        if (word.isEmpty()) {
             return false
         }
         val res = word.withSlice {
