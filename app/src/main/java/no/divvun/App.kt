@@ -38,7 +38,6 @@ class App : Application() {
         PahkatClient.Android.init(applicationInfo.dataDir).orThrow()
 
         val prefixPath = prefixPath(this)
-
         initPrefixPackageStore(prefixPath)
 
         val key = PackageKey(
@@ -47,9 +46,8 @@ class App : Application() {
                 PackageKeyParams(platform = "mobile")
         )
 
+        PackageObserver.init(this, spellerPath(this))
         ensurePeriodicPackageUpdates(this, prefixPath, key)
-
-        PackageObserver.init(spellerPath(this))
     }
 
 

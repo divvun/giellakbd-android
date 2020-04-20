@@ -30,26 +30,3 @@ class SpellerArchiveWatcher(private val spellerPath: String) : OnPackageUpdateLi
         updateArchive()
     }
 }
-
-
-class PeriodicExecutor(private val period: Long) : Executor {
-    private var command: Runnable? = null
-
-    override fun execute(command: Runnable?) {
-        this.command = command
-        poller.postDelayed(executor, period)
-    }
-
-    private val executor: Runnable = object : Runnable {
-        override fun run() {
-            val uptimeMillis: Long = SystemClock.uptimeMillis()
-            command!!.run()
-            poller.postAtTime(this, uptimeMillis + period)
-        }
-    }
-
-    companion object {
-        private val TAG = PeriodicExecutor::class.java.simpleName
-        private val poller: Handler = Handler()
-    }
-}
