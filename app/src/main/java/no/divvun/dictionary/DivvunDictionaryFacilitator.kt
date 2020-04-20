@@ -9,14 +9,12 @@ import com.android.inputmethod.latin.NgramContext
 import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import com.android.inputmethod.latin.utils.SuggestionResults
-import no.divvun.createTag
 import timber.log.Timber
 import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
 class DivvunDictionaryFacilitator() : DictionaryFacilitator {
-    private val tag = createTag(this)
     private var isActive = false
 
     var dictionary = DivvunDictionary(null, null)
