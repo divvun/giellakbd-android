@@ -88,7 +88,7 @@ dependencies {
 
     implementation 'com.google.code.gson:gson:2.8.5'
 
-    implementation('com.github.divvun:pahkat-client-sdk-java:672721a5') {
+    implementation('com.github.divvun:pahkat-client-sdk-java:111d0025') {
         exclude group: 'net.java.dev.jna'
     }
 

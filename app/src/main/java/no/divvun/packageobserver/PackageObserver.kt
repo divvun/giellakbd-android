@@ -5,13 +5,12 @@ import androidx.work.WorkInfo
 import no.divvun.pahkat.WORKMANAGER_TAG_UPDATE
 import no.divvun.pahkat.workManager
 import timber.log.Timber
-import java.io.File
 
 object PackageObserver {
     var listener: OnPackageUpdateListener? = null
-    private var lastModified = 0L
+//    private var lastModified = 0L
 
-    fun init(context: Context, path: String) {
+    fun init(context: Context) {
         Timber.d("Init")
         context.workManager().getWorkInfosByTagLiveData(WORKMANAGER_TAG_UPDATE).observeForever {
             Timber.d("WorkInfos $it")
@@ -19,12 +18,13 @@ object PackageObserver {
             Timber.d("WorkInfo $workInfo")
 
             if (workInfo.state == WorkInfo.State.ENQUEUED) {
+                /**
                 val spellerFile = File(path)
                 if (spellerFile.exists() && lastModified != spellerFile.lastModified()) {
-                    lastModified = spellerFile.lastModified()
-                    Timber.i("OnPackage Update!")
-                    listener?.onPackageUpdate()
-                }
+                lastModified = spellerFile.lastModified()
+                 */
+                Timber.i("OnPackages Update!")
+                listener?.onPackageUpdate()
             }
         }
     }

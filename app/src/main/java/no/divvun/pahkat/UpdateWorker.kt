@@ -2,6 +2,8 @@ package no.divvun.pahkat
 
 
 import android.content.Context
+import android.view.inputmethod.InputMethodManager
+import androidx.core.content.getSystemService
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 import androidx.work.await
@@ -10,12 +12,14 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import no.divvun.SpellerPackage
 import no.divvun.pahkat.client.PackageKey
 import no.divvun.pahkat.client.PrefixPackageStore
 import no.divvun.pahkat.client.TransactionAction
 import no.divvun.pahkat.client.delegate.PackageDownloadDelegate
 import no.divvun.pahkat.client.delegate.PackageTransactionDelegate
 import no.divvun.pahkat.client.ffi.orThrow
+import no.divvun.spellers
 import timber.log.Timber
 
 const val WORKMANAGER_TAG_UPDATE = "no.divvun.pahkat.client.UPDATE"
@@ -27,10 +31,6 @@ const val KEY_OBJECT_TYPE = "no.divvun.pahkat.client.objectType"
 
 
 class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context, params) {
-    private val packageKeyValue
-        get() = inputData.getString(KEY_PACKAGE_KEY)?.let {
-            PackageKey.from(it)
-        }
     private val packageStorePathValue get() = inputData.getString(KEY_PACKAGE_STORE_PATH)
 
     private inner class DownloadDelegate :
@@ -173,9 +173,6 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 
     override fun doWork(): Result {
         Timber.d("Starting work")
-        val packageKey = packageKeyValue ?: return Result.failure(
-                IllegalArgumentException("packageKey cannot be null").toData()
-        )
         val packageStorePath = packageStorePathValue ?: return Result.failure(
                 IllegalArgumentException("packageStorePath cannot be null").toData()
         )
@@ -189,49 +186,68 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         Timber.d("Refreshing repos")
         packageStore.forceRefreshRepos().orThrow()
 
+        val activePackages = applicationContext.resolveActivePackageKeys(spellers)
         Timber.d("Starting download")
-        setProgressAsync(
-                UpdateProgress.Download.Starting(
-                        packageKey.toString()
-                ).toData()
-        )
 
-        // This blocks to completion.
-        val downloadResult = when (val r = packageStore.download(packageKey, downloadDelegate)) {
-            is Either.Left -> return Result.retry()
-            is Either.Right -> Result.success(
-                    r.b.toData()
+        for (packageKey in activePackages) {
+            setProgressAsync(
+                    UpdateProgress.Download.Starting(
+                            packageKey.toString()
+                    ).toData()
             )
+
+            // This blocks to completion.
+            packageStore.download(packageKey, downloadDelegate).isLeft()
+            val downloadResult = when (val r = packageStore.download(packageKey, downloadDelegate)) {
+                is Either.Left -> return Result.retry()
+                is Either.Right -> Result.success(
+                        r.b.toData()
+                )
+            }
+
+            Timber.d("Download complete $packageKey")
+            if (downloadDelegate.coroutineScope.isActive) {
+                Timber.d("Looping 250ms delay")
+                Thread.sleep(250)
+            }
+            // Normally download is completed here
+
+            // Our action is installing
+            Timber.d("Starting install $packageKey")
+            val actions = listOf(TransactionAction.install(packageKey, Unit))
+
+            val tx =
+                    when (val result = packageStore.transaction(actions)) {
+                        is Either.Left -> return Result.failure(result.a.toData())
+                        is Either.Right -> result.b
+                    }
+
+            // This blocks to completion.
+            tx.process(transactionDelegate)
+
+            Timber.d("Install complete $packageKey")
+
+            if (transactionDelegate.coroutineScope.isActive) {
+                Timber.d("Looping 250ms delay")
+                Thread.sleep(250)
+            }
+
         }
-
-        Timber.d("Download complete")
-        if (downloadDelegate.coroutineScope.isActive) {
-            Timber.d("Looping 250ms delay")
-            Thread.sleep(250)
-        }
-        // Normally download is completed here
-
-        // Our action is installing
-        Timber.d("Starting install")
-        val actions = listOf(TransactionAction.install(packageKey, Unit))
-
-        val tx =
-                when (val result = packageStore.transaction(actions)) {
-                    is Either.Left -> return Result.failure(result.a.toData())
-                    is Either.Right -> result.b
-                }
-
-        // This blocks to completion.
-        tx.process(transactionDelegate)
-
-        Timber.d("Install complete")
-
-        if (transactionDelegate.coroutineScope.isActive) {
-            Timber.d("Looping 250ms delay")
-            Thread.sleep(250)
-        }
-
         Timber.d("Work success")
         return Result.success()
     }
+}
+
+fun Context.resolveActivePackageKeys(activePackages: Map<String, SpellerPackage>): Set<PackageKey> {
+    val imm = getSystemService<InputMethodManager>()!!
+    val inputMethods = imm.inputMethodList.filter { it.id.contains(packageName) }
+    Timber.d("Relevant InputMethods: ${inputMethods.map { it.packageName }}")
+    val enabledSubtypes = inputMethods.flatMap { imi ->
+        imm.getEnabledInputMethodSubtypeList(imi, true).map { ims ->
+            ims.locale
+        }
+    }
+    Timber.d("Enabled subtypes: $enabledSubtypes")
+
+    return activePackages.filterKeys { it in enabledSubtypes }.values.map { it.packageKey }.toSet()
 }

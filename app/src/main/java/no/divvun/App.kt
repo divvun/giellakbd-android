@@ -8,20 +8,37 @@ import androidx.work.NetworkType
 import androidx.work.PeriodicWorkRequestBuilder
 import arrow.core.Either
 import no.divvun.packageobserver.PackageObserver
-import no.divvun.pahkat.*
+import no.divvun.pahkat.UpdateWorker
+import no.divvun.pahkat.WORKMANAGER_TAG_UPDATE
 import no.divvun.pahkat.client.*
 import no.divvun.pahkat.client.ffi.orThrow
+import no.divvun.pahkat.workManager
 import timber.log.Timber
+import java.net.URI
 import java.util.concurrent.TimeUnit
 
-
-const val spellerFile = "smj.bhfst"
-const val packageId = "speller-smj"
-const val packageRepoUrl = "https://x.brendan.so/divvun-pahkat-repo"
-const val REPO_URL = "https://x.brendan.so/divvun-pahkat-repo/"
+const val WM_SPELLERUPDATEWORKER_NAME = "SPELLER_UPDATE_WORKER"
 
 fun prefixPath(context: Context): String = "${context.applicationInfo.dataDir}/no_backup/pahkat"
-fun spellerPath(context: Context): String = "${prefixPath(context)}/pkg/$packageId/$spellerFile"
+
+val spellers = mapOf(
+        "smj_NO" to SpellerPackage("https://x.brendan.so/divvun-pahkat-repo/speller-smj".packageKey(), "smj.bhfst"),
+        "smj_SE" to SpellerPackage("https://x.brendan.so/divvun-pahkat-repo/speller-smj".packageKey(), "smj.bhfst")
+)
+
+fun String.packageKey(): PackageKey {
+    val url = URI.create(this).toURL()
+    val repoUrl = "${url.protocol}://${url.authority}"
+    val spellerId = url.file
+    return PackageKey(repoUrl, spellerId, PackageKeyParams(platform = "mobile"))
+}
+
+data class SpellerPackage(
+        val packageKey: PackageKey,
+        val spellerFile: String
+) {
+    fun spellerPath(context: Context): String = "${prefixPath(context)}/pkg/${packageKey.id}/$spellerFile"
+}
 
 class App : Application() {
 
@@ -37,22 +54,16 @@ class App : Application() {
         PahkatClient.Android.init(applicationInfo.dataDir).orThrow()
 
         val prefixPath = prefixPath(this)
-        initPrefixPackageStore(prefixPath)
+        initPrefixPackageStore(prefixPath, spellers.values.map { it.packageKey }.toList())
 
-        val key = PackageKey(
-                packageRepoUrl,
-                packageId,
-                PackageKeyParams(platform = "mobile")
-        )
+        PackageObserver.init(this)
 
-        PackageObserver.init(this, spellerPath(this))
-
-//        workManager().cancelUniqueWork(key.workName())
-        ensurePeriodicPackageUpdates(this, prefixPath, key)
+        workManager().cancelUniqueWork(WM_SPELLERUPDATEWORKER_NAME)
+        ensurePeriodicPackageUpdates(this, prefixPath)
     }
 
 
-    private fun initPrefixPackageStore(prefixPath: String) {
+    private fun initPrefixPackageStore(prefixPath: String, packages: List<PackageKey>) {
         // Timber.d("Env: ${System.getenv().map { "${it.key}: ${it.value}" }.joinToString(", ")}")
 
         val prefix = when (val result = PrefixPackageStore.openOrCreate(prefixPath)) {
@@ -63,18 +74,17 @@ class App : Application() {
             is Either.Right -> result.b
         }
 
+        val repos = packages.map { it.repositoryUrl }.toSet().map { it to RepoRecord(null) }.toMap()
         val config = prefix.config().orThrow()
-        config.setRepos(mapOf(REPO_URL to RepoRecord(Repository.Channel.NIGHTLY.value))).orThrow()
+        config.setRepos(repos).orThrow()
     }
 
     private fun ensurePeriodicPackageUpdates(
             context: Context,
-            prefixPath: String,
-            key: PackageKey
+            prefixPath: String
     ): String {
         val req = PeriodicWorkRequestBuilder<UpdateWorker>(1, TimeUnit.DAYS)
                 .addTag(WORKMANAGER_TAG_UPDATE)
-                .setInputData(key.workData(prefixPath))
                 .setConstraints(
                         Constraints.Builder()
                                 .setRequiredNetworkType(NetworkType.UNMETERED)
@@ -84,10 +94,9 @@ class App : Application() {
                 )
                 .build()
 
-        val workName = key.workName()
         context.workManager()
-                .enqueueUniquePeriodicWork(workName, ExistingPeriodicWorkPolicy.KEEP, req)
-        return workName
+                .enqueueUniquePeriodicWork(WM_SPELLERUPDATEWORKER_NAME, ExistingPeriodicWorkPolicy.KEEP, req)
+        return prefixPath
     }
 }
 

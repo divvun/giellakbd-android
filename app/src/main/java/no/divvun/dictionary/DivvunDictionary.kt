@@ -9,14 +9,13 @@ import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import no.divvun.divvunspell.SpellerConfig
 import no.divvun.packageobserver.SpellerArchiveWatcher
-import no.divvun.spellerPath
 import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
 class DivvunDictionary(private val context: Context?, locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
 
-    private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(spellerPath(it)) }
+    private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(it, locale!!) }
     private val speller
         get() = spellerArchiveWatcher?.archive?.speller()
 
