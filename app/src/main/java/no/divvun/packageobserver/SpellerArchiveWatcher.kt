@@ -18,7 +18,8 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
     private fun updateArchive() {
         Timber.d("Updating speller archive")
         archive = try {
-            val spellerPath = spellers[locale.toLanguageTag()]?.spellerPath(context)
+            Timber.d("Retrieving speller for locale: $locale")
+            val spellerPath = spellers[locale.toString()]?.spellerPath(context)
             Timber.d("Speller path: $spellerPath")
             if(spellerPath != null){
                 Timber.d("Speller path found resolved: $spellerPath")
@@ -29,6 +30,7 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
                 null
             }
         } catch (ex: Exception) {
+            Timber.e("Failed to open archive $ex")
             Sentry.capture(ex)
             null
         }

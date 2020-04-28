@@ -187,7 +187,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         packageStore.forceRefreshRepos().orThrow()
 
         val activePackages = applicationContext.resolveActivePackageKeys(spellers)
-        Timber.d("Starting download")
+        Timber.d("Active packages existing $activePackages")
 
         for (packageKey in activePackages) {
             setProgressAsync(
@@ -195,6 +195,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                             packageKey.toString()
                     ).toData()
             )
+            Timber.d("Starting download")
 
             // This blocks to completion.
             packageStore.download(packageKey, downloadDelegate).isLeft()
@@ -249,5 +250,5 @@ fun Context.resolveActivePackageKeys(activePackages: Map<String, SpellerPackage>
     }
     Timber.d("Enabled subtypes: $enabledSubtypes")
 
-    return activePackages.filterKeys { it in enabledSubtypes }.values.map { it.packageKey }.toSet()
+    return activePackages.filterKeys { it.toLowerCase() in enabledSubtypes }.values.map { it.packageKey }.toSet()
 }
