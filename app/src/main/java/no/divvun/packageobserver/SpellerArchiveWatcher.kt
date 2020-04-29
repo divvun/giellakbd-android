@@ -18,8 +18,8 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
     private fun updateArchive() {
         Timber.d("Updating speller archive")
         archive = try {
-            Timber.d("Retrieving speller for locale: $locale")
-            val spellerPath = spellers[locale.toLanguageTag().toString()]?.spellerPath(context)
+            Timber.d("Retrieving speller for languageTag: ${locale.language}")
+            val spellerPath = spellers[locale.language]?.spellerPath(context)
             Timber.d("Speller path: $spellerPath")
             if(spellerPath != null){
                 Timber.d("Speller path found resolved: $spellerPath")

@@ -72,6 +72,9 @@ import com.android.inputmethod.latin.touchinputconsumer.GestureConsumer
 import com.android.inputmethod.latin.utils.*
 import no.divvun.dictionary.DivvunDictionaryFacilitator
 import no.divvun.domain.loadKeyboardDescriptor
+import no.divvun.pahkat.UpdateWorker
+import no.divvun.pahkat.hasSubtypesChanged
+import no.divvun.pahkat.restartUpdaterIfSubtypesChanged
 import timber.log.Timber
 import java.io.FileDescriptor
 import java.io.PrintWriter
@@ -695,6 +698,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     override fun onStartInput(editorInfo: EditorInfo, restarting: Boolean) {
+        restartUpdaterIfSubtypesChanged()
         mHandler.onStartInput(editorInfo, restarting)
     }
 

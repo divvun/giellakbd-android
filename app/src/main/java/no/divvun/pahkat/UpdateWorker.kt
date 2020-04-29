@@ -1,13 +1,14 @@
 package no.divvun.pahkat
 
 
+import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Context.MODE_PRIVATE
 import android.view.inputmethod.InputMethodManager
 import androidx.core.content.getSystemService
-import androidx.work.Worker
-import androidx.work.WorkerParameters
-import androidx.work.await
+import androidx.work.*
 import arrow.core.Either
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
@@ -19,10 +20,15 @@ import no.divvun.pahkat.client.TransactionAction
 import no.divvun.pahkat.client.delegate.PackageDownloadDelegate
 import no.divvun.pahkat.client.delegate.PackageTransactionDelegate
 import no.divvun.pahkat.client.ffi.orThrow
+import no.divvun.pahkat.client.fromJson
+import no.divvun.prefixPath
 import no.divvun.spellers
+import no.divvun.workData
 import timber.log.Timber
+import java.util.concurrent.TimeUnit
 
 const val WORKMANAGER_TAG_UPDATE = "no.divvun.pahkat.client.UPDATE"
+const val WORKMANAGER_NAME_UPDATE = "no.divvun.pahkat.client.UPDATE_NAME"
 
 const val KEY_PACKAGE_KEY = "no.divvun.pahkat.client.packageKey"
 const val KEY_PACKAGE_STORE_PATH = "no.divvun.pahkat.client.packageStorePath"
@@ -186,8 +192,14 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         Timber.d("Refreshing repos")
         packageStore.forceRefreshRepos().orThrow()
 
-        val activePackages = applicationContext.resolveActivePackageKeys(spellers)
+        val enabledSubtypes = applicationContext.activeInputMethodSubtype()
+        val activePackages = resolveActivePackageKeys(enabledSubtypes, spellers)
         Timber.d("Active packages existing $activePackages")
+        if (enabledSubtypes.size != activePackages.size) {
+            Timber.d("Some subtypes doesn't have spellers")
+            Timber.d("Enabled Subtypes: $enabledSubtypes")
+            Timber.d("Found Packages: $activePackages")
+        }
 
         for (packageKey in activePackages) {
             setProgressAsync(
@@ -198,12 +210,8 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             Timber.d("Starting download")
 
             // This blocks to completion.
-            packageStore.download(packageKey, downloadDelegate).isLeft()
-            val downloadResult = when (val r = packageStore.download(packageKey, downloadDelegate)) {
+            when (val r = packageStore.download(packageKey, downloadDelegate)) {
                 is Either.Left -> return Result.retry()
-                is Either.Right -> Result.success(
-                        r.b.toData()
-                )
             }
 
             Timber.d("Download complete $packageKey")
@@ -234,24 +242,88 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             }
 
         }
+        applicationContext.storeSubtypes(enabledSubtypes)
         Timber.d("Work success")
         return Result.success()
     }
+
+    private fun resolveActivePackageKeys(enabledSubtypes: Set<String>, activePackages: Map<String, SpellerPackage>): Set<PackageKey> {
+        return activePackages.filterKeys { it in enabledSubtypes }.values.map { it.packageKey }.toSet()
+    }
+
+    companion object {
+        fun restartUpdateWorker(context: Context) {
+            val workManager = context.workManager()
+
+            if (workManager.getWorkInfosByTag(WORKMANAGER_TAG_UPDATE).get().all { it.state != WorkInfo.State.RUNNING }) {
+                Timber.d("Work not currently running restarting worker")
+                workManager.cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
+                ensurePeriodicPackageUpdates(context, prefixPath(context))
+            }
+        }
+
+        fun ensurePeriodicPackageUpdates(
+                context: Context,
+                prefixPath: String
+        ): String {
+            val req = PeriodicWorkRequestBuilder<UpdateWorker>(1, TimeUnit.DAYS)
+                    .addTag(WORKMANAGER_TAG_UPDATE)
+                    .setInputData(prefixPath.workData())
+                    .setConstraints(
+                            Constraints.Builder()
+                                    .setRequiredNetworkType(NetworkType.UNMETERED)
+                                    .setRequiresStorageNotLow(true)
+                                    .setRequiresBatteryNotLow(true)
+                                    .build()
+                    )
+                    .build()
+
+            context.workManager().enqueueUniquePeriodicWork(WORKMANAGER_NAME_UPDATE, ExistingPeriodicWorkPolicy.KEEP, req)
+            return prefixPath
+        }
+    }
 }
 
-fun Context.resolveActivePackageKeys(activePackages: Map<String, SpellerPackage>): Set<PackageKey> {
-    val enabledSubtypes = activeInputMethodSubtype()
-    return activePackages.filterKeys { it in enabledSubtypes }.values.map { it.packageKey }.toSet()
+
+private const val SHARED_PREF_NAME = "SUBTYPES_SHARED_PREFERENCES"
+private const val PREF_KEY_ENABLED_SUBTYPES = "ENABLED_SUBTYPES"
+
+fun Context.hasSubtypesChanged(): Boolean {
+    val gson = Gson()
+    val prefs = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
+    val jsonSubtypes = prefs.getString(PREF_KEY_ENABLED_SUBTYPES, "[]")!!
+    val list = gson.fromJson<List<String>>(jsonSubtypes).toSet()
+    Timber.d("___________________")
+    Timber.d("HASSUBTYPES acti: ${activeInputMethodSubtype()}")
+    Timber.d("HASSUBTYPES list: $list")
+    return activeInputMethodSubtype().toSet() != list
 }
 
-fun Context.activeInputMethodSubtype(): List<String> {
+fun Context.storeSubtypes(subtypes: Set<String>) {
+    val gson = Gson()
+    val prefs = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
+    val json = gson.toJson(subtypes.toList())
+    prefs.edit().putString(PREF_KEY_ENABLED_SUBTYPES, json).apply()
+}
+
+fun Context.restartUpdaterIfSubtypesChanged() {
+    if (hasSubtypesChanged()) {
+        UpdateWorker.restartUpdateWorker(this)
+    }
+
+}
+
+@SuppressLint("NewApi")
+fun Context.activeInputMethodSubtype(): Set<String> {
     val imm = getSystemService<InputMethodManager>()!!
     val inputMethods = imm.inputMethodList.filter { it.id.contains(packageName) }
     Timber.d("Relevant InputMethods: ${inputMethods.map { it.packageName }}")
     return inputMethods.flatMap { imi ->
         imm.getEnabledInputMethodSubtypeList(imi, true).map { ims ->
-            ims.locale
+            val language = ims.locale.takeWhile { it != '_' }
+            Timber.d("Language $language")
+            language
         }
-    }
+    }.toSet()
 }
 

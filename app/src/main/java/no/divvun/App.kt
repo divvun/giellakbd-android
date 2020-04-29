@@ -1,27 +1,20 @@
 package no.divvun
 
 import android.app.Application
-import android.content.BroadcastReceiver
 import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
-import android.inputmethodservice.InputMethodService
-import android.view.inputmethod.InputMethodManager
-import androidx.core.content.getSystemService
-import androidx.work.*
+import androidx.work.Data
 import arrow.core.Either
+import no.divvun.domain.Keyboard
+import no.divvun.domain.loadKeyboardDescriptor
 import no.divvun.packageobserver.PackageObserver
 import no.divvun.pahkat.KEY_PACKAGE_STORE_PATH
 import no.divvun.pahkat.UpdateWorker
-import no.divvun.pahkat.WORKMANAGER_TAG_UPDATE
+import no.divvun.pahkat.WORKMANAGER_NAME_UPDATE
 import no.divvun.pahkat.client.*
 import no.divvun.pahkat.client.ffi.orThrow
 import no.divvun.pahkat.workManager
 import timber.log.Timber
 import java.net.URI
-import java.util.concurrent.TimeUnit
-
-const val WM_SPELLERUPDATEWORKER_NAME = "SPELLER_UPDATE_WORKER"
 
 lateinit var spellers: Map<String, SpellerPackage>
 
@@ -63,7 +56,7 @@ class App : Application() {
         PahkatClient.enableLogging()
         PahkatClient.Android.init(applicationInfo.dataDir).orThrow()
 
-        initSpellerConf()
+        initSpellerConf(this)
 
         Timber.d("Spellers ${spellers.values}")
 
@@ -72,17 +65,40 @@ class App : Application() {
 
         PackageObserver.init(this)
 
-        workManager().cancelUniqueWork(WM_SPELLERUPDATEWORKER_NAME)
-        ensurePeriodicPackageUpdates(this, prefixPath)
+        workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
+        UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath)
     }
 
-    private fun initSpellerConf() {
-        spellers = mapOf(
-                "smj_NO" to SpellerPackage("https://x.brendan.so/divvun-pahkat-repo/packages/speller-sme".packageKey(), "se.bhfst"),
-                "smj_SE" to SpellerPackage("https://x.brendan.so/divvun-pahkat-repo/packages/speller-sme".packageKey(), "se.bhfst")
-        )
+    private fun initSpellerConf(context: Context) {
+        val jsonFiles = context.assets.list("layouts/").orEmpty()
+
+        spellers = jsonFiles.map {
+            Timber.d("Processing Layout: $it")
+            val layoutName = it.removeSuffix(".json")
+            Timber.d("Loading keyboard descriptor $layoutName")
+            // TODO Break out locale from this function
+            val keyboard = loadKeyboardDescriptor(context, layoutName)!!
+            Timber.d("Layout loaded: $keyboard")
+            Timber.d("Layout loaded speller: ${keyboard.speller}")
+            layoutName to keyboard.spellerPackage()
+        }.filter { (layout, spellerPackage) ->
+            if (spellerPackage == null) {
+                Timber.w("Layout $layout does not have a speller!")
+                false
+            } else {
+                true
+            }
+        }.map {
+            @Suppress("UNCHECKED_CAST")
+            it as Pair<String, SpellerPackage>
+        }.toMap()
     }
 
+    private fun Keyboard.spellerPackage(): SpellerPackage? {
+        return speller?.let {
+            SpellerPackage(it.packageUrl.packageKey(), speller.path)
+        }
+    }
 
     private fun initPrefixPackageStore(prefixPath: String, packages: List<PackageKey>) {
         // Timber.d("Env: ${System.getenv().map { "${it.key}: ${it.value}" }.joinToString(", ")}")
@@ -101,24 +117,5 @@ class App : Application() {
         config.setRepos(repos).orThrow()
     }
 
-    private fun ensurePeriodicPackageUpdates(
-            context: Context,
-            prefixPath: String
-    ): String {
-        val req = PeriodicWorkRequestBuilder<UpdateWorker>(1, TimeUnit.DAYS)
-                .addTag(WORKMANAGER_TAG_UPDATE)
-                .setInputData(prefixPath.workData())
-                .setConstraints(
-                        Constraints.Builder()
-                                .setRequiredNetworkType(NetworkType.UNMETERED)
-                                .setRequiresStorageNotLow(true)
-                                .setRequiresBatteryNotLow(true)
-                                .build()
-                )
-                .build()
-
-        context.workManager().enqueueUniquePeriodicWork(WM_SPELLERUPDATEWORKER_NAME, ExistingPeriodicWorkPolicy.KEEP, req)
-        return prefixPath
-    }
 }
 

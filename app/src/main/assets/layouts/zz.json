@@ -1,4 +1,8 @@
 {
+  "speller": {
+    "path": "se.bhfst",
+    "packageUrl": "https://x.brendan.so/divvun-pahkat-repo/packages/speller-sme"
+  },
   "deadKeys": {
     "default": [
       "ˆ",

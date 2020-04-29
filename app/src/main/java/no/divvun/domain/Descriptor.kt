@@ -7,14 +7,21 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
+import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type
 import java.util.*
 
 data class Keyboard(
+        val speller: Speller?,
         val deadKeys: Map<String, List<String>>,
         val transforms: DeadKeyNode.Parent
+)
+
+data class Speller(
+        val path: String,
+        val packageUrl: String
 )
 
 sealed class DeadKeyNode {
@@ -65,9 +72,13 @@ class DeadKeyNodeDeserializer : JsonDeserializer<DeadKeyNode> {
 }
 
 fun loadKeyboardDescriptor(context: Context, locale: Locale): Keyboard? {
+    return loadKeyboardDescriptor(context, locale.language)
+}
+
+fun loadKeyboardDescriptor(context: Context, language: String): Keyboard? {
     val json: String
     try {
-        val inputStream: InputStream = context.assets.open("layouts/${locale.language}.json")
+        val inputStream: InputStream = context.assets.open("layouts/$language.json")
 
         val size = inputStream.available()
         val buffer = ByteArray(size)
