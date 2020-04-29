@@ -240,15 +240,18 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 }
 
 fun Context.resolveActivePackageKeys(activePackages: Map<String, SpellerPackage>): Set<PackageKey> {
+    val enabledSubtypes = activeInputMethodSubtype()
+    return activePackages.filterKeys { it in enabledSubtypes }.values.map { it.packageKey }.toSet()
+}
+
+fun Context.activeInputMethodSubtype(): List<String> {
     val imm = getSystemService<InputMethodManager>()!!
     val inputMethods = imm.inputMethodList.filter { it.id.contains(packageName) }
     Timber.d("Relevant InputMethods: ${inputMethods.map { it.packageName }}")
-    val enabledSubtypes = inputMethods.flatMap { imi ->
+    return inputMethods.flatMap { imi ->
         imm.getEnabledInputMethodSubtypeList(imi, true).map { ims ->
             ims.locale
         }
     }
-    Timber.d("Enabled subtypes: $enabledSubtypes")
-
-    return activePackages.filterKeys { it.toLowerCase() in enabledSubtypes }.values.map { it.packageKey }.toSet()
 }
+
