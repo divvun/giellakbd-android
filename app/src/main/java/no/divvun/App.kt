@@ -76,21 +76,11 @@ class App : Application() {
             Timber.d("Processing Layout: $it")
             val layoutName = it.removeSuffix(".json")
             Timber.d("Loading keyboard descriptor $layoutName")
-            // TODO Break out locale from this function
             val keyboard = loadKeyboardDescriptor(context, layoutName)!!
-            Timber.d("Layout loaded: $keyboard")
-            Timber.d("Layout loaded speller: ${keyboard.speller}")
+            Timber.d("Layout loaded: $layoutName with speller: ${keyboard.speller}")
             layoutName to keyboard.spellerPackage()
-        }.filter { (layout, spellerPackage) ->
-            if (spellerPackage == null) {
-                Timber.w("Layout $layout does not have a speller!")
-                false
-            } else {
-                true
-            }
-        }.map {
-            @Suppress("UNCHECKED_CAST")
-            it as Pair<String, SpellerPackage>
+        }.mapNotNull { (layoutName, spellerPackage) ->
+            spellerPackage?.let { layoutName to spellerPackage }
         }.toMap()
     }
 

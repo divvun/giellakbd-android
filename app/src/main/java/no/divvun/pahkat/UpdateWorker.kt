@@ -252,13 +252,15 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
     }
 
     companion object {
-        fun restartUpdateWorker(context: Context) {
+        fun restartUpdateWorkerIfNotRunning(context: Context) {
             val workManager = context.workManager()
 
             if (workManager.getWorkInfosByTag(WORKMANAGER_TAG_UPDATE).get().all { it.state != WorkInfo.State.RUNNING }) {
                 Timber.d("Work not currently running restarting worker")
                 workManager.cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
                 ensurePeriodicPackageUpdates(context, prefixPath(context))
+            } else {
+                Timber.d("Update already running, skipping restart")
             }
         }
 
@@ -293,9 +295,7 @@ fun Context.hasSubtypesChanged(): Boolean {
     val prefs = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
     val jsonSubtypes = prefs.getString(PREF_KEY_ENABLED_SUBTYPES, "[]")!!
     val list = gson.fromJson<List<String>>(jsonSubtypes).toSet()
-    Timber.d("___________________")
-    Timber.d("HASSUBTYPES acti: ${activeInputMethodSubtype()}")
-    Timber.d("HASSUBTYPES list: $list")
+    Timber.d("hasSubtypesChanged() Active: ${activeInputMethodSubtype()}, stored: $list")
     return activeInputMethodSubtype().toSet() != list
 }
 
@@ -308,7 +308,7 @@ fun Context.storeSubtypes(subtypes: Set<String>) {
 
 fun Context.restartUpdaterIfSubtypesChanged() {
     if (hasSubtypesChanged()) {
-        UpdateWorker.restartUpdateWorker(this)
+        UpdateWorker.restartUpdateWorkerIfNotRunning(this)
     }
 
 }
