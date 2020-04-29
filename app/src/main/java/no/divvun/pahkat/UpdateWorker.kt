@@ -1,7 +1,6 @@
 package no.divvun.pahkat
 
 
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.view.inputmethod.InputMethodManager
@@ -25,6 +24,7 @@ import no.divvun.prefixPath
 import no.divvun.spellers
 import no.divvun.workData
 import timber.log.Timber
+import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val WORKMANAGER_TAG_UPDATE = "no.divvun.pahkat.client.UPDATE"
@@ -192,7 +192,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         Timber.d("Refreshing repos")
         packageStore.forceRefreshRepos().orThrow()
 
-        val enabledSubtypes = applicationContext.activeInputMethodSubtype()
+        val enabledSubtypes = applicationContext.activeInputMethodSubtypeLanguageTags()
         val activePackages = resolveActivePackageKeys(enabledSubtypes, spellers)
         Timber.d("Active packages existing $activePackages")
         if (enabledSubtypes.size != activePackages.size) {
@@ -288,21 +288,21 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 
 
 private const val SHARED_PREF_NAME = "SUBTYPES_SHARED_PREFERENCES"
-private const val PREF_KEY_ENABLED_SUBTYPES = "ENABLED_SUBTYPES"
+private const val PREF_KEY_ENABLED_SUBTYPES = "ENABLED_SUBTYPE_LANGUAGETAGS"
 
 fun Context.hasSubtypesChanged(): Boolean {
     val gson = Gson()
     val prefs = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
-    val jsonSubtypes = prefs.getString(PREF_KEY_ENABLED_SUBTYPES, "[]")!!
-    val list = gson.fromJson<List<String>>(jsonSubtypes).toSet()
-    Timber.d("hasSubtypesChanged() Active: ${activeInputMethodSubtype()}, stored: $list")
-    return activeInputMethodSubtype().toSet() != list
+    val jsonSubtypeLanguageTags = prefs.getString(PREF_KEY_ENABLED_SUBTYPES, "[]")!!
+    val storedLanguageTags = gson.fromJson<List<String>>(jsonSubtypeLanguageTags).toSet()
+    Timber.d("hasSubtypesChanged() Active: ${activeInputMethodSubtypeLanguageTags()}, stored: $storedLanguageTags")
+    return activeInputMethodSubtypeLanguageTags().toSet() != storedLanguageTags
 }
 
-fun Context.storeSubtypes(subtypes: Set<String>) {
+fun Context.storeSubtypes(languageTags: Set<String>) {
     val gson = Gson()
     val prefs = getSharedPreferences(SHARED_PREF_NAME, MODE_PRIVATE)
-    val json = gson.toJson(subtypes.toList())
+    val json = gson.toJson(languageTags.toList())
     prefs.edit().putString(PREF_KEY_ENABLED_SUBTYPES, json).apply()
 }
 
@@ -313,16 +313,14 @@ fun Context.restartUpdaterIfSubtypesChanged() {
 
 }
 
-@SuppressLint("NewApi")
-fun Context.activeInputMethodSubtype(): Set<String> {
+fun Context.activeInputMethodSubtypeLanguageTags(): Set<String> {
     val imm = getSystemService<InputMethodManager>()!!
     val inputMethods = imm.inputMethodList.filter { it.id.contains(packageName) }
     Timber.d("Relevant InputMethods: ${inputMethods.map { it.packageName }}")
     return inputMethods.flatMap { imi ->
         imm.getEnabledInputMethodSubtypeList(imi, true).map { ims ->
-            val language = ims.locale.takeWhile { it != '_' }
-            Timber.d("Language $language")
-            language
+            val parts = ims.locale.split("_")
+            Locale(parts.getOrElse(0) { "" }, parts.getOrElse(1) { "" }).toLanguageTag()
         }
     }.toSet()
 }

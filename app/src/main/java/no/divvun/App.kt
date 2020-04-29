@@ -74,13 +74,13 @@ class App : Application() {
 
         spellers = jsonFiles.map {
             Timber.d("Processing Layout: $it")
-            val layoutName = it.removeSuffix(".json")
-            Timber.d("Loading keyboard descriptor $layoutName")
-            val keyboard = loadKeyboardDescriptor(context, layoutName)!!
-            Timber.d("Layout loaded: $layoutName with speller: ${keyboard.speller}")
-            layoutName to keyboard.spellerPackage()
-        }.mapNotNull { (layoutName, spellerPackage) ->
-            spellerPackage?.let { layoutName to spellerPackage }
+            val languageTag = it.removeSuffix(".json")
+            Timber.d("Loading keyboard descriptor $languageTag")
+            val keyboard = loadKeyboardDescriptor(context, languageTag)!!
+            Timber.d("Layout loaded: $languageTag with speller: ${keyboard.speller}")
+            languageTag to keyboard.spellerPackage()
+        }.mapNotNull { (languageTag, spellerPackage) ->
+            spellerPackage?.let { languageTag to spellerPackage }
         }.toMap()
     }
 

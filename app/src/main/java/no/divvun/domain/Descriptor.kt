@@ -72,13 +72,13 @@ class DeadKeyNodeDeserializer : JsonDeserializer<DeadKeyNode> {
 }
 
 fun loadKeyboardDescriptor(context: Context, locale: Locale): Keyboard? {
-    return loadKeyboardDescriptor(context, locale.language)
+    return loadKeyboardDescriptor(context, locale.toLanguageTag())
 }
 
-fun loadKeyboardDescriptor(context: Context, language: String): Keyboard? {
+fun loadKeyboardDescriptor(context: Context, languageTag: String): Keyboard? {
     val json: String
     try {
-        val inputStream: InputStream = context.assets.open("layouts/$language.json")
+        val inputStream: InputStream = context.assets.open("layouts/$languageTag.json")
 
         val size = inputStream.available()
         val buffer = ByteArray(size)
