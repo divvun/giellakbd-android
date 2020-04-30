@@ -46,8 +46,6 @@ class App : Application() {
     }
 
     private fun initPrefixPackageStore(prefixPath: String, repos: Map<String, RepoRecord>) {
-        // Timber.d("Env: ${System.getenv().map { "${it.key}: ${it.value}" }.joinToString(", ")}")
-
         val prefix = when (val result = PrefixPackageStore.openOrCreate(prefixPath)) {
             is Either.Left -> {
                 Timber.e("Failed to get packageStore ${result.a}")
