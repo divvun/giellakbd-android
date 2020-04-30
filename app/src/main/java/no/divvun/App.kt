@@ -39,7 +39,9 @@ class App : Application() {
         initPrefixPackageStore(prefixPath, Spellers.config.repos() )
         PackageObserver.init(this)
 
-        workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
+        // This can be enable to ensure periodic update is ran on each App start
+ //       workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
+
         UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath)
     }
 
