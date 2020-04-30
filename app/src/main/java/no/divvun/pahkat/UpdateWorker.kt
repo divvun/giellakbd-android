@@ -13,6 +13,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import no.divvun.SpellerPackage
+import no.divvun.Spellers
 import no.divvun.pahkat.client.PackageKey
 import no.divvun.pahkat.client.PrefixPackageStore
 import no.divvun.pahkat.client.TransactionAction
@@ -21,8 +22,6 @@ import no.divvun.pahkat.client.delegate.PackageTransactionDelegate
 import no.divvun.pahkat.client.ffi.orThrow
 import no.divvun.pahkat.client.fromJson
 import no.divvun.prefixPath
-import no.divvun.spellers
-import no.divvun.workData
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -193,7 +192,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         packageStore.forceRefreshRepos().orThrow()
 
         val enabledSubtypes = applicationContext.activeInputMethodSubtypeLanguageTags()
-        val activePackages = resolveActivePackageKeys(enabledSubtypes, spellers)
+        val activePackages = resolveActivePackageKeys(enabledSubtypes, Spellers.config)
         Timber.d("Active packages existing $activePackages")
         if (enabledSubtypes.size != activePackages.size) {
             Timber.d("Some subtypes doesn't have spellers")
@@ -325,3 +324,8 @@ fun Context.activeInputMethodSubtypeLanguageTags(): Set<String> {
     }.toSet()
 }
 
+fun String.workData(): Data {
+    return Data.Builder()
+            .putString(KEY_PACKAGE_STORE_PATH, this)
+            .build()
+}

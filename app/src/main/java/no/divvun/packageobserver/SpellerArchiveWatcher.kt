@@ -2,8 +2,8 @@ package no.divvun.packageobserver
 
 import android.content.Context
 import io.sentry.Sentry
+import no.divvun.Spellers
 import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
-import no.divvun.spellers
 import timber.log.Timber
 import java.util.*
 
@@ -19,14 +19,14 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
         Timber.d("Updating speller archive")
         archive = try {
             Timber.d("Retrieving speller for languageTag: ${locale.language}")
-            val spellerPath = spellers[locale.toLanguageTag()]?.spellerPath(context)
+            val spellerPath = Spellers[locale.toLanguageTag()]?.spellerPath(context)
             Timber.d("Speller path: $spellerPath")
             if(spellerPath != null){
                 Timber.d("Speller path found resolved: $spellerPath")
                 Timber.d("Opening archive")
                 ThfstChunkedBoxSpellerArchive.open(spellerPath)
             } else {
-                Timber.d("No speller found for ${locale.toLanguageTag()} in $spellers")
+                Timber.d("No speller found for ${locale.toLanguageTag()} in ${Spellers.config}")
                 null
             }
         } catch (ex: Exception) {
