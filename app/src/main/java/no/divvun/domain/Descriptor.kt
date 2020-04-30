@@ -7,7 +7,6 @@ import com.google.gson.JsonDeserializationContext
 import com.google.gson.JsonDeserializer
 import com.google.gson.JsonElement
 import com.google.gson.reflect.TypeToken
-import timber.log.Timber
 import java.io.IOException
 import java.io.InputStream
 import java.lang.reflect.Type

@@ -14,7 +14,7 @@ import java.io.File
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-class DivvunDictionaryFacilitator() : DictionaryFacilitator {
+class DivvunDictionaryFacilitator : DictionaryFacilitator {
     private var isActive = false
 
     var dictionary = DivvunDictionary(null, null)

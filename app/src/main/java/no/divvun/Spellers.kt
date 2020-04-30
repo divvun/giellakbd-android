@@ -7,7 +7,6 @@ import no.divvun.pahkat.client.PackageKey
 import no.divvun.pahkat.client.PackageKeyParams
 import no.divvun.pahkat.client.RepoRecord
 import timber.log.Timber
-import java.net.URI
 
 typealias SpellerConfiguration = Map<String, SpellerPackage>
 typealias RepoConfiguration = Map<String, RepoRecord>

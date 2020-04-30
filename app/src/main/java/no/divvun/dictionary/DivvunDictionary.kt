@@ -3,7 +3,6 @@ package no.divvun.dictionary
 import android.content.Context
 import com.android.inputmethod.latin.Dictionary
 import com.android.inputmethod.latin.NgramContext
-import com.android.inputmethod.latin.SuggestedWords
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
@@ -13,7 +12,7 @@ import timber.log.Timber
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DivvunDictionary(private val context: Context?, locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
+class DivvunDictionary(context: Context?, locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
 
     private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(it, locale!!) }
     private val speller
@@ -24,7 +23,16 @@ class DivvunDictionary(private val context: Context?, locale: Locale?) : Diction
 
     }
 
-    override fun getSuggestions(composedData: ComposedData, ngramContext: NgramContext, proximityInfoHandle: Long, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, weightForLocale: Float, inOutWeightOfLangModelVsSpatialModel: FloatArray): ArrayList<SuggestedWords.SuggestedWordInfo> {
+    override fun getSuggestions(
+            composedData: ComposedData,
+            ngramContext: NgramContext,
+            proximityInfoHandle: Long,
+            settingsValuesForSuggestion: SettingsValuesForSuggestion,
+            sessionId: Int,
+            weightForLocale: Float,
+            inOutWeightOfLangModelVsSpatialModel: FloatArray
+    ): ArrayList<SuggestedWordInfo> {
+
         Timber.d("getSuggestions")
         val speller = this.speller ?: return ArrayList()
         val word = composedData.mTypedWord.trim()

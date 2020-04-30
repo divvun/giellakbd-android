@@ -209,7 +209,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             Timber.d("Starting download")
 
             // This blocks to completion.
-            when (val r = packageStore.download(packageKey, downloadDelegate)) {
+            when (packageStore.download(packageKey, downloadDelegate)) {
                 is Either.Left -> return Result.retry()
             }
 
@@ -224,11 +224,10 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             Timber.d("Starting install $packageKey")
             val actions = listOf(TransactionAction.install(packageKey, Unit))
 
-            val tx =
-                    when (val result = packageStore.transaction(actions)) {
-                        is Either.Left -> return Result.failure(result.a.toData())
-                        is Either.Right -> result.b
-                    }
+            val tx = when (val result = packageStore.transaction(actions)) {
+                is Either.Left -> return Result.failure(result.a.toData())
+                is Either.Right -> result.b
+            }
 
             // This blocks to completion.
             tx.process(transactionDelegate)
@@ -286,6 +285,8 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 }
 
 
+/** Helper methods to trigger download if user changes the active subtypes, because android does
+ * not expose any way to observe if subtypes changed */
 private const val SHARED_PREF_NAME = "SUBTYPES_SHARED_PREFERENCES"
 private const val PREF_KEY_ENABLED_SUBTYPES = "ENABLED_SUBTYPE_LANGUAGETAGS"
 
@@ -309,7 +310,6 @@ fun Context.restartUpdaterIfSubtypesChanged() {
     if (hasSubtypesChanged()) {
         UpdateWorker.restartUpdateWorkerIfNotRunning(this)
     }
-
 }
 
 fun Context.activeInputMethodSubtypeLanguageTags(): Set<String> {
@@ -318,6 +318,7 @@ fun Context.activeInputMethodSubtypeLanguageTags(): Set<String> {
     Timber.d("Relevant InputMethods: ${inputMethods.map { it.packageName }}")
     return inputMethods.flatMap { imi ->
         imm.getEnabledInputMethodSubtypeList(imi, true).map { ims ->
+            @Suppress("DEPRECATION")
             val parts = ims.locale.split("_")
             Locale(parts.getOrElse(0) { "" }, parts.getOrElse(1) { "" }).toLanguageTag()
         }

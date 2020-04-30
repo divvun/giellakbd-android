@@ -2,21 +2,18 @@ package no.divvun
 
 import android.app.Application
 import android.content.Context
-import androidx.work.Data
 import arrow.core.Either
 import no.divvun.packageobserver.PackageObserver
-import no.divvun.pahkat.KEY_PACKAGE_STORE_PATH
 import no.divvun.pahkat.UpdateWorker
-import no.divvun.pahkat.WORKMANAGER_NAME_UPDATE
-import no.divvun.pahkat.client.*
+import no.divvun.pahkat.client.PahkatClient
+import no.divvun.pahkat.client.PrefixPackageStore
+import no.divvun.pahkat.client.RepoRecord
 import no.divvun.pahkat.client.ffi.orThrow
-import no.divvun.pahkat.workManager
 import timber.log.Timber
-import java.net.URI
 
 fun prefixPath(context: Context): String = "${context.applicationInfo.dataDir}/no_backup/pahkat"
 
-
+@Suppress("unused")
 class App : Application() {
 
     override fun onCreate() {
@@ -36,11 +33,11 @@ class App : Application() {
 
         val prefixPath = prefixPath(this)
 
-        initPrefixPackageStore(prefixPath, Spellers.config.repos() )
+        initPrefixPackageStore(prefixPath, Spellers.config.repos())
         PackageObserver.init(this)
 
         // This can be enable to ensure periodic update is ran on each App start
- //       workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
+        //       workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
 
         UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath)
     }
@@ -58,6 +55,5 @@ class App : Application() {
         val config = prefix.config().orThrow()
         config.setRepos(repos).orThrow()
     }
-
 }
 
