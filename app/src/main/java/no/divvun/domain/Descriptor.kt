@@ -15,7 +15,6 @@ import java.util.*
 
 data class Keyboard(
         val speller: Speller?,
-        val deadKeys: Map<String, List<String>>,
         val transforms: DeadKeyNode.Parent
 )
 
