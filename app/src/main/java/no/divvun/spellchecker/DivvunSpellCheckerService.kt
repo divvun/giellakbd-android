@@ -5,9 +5,7 @@ import android.service.textservice.SpellCheckerService
 import android.view.textservice.SentenceSuggestionsInfo
 import android.view.textservice.SuggestionsInfo
 import android.view.textservice.TextInfo
-import no.divvun.DivvunUtils
-import no.divvun.divvunspell.ThfstChunkedBoxSpeller
-import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
+import no.divvun.packageobserver.SpellerArchiveWatcher
 import timber.log.Timber
 import java.util.*
 
@@ -23,13 +21,15 @@ class DivvunSpellCheckerService : SpellCheckerService() {
     }
 
     class DivvunSpellCheckerSession(private val context: Context) : Session() {
-        private var archive: ThfstChunkedBoxSpellerArchive? = null
-        private var speller: ThfstChunkedBoxSpeller? = null
+
+        private lateinit var spellerArchiveWatcher: SpellerArchiveWatcher
+        private val speller
+            get() = spellerArchiveWatcher.archive?.speller()
 
         override fun onCreate() {
             Timber.d("onCreate")
-            archive = DivvunUtils.getSpeller(context, Locale(locale))
-            speller = archive?.speller()
+            Locale(locale)
+            spellerArchiveWatcher = SpellerArchiveWatcher(context, Locale(locale))
         }
 
         override fun onGetSuggestions(textInfo: TextInfo?, suggestionsLimit: Int): SuggestionsInfo {

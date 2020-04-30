@@ -11,7 +11,7 @@ import java.util.*
 
 //@SuppressLint("StaticFieldLeak")
 object DivvunUtils {
-    private val TAG = DivvunUtils::class.java.simpleName
+    /*
 
     private fun dictFileName(locale: Locale) = "${locale.language}.bhfst"
     private fun cachedDictFileName(locale: Locale) = "${locale.language}_v${BuildConfig.VERSION_NAME}.bhfst"
@@ -69,6 +69,7 @@ object DivvunUtils {
     private val lock: Any = object {}
     private val loadedArchives = mutableMapOf<Locale, ThfstChunkedBoxSpellerArchive>()
 
+
     fun getSpeller(context: Context, locale: Locale?): ThfstChunkedBoxSpellerArchive? {
         Timber.d("getSpeller() for $locale")
 
@@ -101,4 +102,6 @@ object DivvunUtils {
     fun dumpMemoryMaps() {
         File("/proc/self/maps").forEachLine { Timber.v("/proc/self/maps, $it") }
     }
+
+     */
 }
