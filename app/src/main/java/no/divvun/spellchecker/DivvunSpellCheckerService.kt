@@ -6,6 +6,7 @@ import android.view.textservice.SentenceSuggestionsInfo
 import android.view.textservice.SuggestionsInfo
 import android.view.textservice.TextInfo
 import no.divvun.packageobserver.SpellerArchiveWatcher
+import no.divvun.pahkat.toLocale
 import timber.log.Timber
 import java.util.*
 
@@ -27,9 +28,8 @@ class DivvunSpellCheckerService : SpellCheckerService() {
             get() = spellerArchiveWatcher.archive?.speller()
 
         override fun onCreate() {
-            Timber.d("onCreate")
-            Locale(locale)
-            spellerArchiveWatcher = SpellerArchiveWatcher(context, Locale(locale))
+            Timber.d("onCreate, locale: ${locale.toLocale()}")
+            spellerArchiveWatcher = SpellerArchiveWatcher(context, locale.toLocale())
         }
 
         override fun onGetSuggestions(textInfo: TextInfo?, suggestionsLimit: Int): SuggestionsInfo {

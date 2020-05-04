@@ -4,6 +4,7 @@ package no.divvun.pahkat
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.view.inputmethod.InputMethodManager
+import android.view.textservice.TextServicesManager
 import androidx.core.content.getSystemService
 import androidx.work.*
 import arrow.core.Either
@@ -319,10 +320,18 @@ fun Context.activeInputMethodSubtypeLanguageTags(): Set<String> {
     return inputMethods.flatMap { imi ->
         imm.getEnabledInputMethodSubtypeList(imi, true).map { ims ->
             @Suppress("DEPRECATION")
-            val parts = ims.locale.split("_")
-            Locale(parts.getOrElse(0) { "" }, parts.getOrElse(1) { "" }).toLanguageTag()
+            ims.locale.toLanguageTag()
         }
     }.toSet()
+}
+
+fun String.toLocale(): Locale {
+    val parts = split("_")
+    return Locale(parts.getOrElse(0) { "" }, parts.getOrElse(1) { "" })
+}
+
+fun String.toLanguageTag(): String {
+    return toLocale().toLanguageTag()
 }
 
 fun String.workData(): Data {
