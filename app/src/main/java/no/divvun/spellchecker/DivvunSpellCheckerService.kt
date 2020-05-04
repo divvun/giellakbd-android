@@ -6,7 +6,7 @@ import android.view.textservice.SentenceSuggestionsInfo
 import android.view.textservice.SuggestionsInfo
 import android.view.textservice.TextInfo
 import no.divvun.packageobserver.SpellerArchiveWatcher
-import no.divvun.pahkat.toLocale
+import no.divvun.toLocale
 import timber.log.Timber
 import java.util.*
 

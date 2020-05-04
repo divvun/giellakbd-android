@@ -4,7 +4,6 @@ package no.divvun.pahkat
 import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.view.inputmethod.InputMethodManager
-import android.view.textservice.TextServicesManager
 import androidx.core.content.getSystemService
 import androidx.work.*
 import arrow.core.Either
@@ -23,6 +22,7 @@ import no.divvun.pahkat.client.delegate.PackageTransactionDelegate
 import no.divvun.pahkat.client.ffi.orThrow
 import no.divvun.pahkat.client.fromJson
 import no.divvun.prefixPath
+import no.divvun.toLanguageTag
 import timber.log.Timber
 import java.util.*
 import java.util.concurrent.TimeUnit
@@ -323,15 +323,6 @@ fun Context.activeInputMethodSubtypeLanguageTags(): Set<String> {
             ims.locale.toLanguageTag()
         }
     }.toSet()
-}
-
-fun String.toLocale(): Locale {
-    val parts = split("_")
-    return Locale(parts.getOrElse(0) { "" }, parts.getOrElse(1) { "" })
-}
-
-fun String.toLanguageTag(): String {
-    return toLocale().toLanguageTag()
 }
 
 fun String.workData(): Data {
