@@ -11,8 +11,8 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
     var archive: ThfstChunkedBoxSpellerArchive? = null
 
     init {
-        updateArchive()
         PackageObserver.listener = this
+        updateArchive()
     }
 
     private fun updateArchive() {
@@ -26,7 +26,7 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
                 Timber.d("Opening archive")
                 ThfstChunkedBoxSpellerArchive.open(spellerPath)
             } else {
-                Timber.d("No speller found for ${locale.toLanguageTag()} in ${Spellers.config}")
+                Timber.w("No speller found for ${locale.toLanguageTag()} in ${Spellers.config}")
                 null
             }
         } catch (ex: Exception) {
