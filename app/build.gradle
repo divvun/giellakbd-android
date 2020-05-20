@@ -85,6 +85,11 @@ androidExtensions {
 
 
 dependencies {
+    // Pahkat FFI components
+    implementation('com.github.divvun:pahkat-client-sdk-java:959534ac7a') {
+        exclude group: 'net.java.dev.jna'
+    }
+
     implementation "androidx.legacy:legacy-support-v4:$legacySupportVersion"
     implementation "io.sentry:sentry-android:$sentryVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
@@ -102,11 +107,6 @@ dependencies {
 
     // Android Kotlin Extensions
     implementation "androidx.core:core-ktx:$ktxVersion"
-
-
-    implementation('com.github.divvun:pahkat-client-sdk-java:111d0025') {
-        exclude group: 'net.java.dev.jna'
-    }
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4'
 

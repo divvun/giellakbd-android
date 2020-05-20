@@ -15,7 +15,7 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 @Structure.FieldOrder({"data", "len"})
 public class SlicePointer extends Structure {
     public volatile Pointer data;
-    public volatile NativeLong len;
+    public volatile Pointer len;
 
     public static class ByValue extends SlicePointer implements Structure.ByValue {
         @NotNull
@@ -28,7 +28,7 @@ public class SlicePointer extends Structure {
             data.write(0, bytes, 0, length);
 
             ptr.data = data;
-            ptr.len = new NativeLong(length);
+            ptr.len = Pointer.createConstant(length);
 
             ptr.writeField("data");
             ptr.writeField("len");
@@ -39,13 +39,13 @@ public class SlicePointer extends Structure {
 
     @Nullable
     public String decode() {
-        int v = len.intValue();
+        long v = Pointer.nativeValue(len);
 
         if (v == 0 || data == Pointer.NULL) {
             return null;
         }
 
-        byte[] array = data.getByteArray(0, v);
+        byte[] array = data.getByteArray(0, (int)v);
         return new String(array, UTF_8);
     }
 }

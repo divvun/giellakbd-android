@@ -2,6 +2,7 @@ package no.divvun.divvunspell
 
 import com.sun.jna.NativeLong
 import com.sun.jna.Pointer
+import java.nio.charset.StandardCharsets.UTF_8
 
 data class CaseHandlingConfig(
         val startPenalty: Float = 0.0f,
@@ -75,7 +76,6 @@ class ThfstChunkedBoxSpellerArchive private constructor(private val handle: Poin
     companion object {
         @Throws(DivvunSpellException::class)
         fun open(path: String): ThfstChunkedBoxSpellerArchive {
-
             val handle = path.withSlice {
                 CLibrary.divvun_thfst_chunked_box_speller_archive_open(it, errorCallback)
             }
@@ -93,9 +93,11 @@ class ThfstChunkedBoxSpellerArchive private constructor(private val handle: Poin
 
 private var lastError: String? = null
 
-private val errorCallback = ErrorCallback { error ->
-    lastError = error.getString(0, "UTF-8")
+internal val errorCallback = ErrorCallback { ptr, size ->
+    val bytes = ptr.getByteArray(0, Pointer.nativeValue(size).toInt())
+    lastError = String(bytes, UTF_8)
 }
+
 
 @Throws(DivvunSpellException::class)
 private fun assertNoError() {
