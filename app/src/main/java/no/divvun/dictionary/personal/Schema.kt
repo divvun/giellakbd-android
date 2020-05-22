@@ -27,10 +27,11 @@ data class Language(
                     onDelete = ForeignKey.CASCADE)],
         indices = [Index(value = ["word", "language_id"], unique = true), Index("language_id")])
 data class Candidate(
-        @PrimaryKey
         val word: String = "",
         @ColumnInfo(name = "language_id")
-        val languageId: Long
+        val languageId: Long,
+        @PrimaryKey(autoGenerate = true)
+        val candidateId: Long = 0
 )
 
 @Entity(tableName = "words",
