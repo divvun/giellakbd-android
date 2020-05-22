@@ -7,6 +7,8 @@ import android.view.inputmethod.InputMethodManager
 import androidx.core.content.getSystemService
 import androidx.work.*
 import arrow.core.Either
+import arrow.core.Option
+import arrow.core.extensions.list.functorFilter.filterMap
 import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -14,17 +16,13 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import no.divvun.SpellerPackage
 import no.divvun.Spellers
-import no.divvun.pahkat.client.PackageKey
-import no.divvun.pahkat.client.PrefixPackageStore
-import no.divvun.pahkat.client.TransactionAction
+import no.divvun.pahkat.client.*
 import no.divvun.pahkat.client.delegate.PackageDownloadDelegate
 import no.divvun.pahkat.client.delegate.PackageTransactionDelegate
 import no.divvun.pahkat.client.ffi.orThrow
-import no.divvun.pahkat.client.fromJson
 import no.divvun.prefixPath
 import no.divvun.toLanguageTag
 import timber.log.Timber
-import java.util.*
 import java.util.concurrent.TimeUnit
 
 const val WORKMANAGER_TAG_UPDATE = "no.divvun.pahkat.client.UPDATE"
@@ -194,55 +192,86 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 
         val enabledSubtypes = applicationContext.activeInputMethodSubtypeLanguageTags()
         val activePackages = resolveActivePackageKeys(enabledSubtypes, Spellers.config)
+
+        val packagesToUpdate = activePackages.map { it to packageStore.status(it) }
+                .filterMap { (key, result) ->
+                    result.fold({
+                        Timber.e("Failed to get package status for $key, $it")
+                        Option.empty<PackageKey>()
+                    }, {
+                        when (it) {
+                            PackageInstallStatus.NotInstalled, PackageInstallStatus.RequiresUpdate -> {
+                                Option.just(key)
+                            }
+                            PackageInstallStatus.UpToDate -> {
+                                Option.empty()
+                            }
+                            else -> {
+                                Timber.d("Status error for package: $key, returned: $it")
+                                Option.empty()
+                            }
+                        }
+                    })
+                }
         Timber.d("Active packages existing $activePackages")
-        if (enabledSubtypes.size != activePackages.size) {
-            Timber.d("Some subtypes doesn't have spellers")
-            Timber.d("Enabled Subtypes: $enabledSubtypes")
-            Timber.d("Found Packages: $activePackages")
-        }
+        Timber.d("Packages needing update/install: $packagesToUpdate")
 
-        for (packageKey in activePackages) {
-            setProgressAsync(
-                    UpdateProgress.Download.Starting(
-                            packageKey.toString()
-                    ).toData()
-            )
-            Timber.d("Starting download")
-
-            // This blocks to completion.
-            when (packageStore.download(packageKey, downloadDelegate)) {
-                is Either.Left -> return Result.retry()
+        val updateResult = packagesToUpdate.map { packageKey ->
+            val result = updatePackage(packageStore, packageKey)
+            if(result !is Result.Success){
+                Timber.e("Failed to install $packageKey, returned: $result")
             }
+            packageKey to result
+        }.toMap()
 
-            Timber.d("Download complete $packageKey")
-            if (downloadDelegate.coroutineScope.isActive) {
-                Timber.d("Looping 250ms delay")
-                Thread.sleep(250)
-            }
-            // Normally download is completed here
+        Timber.d("Successfully installed ${updateResult.filterValues { it is Result.Success }} of ${updateResult.size}")
 
-            // Our action is installing
-            Timber.d("Starting install $packageKey")
-            val actions = listOf(TransactionAction.install(packageKey, Unit))
-
-            val tx = when (val result = packageStore.transaction(actions)) {
-                is Either.Left -> return Result.failure(result.a.toData())
-                is Either.Right -> result.b
-            }
-
-            // This blocks to completion.
-            tx.process(transactionDelegate)
-
-            Timber.d("Install complete $packageKey")
-
-            if (transactionDelegate.coroutineScope.isActive) {
-                Timber.d("Looping 250ms delay")
-                Thread.sleep(250)
-            }
-
-        }
         applicationContext.storeSubtypes(enabledSubtypes)
-        Timber.d("Work success")
+        Timber.d("Work completed")
+        return Result.success()
+    }
+
+    private fun updatePackage(packageStore: PrefixPackageStore, packageKey: PackageKey): Result {
+        setProgressAsync(
+                UpdateProgress.Download.Starting(
+                        packageKey.toString()
+                ).toData()
+        )
+        Timber.d("Starting download")
+
+        // This blocks to completion.
+        when (packageStore.download(packageKey, downloadDelegate)) {
+            is Either.Left -> return Result.retry()
+        }
+
+        // Do we need this sleep?
+        Timber.d("Download complete $packageKey")
+        if (downloadDelegate.coroutineScope.isActive) {
+            Timber.d("Looping 250ms delay")
+            Thread.sleep(250)
+        }
+        // Normally download is completed here
+
+        // Our action is installing
+        Timber.d("Starting install $packageKey")
+        val actions = listOf(TransactionAction.install(packageKey, Unit))
+
+        val tx = when (val result = packageStore.transaction(actions)) {
+            is Either.Left -> {
+                return Result.failure()
+            }
+            is Either.Right -> result.b
+        }
+
+        // This blocks to completion.
+        tx.process(transactionDelegate)
+
+        Timber.d("Install complete $packageKey")
+
+        if (transactionDelegate.coroutineScope.isActive) {
+            Timber.d("Looping 250ms delay")
+            Thread.sleep(250)
+        }
         return Result.success()
     }
 
