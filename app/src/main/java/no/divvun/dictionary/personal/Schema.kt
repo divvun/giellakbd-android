@@ -31,6 +31,7 @@ data class Candidate(
         @ColumnInfo(name = "language_id")
         val languageId: Long,
         @PrimaryKey(autoGenerate = true)
+        @ColumnInfo(name = "candidate_id")
         val candidateId: Long = 0
 )
 
