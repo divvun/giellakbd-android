@@ -1,13 +1,12 @@
 package no.divvun.dictionary.personal
 
 import android.content.Context
-import android.util.Log
 import com.android.inputmethod.latin.Dictionary
 import com.android.inputmethod.latin.NgramContext
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
-import com.android.inputmethod.usecases.CreateLanguageUseCase
+import com.android.inputmethod.usecases.LanguageUseCase
 import no.divvun.levenshteinTo
 import timber.log.Timber
 import java.util.*
@@ -16,12 +15,9 @@ class PersonalDictionary(private val context: Context?, locale: Locale) : Dictio
 
     private val database: PersonalDictionaryDatabase = PersonalDictionaryDatabase.getInstance(context!!)
     private val languageId by lazy {
-        database.dictionaryDao().findLanguage(locale.language, locale.country, locale.variant).first().languageId
-    }
-
-    init {
-        CreateLanguageUseCase(database).execute(locale.toLanguage())
-        Timber.d("New Personal DictionaryInstance")
+        //database.dictionaryDao().findLanguage(locale.language, locale.country, locale.variant).first().languageId
+        Timber.d("Creating language if needed ${locale.toLanguage()}")
+        LanguageUseCase(database).execute(locale.toLanguage())
     }
 
     private fun Locale.toLanguage(): Language {

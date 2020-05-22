@@ -10,6 +10,16 @@ interface DictionaryDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertLanguage(language: Language): Long
 
+    @Transaction
+    fun findCreateLanguage(language: Language): Long {
+        val lang = findLanguage(language.language, language.country, language.variant)
+        return if(lang.isEmpty()){
+            insertLanguage(language)
+        } else {
+            lang.first().languageId
+        }
+    }
+
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     fun insertLanguageC(language: Language): Completable
 
