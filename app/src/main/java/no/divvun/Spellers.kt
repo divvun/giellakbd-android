@@ -50,11 +50,7 @@ object Spellers {
     }
 
     private fun String.packageKey(): PackageKey {
-        val repoUrl = split("/packages")[0]
-        Timber.d("repoUrl: $repoUrl")
-        val spellerId = split('/').last()
-        Timber.d("spellerId: $spellerId")
-        return PackageKey(repoUrl, spellerId, PackageKeyParams(platform = "mobile"))
+        return PackageKey.from(this)
     }
 }
 
