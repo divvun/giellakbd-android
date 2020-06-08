@@ -1,38 +1,38 @@
-plugins {
-    id 'com.github.triplet.play' version '2.0.0'
-}
-apply from: 'local.gradle'
+//plugins {
+//    id 'com.github.triplet.play' version '2.0.0'
+//}
+//apply from: 'local.gradle'
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
 apply plugin: 'kotlin-android-extensions'
-apply plugin: 'com.github.triplet.play'
+//apply plugin: 'com.github.triplet.play'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 
-play {
-    track = "alpha"
-    serviceAccountEmail = app.playEmail
-    serviceAccountCredentials = app.playCredentials != "" ? file(app.playCredentials) : file("/dev/null")
-}
+//play {
+//    track = "alpha"
+//    serviceAccountEmail = app.playEmail
+//    serviceAccountCredentials = app.playCredentials != "" ? file(app.playCredentials) : file("/dev/null")
+//}
 
 android {
     compileSdkVersion 28
     buildToolsVersion "28.0.3"
 
     defaultConfig {
-        applicationId app.packageName
+        applicationId "se.brendan.testkbd" //app.packageName
         minSdkVersion 21
         targetSdkVersion 28
 
-        versionCode app.versionCode
-        versionName app.versionName
+        versionCode 1 // app.versionCode
+        versionName "1.0" //app.versionName
     }
 
     kotlinOptions {
         jvmTarget = "1.8"
     }
 
-    if (app.storeFile != "") {
+    if (false) {
         signingConfigs {
             release {
                 storeFile app.storeFile != "" ? rootProject.file(app.storeFile) : null
@@ -86,7 +86,7 @@ androidExtensions {
 
 dependencies {
     // Pahkat FFI components
-    implementation('com.github.divvun:pahkat-client-sdk-java:959534ac7a') {
+    implementation('com.github.divvun:pahkat-client-sdk-java:06331e405e') {
         exclude group: 'net.java.dev.jna'
     }
 
