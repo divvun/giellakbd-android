@@ -34,8 +34,6 @@ import com.android.inputmethod.latin.utils.FeedbackUtils;
 import com.android.inputmethod.ui.personaldictionary.PersonalDictionaryActivity;
 import com.android.inputmethodcommon.InputMethodSettingsFragment;
 
-import timber.log.Timber;
-
 public final class SettingsFragment extends InputMethodSettingsFragment {
     // We don't care about menu grouping.
     private static final int NO_MENU_GROUP = Menu.NONE;
@@ -62,7 +60,6 @@ public final class SettingsFragment extends InputMethodSettingsFragment {
         }
 
         findPreference("personal_dictionary").setOnPreferenceClickListener(preference -> {
-            Timber.d("Preference clicked!");
             Intent intent = new Intent(getActivity(), PersonalDictionaryActivity.class);
             startActivity(intent);
             return true;

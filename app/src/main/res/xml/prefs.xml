@@ -27,6 +27,11 @@
         android:fragment="com.android.inputmethod.latin.settings.AppearanceSettingsFragment"
         android:key="screen_appearance"
         android:title="@string/settings_screen_appearance" />
+
+    <Preference
+        android:key="personal_dictionary"
+        android:title="@string/personal_dictionary_title" />
+
     <!--PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.GestureSettingsFragment"
         android:title="@string/settings_screen_gesture"
@@ -39,9 +44,5 @@
         android:fragment="com.android.inputmethod.latin.settings.AdvancedSettingsFragment"
         android:key="screen_advanced"
         android:title="@string/settings_screen_advanced" />
-
-    <Preference
-        android:key="personal_dictionary"
-        android:title="@string/personal_dictionary_title" />
 
 </PreferenceScreen>
