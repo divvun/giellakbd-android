@@ -31,7 +31,10 @@ import com.android.inputmethod.latin.R;
 import com.android.inputmethod.latin.define.ProductionFlags;
 import com.android.inputmethod.latin.utils.ApplicationUtils;
 import com.android.inputmethod.latin.utils.FeedbackUtils;
+import com.android.inputmethod.ui.personaldictionary.PersonalDictionaryActivity;
 import com.android.inputmethodcommon.InputMethodSettingsFragment;
+
+import timber.log.Timber;
 
 public final class SettingsFragment extends InputMethodSettingsFragment {
     // We don't care about menu grouping.
@@ -57,6 +60,13 @@ public final class SettingsFragment extends InputMethodSettingsFragment {
                 preferenceScreen.removePreference(accountsPreference);
             }
         }
+
+        findPreference("personal_dictionary").setOnPreferenceClickListener(preference -> {
+            Timber.d("Preference clicked!");
+            Intent intent = new Intent(getActivity(), PersonalDictionaryActivity.class);
+            startActivity(intent);
+            return true;
+        });
     }
 
     @Override

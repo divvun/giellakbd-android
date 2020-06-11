@@ -1,5 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Copyright (C) 2008 The Android Open Source Project
+<?xml version="1.0" encoding="utf-8"?><!-- Copyright (C) 2008 The Android Open Source Project
 
      Licensed under the Apache License, Version 2.0 (the "License");
      you may not use this file except in compliance with the License.
@@ -14,22 +13,20 @@
      limitations under the License.
 -->
 
-<PreferenceScreen
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:latin="http://schemas.android.com/apk/res-auto"
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
     android:key="english_ime_name">
     <PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.PreferencesSettingsFragment"
-        android:title="@string/settings_screen_preferences"
-        android:key="screen_preferences" />
+        android:key="screen_preferences"
+        android:title="@string/settings_screen_preferences" />
     <!--PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.AccountsSettingsFragment"
         android:title="@string/settings_screen_accounts"
         android:key="screen_accounts" /-->
     <PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.AppearanceSettingsFragment"
-        android:title="@string/settings_screen_appearance"
-        android:key="screen_appearance" />
+        android:key="screen_appearance"
+        android:title="@string/settings_screen_appearance" />
     <!--PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.GestureSettingsFragment"
         android:title="@string/settings_screen_gesture"
@@ -40,6 +37,11 @@
         android:key="screen_correction" /-->
     <PreferenceScreen
         android:fragment="com.android.inputmethod.latin.settings.AdvancedSettingsFragment"
-        android:title="@string/settings_screen_advanced"
-        android:key="screen_advanced" />
+        android:key="screen_advanced"
+        android:title="@string/settings_screen_advanced" />
+
+    <Preference
+        android:key="personal_dictionary"
+        android:title="@string/personal_dictionary_title" />
+
 </PreferenceScreen>
