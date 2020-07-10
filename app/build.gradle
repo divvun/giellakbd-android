@@ -1,7 +1,5 @@
-plugins 
-    if (file('local.gradle').exists()) {
-        id 'com.github.triplet.play' version '2.0.0'
-    }
+plugins {
+    id 'com.github.triplet.play' version '2.0.0'
 }
 
 if (file('local.gradle').exists()) {
