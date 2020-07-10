@@ -36,14 +36,14 @@ public final class MoreKeysDetector extends KeyDetector {
 
     @Override
     public Key detectHitKey(final int x, final int y) {
-        Log.d("MoreKeys", String.format("detectHitKey x: %d y: %d", x, y));
+        Log.v("MoreKeys", String.format("detectHitKey x: %d y: %d", x, y));
         final Keyboard keyboard = getKeyboard();
         if (keyboard == null) {
             return null;
         }
         final int touchX = getTouchX(x);
         final int touchY = getTouchY(y);
-        Log.d("MoreKeys", String.format("detectHitKey touch x: %d touch y: %d", touchX, touchY));
+        Log.v("MoreKeys", String.format("detectHitKey touch x: %d touch y: %d", touchX, touchY));
 
         Key nearestKey = null;
         int nearestDist = (y < 0) ? mSlideAllowanceSquareTop : mSlideAllowanceSquare;
@@ -54,7 +54,7 @@ public final class MoreKeysDetector extends KeyDetector {
                 nearestDist = dist;
             }
         }
-        Log.d("MoreKeys", String.format("nearestKey: %s", nearestKey == null ? null : nearestKey.toString()));
+        Log.v("MoreKeys", String.format("nearestKey: %s", nearestKey == null ? null : nearestKey.toString()));
         return nearestKey;
     }
 }

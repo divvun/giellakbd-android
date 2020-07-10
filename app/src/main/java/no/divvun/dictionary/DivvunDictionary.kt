@@ -7,16 +7,51 @@ import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
 import no.divvun.divvunspell.SpellerConfig
+import no.divvun.divvunspell.ThfstChunkedBoxSpeller
+import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import no.divvun.packageobserver.SpellerArchiveWatcher
 import timber.log.Timber
+import java.io.File
+import java.nio.file.Paths
 import java.util.*
 import kotlin.collections.ArrayList
 
-class DivvunDictionary(context: Context?, locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
-
+class DivvunDictionary(private val context: Context?, private val locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
     private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(it, locale!!) }
-    private val speller
-        get() = spellerArchiveWatcher?.archive?.speller()
+    private val speller get(): ThfstChunkedBoxSpeller? {
+        val speller = spellerArchiveWatcher?.archive?.speller()
+        if (speller != null) {
+            return speller
+        }
+
+        // If no package, try getting it from the assets.
+        if (context == null || locale == null) {
+            return null
+        }
+
+        val bhfstName = "${locale.toLanguageTag()}.bhfst"
+        val bhfstFile = File(context.cacheDir, bhfstName)
+
+        if (!bhfstFile.exists()) {
+            try {
+                var asset = context.assets.open(bhfstName)
+                asset.copyTo(bhfstFile.outputStream())
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+
+        if (bhfstFile.exists()) {
+            try {
+                spellerArchiveWatcher?.archive = ThfstChunkedBoxSpellerArchive.open(bhfstFile.path)
+                return spellerArchiveWatcher?.archive?.speller()
+            } catch (e: Exception) {
+                Timber.e(e)
+            }
+        }
+
+        return null
+    }
 
     init {
         Timber.d("DivvunDictionaryCreated")
