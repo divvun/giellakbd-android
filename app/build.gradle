@@ -23,8 +23,8 @@ if (file('local.gradle').exists()) {
 }
 
 android {
-    compileSdkVersion 28
-    buildToolsVersion "28.0.3"
+    compileSdkVersion 29
+    buildToolsVersion "29.0.3"
 
     defaultConfig {
         if (file('local.gradle').exists()) {
@@ -38,7 +38,10 @@ android {
         }
 
         minSdkVersion 21
-        targetSdkVersion 28
+        targetSdkVersion 29
+
+        versionCode app.versionCode
+        versionName app.versionName
     }
 
     kotlinOptions {
