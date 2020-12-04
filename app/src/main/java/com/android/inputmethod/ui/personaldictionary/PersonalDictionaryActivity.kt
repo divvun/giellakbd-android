@@ -17,7 +17,9 @@ class PersonalDictionaryActivity : AppCompatActivity() {
         host = f_dictionary_navhost as NavHostFragment
 
         setSupportActionBar(tl_dictionary)
+        supportActionBar?.setHomeButtonEnabled(true)
         NavigationUI.setupActionBarWithNavController(this, host.navController)
+
     }
 
     override fun onSupportNavigateUp() = host.navController.navigateUp()
