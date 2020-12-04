@@ -16,12 +16,18 @@ class PersonalDictionaryActivity : AppCompatActivity() {
         setContentView(R.layout.activity_personal_dictionary)
         host = f_dictionary_navhost as NavHostFragment
 
+        val appBarConfiguration = AppBarConfiguration.Builder().build()
         setSupportActionBar(tl_dictionary)
-        supportActionBar?.setHomeButtonEnabled(true)
-        NavigationUI.setupActionBarWithNavController(this, host.navController)
-
+        NavigationUI.setupActionBarWithNavController(this, host.navController, appBarConfiguration)
     }
 
-    override fun onSupportNavigateUp() = host.navController.navigateUp()
+    override fun onSupportNavigateUp(): Boolean {
+        return if(host.navController.navigateUp()){
+            true
+        } else {
+            finish()
+            true
+        }
+    }
 }
 
