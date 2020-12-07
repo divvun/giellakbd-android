@@ -608,4 +608,7 @@ Tip: You can download and remove dictionaries by going to &lt;b>Languages&#160;&
     <string name="snackbar_block_word_failed">Failed to block word, %1$s</string>
     <string name="snackbar_allow_word"><![CDATA[<b>%1$s</b> allowed]]></string>
     <string name="snackbar_allow_word_failed">Failed to allow word, %1$s</string>
+    <string name="settings_screen_about">About</string>
+    <string name="prefs_about_version_name">Version Name</string>
+    <string name="prefs_about_version_code">Version Code</string>
 </resources>
