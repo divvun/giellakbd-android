@@ -23,7 +23,11 @@ class LanguageWordView(context: Context, attr: AttributeSet?, style: Int) : Cons
 
     fun update(viewState: LanguageWordViewState) {
         this.viewState = viewState
-        tv_langitem_lang.text = "${viewState.language} ${viewState.country} ${viewState.variant}"
+        tv_langitem_lang.text = if (viewState.displayName.isNotEmpty()) {
+            viewState.displayName
+        } else {
+            "${viewState.language} ${viewState.country} ${viewState.variant}"
+        }
     }
 
 

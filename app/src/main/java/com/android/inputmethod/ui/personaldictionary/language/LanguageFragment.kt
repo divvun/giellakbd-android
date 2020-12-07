@@ -34,7 +34,7 @@ class LanguageFragment : Fragment(), LanguageView {
         super.onCreate(savedInstanceState)
         val database = PersonalDictionaryDatabase.getInstance(context!!)
         val languageUseCase = LanguagesUseCase(database)
-        presenter = LanguagePresenter(this, languageUseCase)
+        presenter = LanguagePresenter(this, languageUseCase, requireContext())
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

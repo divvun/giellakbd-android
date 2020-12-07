@@ -4,6 +4,7 @@ import com.android.inputmethod.ui.components.recycleradapter.Diffable
 
 data class LanguageWordViewState(
         val languageId: Long,
+        val displayName: String,
         val language: String,
         val country: String?,
         val variant: String?
