@@ -101,7 +101,12 @@ android {
 
 dependencies {
     // Pahkat FFI components
-    implementation('com.github.divvun:pahkat-client-sdk-java:06331e405e') {
+    implementation('com.github.divvun:pahkat-client-sdk-java:3bcc79f9ba') {
+        exclude group: 'net.java.dev.jna'
+    }
+
+    // DivvunSpell FFI components
+    implementation('com.github.divvun:divvunspell-sdk-java:d173e3ffcf') {
         exclude group: 'net.java.dev.jna'
     }
     
@@ -125,7 +130,7 @@ dependencies {
 
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4'
 
-    def work_version = "2.4.0-alpha02"
+    def work_version = "2.5.0-beta02"
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "androidx.work:work-rxjava2:$work_version"
 
@@ -134,9 +139,9 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'androidx.appcompat:appcompat:1.1.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0-beta4'
-    implementation 'com.google.android.material:material:1.1.0'
+    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
+    implementation 'com.google.android.material:material:1.2.1'
 
     implementation("com.squareup.moshi:moshi:1.8.0")
 
@@ -150,7 +155,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
 
-    implementation 'com.google.android.material:material:1.1.0-alpha09'
+    implementation 'com.google.android.material:material:1.2.0'
 
 
     implementation "io.arrow-kt:arrow-syntax:$arrowVersion"

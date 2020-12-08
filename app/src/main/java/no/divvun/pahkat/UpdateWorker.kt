@@ -14,14 +14,11 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
-import no.divvun.SpellerPackage
-import no.divvun.Spellers
+import no.divvun.*
 import no.divvun.pahkat.client.*
 import no.divvun.pahkat.client.delegate.PackageDownloadDelegate
 import no.divvun.pahkat.client.delegate.PackageTransactionDelegate
 import no.divvun.pahkat.client.ffi.orThrow
-import no.divvun.prefixPath
-import no.divvun.toLanguageTag
 import timber.log.Timber
 import java.util.concurrent.TimeUnit
 
@@ -181,6 +178,8 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                 IllegalArgumentException("packageStorePath cannot be null").toData()
         )
 
+        App.ensurePahkatInit(applicationContext)
+
         val packageStore =
                 when (val result = PrefixPackageStore.open(packageStorePath)) {
                     is Either.Left -> return Result.failure(result.a.toData())
@@ -191,7 +190,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         packageStore.forceRefreshRepos().orThrow()
 
         val enabledSubtypes = applicationContext.activeInputMethodSubtypeLanguageTags()
-        val activePackages = resolveActivePackageKeys(enabledSubtypes, Spellers.config)
+        val activePackages = resolveActivePackageKeys(enabledSubtypes, Spellers.config.value)
 
         val packagesToUpdate = activePackages.map { it to packageStore.status(it) }
                 .filterMap { (key, result) ->

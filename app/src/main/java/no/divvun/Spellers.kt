@@ -8,11 +8,19 @@ import no.divvun.pahkat.client.PackageKeyParams
 import no.divvun.pahkat.client.RepoRecord
 import timber.log.Timber
 
-typealias SpellerConfiguration = Map<String, SpellerPackage>
-typealias RepoConfiguration = Map<String, RepoRecord>
+data class SpellerConfiguration(val value: Map<String, SpellerPackage>) {
+    fun packageKeys(): List<PackageKey> = value.values.map { it.packageKey }.toList()
+    fun repos(): RepoConfiguration {
+        val map = packageKeys()
+                .map { it.repositoryUrl }.toSet()
+                .map { it to RepoRecord(null) }
+                .toMap()
+        return RepoConfiguration(map)
+    }
+}
 
-fun SpellerConfiguration.packageKeys(): List<PackageKey> = values.map { it.packageKey }.toList()
-fun SpellerConfiguration.repos(): RepoConfiguration = packageKeys().map { it.repositoryUrl + "/" }.toSet().map { it to RepoRecord(null) }.toMap()
+data class RepoConfiguration(val value: Map<String, RepoRecord>)
+
 
 object Spellers {
 
@@ -21,7 +29,7 @@ object Spellers {
         get() = internalSpellers
 
     operator fun get(languageTag: String): SpellerPackage? {
-        return config[languageTag]
+        return config.value[languageTag]
     }
 
     fun init(context: Context) {
@@ -29,9 +37,9 @@ object Spellers {
     }
 
     private fun initSpellerConf(context: Context) {
-        val jsonFiles = context.assets.list("layouts/").orEmpty()
+        val jsonFiles = context.assets.list("layouts").orEmpty()
 
-        internalSpellers = jsonFiles.map {
+        internalSpellers = SpellerConfiguration(jsonFiles.map {
             Timber.d("Processing Layout: $it")
             val languageTag = it.removeSuffix(".json")
             Timber.d("Loading keyboard descriptor $languageTag")
@@ -40,7 +48,7 @@ object Spellers {
             languageTag to keyboard.spellerPackage()
         }.mapNotNull { (languageTag, spellerPackage) ->
             spellerPackage?.let { languageTag to spellerPackage }
-        }.toMap()
+        }.toMap())
     }
 
     private fun Keyboard.spellerPackage(): SpellerPackage? {

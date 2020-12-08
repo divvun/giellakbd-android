@@ -21,7 +21,8 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
             Timber.d("Retrieving speller for languageTag: ${locale.language}")
             val spellerPath = Spellers[locale.toLanguageTag()]?.spellerPath(context)
             Timber.d("Speller path: $spellerPath")
-            if(spellerPath != null){
+
+            if (spellerPath != null) {
                 Timber.d("Speller path found resolved: $spellerPath")
                 Timber.d("Opening archive")
                 ThfstChunkedBoxSpellerArchive.open(spellerPath)

@@ -15,6 +15,35 @@ fun prefixPath(context: Context): String = "${context.applicationInfo.dataDir}/n
 
 @Suppress("unused")
 class App : Application() {
+    companion object {
+        private var pahkatHasInitialized = false
+
+        fun ensurePahkatInit(context: Context) {
+            if (pahkatHasInitialized) return
+
+            pahkatHasInitialized = true
+
+            Spellers.init(context)
+            val prefixPath = prefixPath(context)
+
+            Timber.d("Spellers ${Spellers.config.value.values}")
+
+//            PahkatClient.enableLogging()
+            PahkatClient.Android.init(context.applicationInfo.dataDir).orThrow()
+
+            val prefix = when (val result = PrefixPackageStore.openOrCreate(prefixPath)) {
+                is Either.Left -> {
+                    Timber.e("Failed to get packageStore ${result.a}")
+                    throw RuntimeException("Unable to open/create prefix package store!")
+                }
+                is Either.Right -> result.b
+            }
+
+            // Repos need trailing / or will be very mad.
+            val config = prefix.config().orThrow()
+            config.setRepos(Spellers.config.repos().value).orThrow()
+        }
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -24,36 +53,14 @@ class App : Application() {
         Timber.d("onCreate")
 
         // Init PahkatClient
-        PahkatClient.enableLogging()
-        PahkatClient.Android.init(applicationInfo.dataDir).orThrow()
 
-        Spellers.init(this)
-
-        Timber.d("Spellers ${Spellers.config.values}")
-
-        val prefixPath = prefixPath(this)
-
-        initPrefixPackageStore(prefixPath, Spellers.config.repos())
+        ensurePahkatInit(this)
         PackageObserver.init(this)
 
-        // This can be enable to ensure periodic update is ran on each App start
-        //       workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
+        // This is enabled to ensure periodic update is ran on each App start
+        // workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
 
-        UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath)
-    }
-
-    private fun initPrefixPackageStore(prefixPath: String, repos: Map<String, RepoRecord>) {
-        val prefix = when (val result = PrefixPackageStore.openOrCreate(prefixPath)) {
-            is Either.Left -> {
-                Timber.e("Failed to get packageStore ${result.a}")
-                throw RuntimeException("Unable to open/create prefix package store!")
-            }
-            is Either.Right -> result.b
-        }
-
-        // Repos need trailing / or will be very mad.
-        val config = prefix.config().orThrow()
-        config.setRepos(repos).orThrow()
+        UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath(this))
     }
 }
 

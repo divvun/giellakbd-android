@@ -18,17 +18,18 @@ import kotlin.collections.ArrayList
 
 class DivvunDictionary(private val context: Context?, private val locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
     private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(it, locale!!) }
+
     private val speller get(): ThfstChunkedBoxSpeller? {
         val speller = spellerArchiveWatcher?.archive?.speller()
         if (speller != null) {
             return speller
         }
 
-        // If no package, try getting it from the assets.
         if (context == null || locale == null) {
             return null
         }
 
+        // If no package, try getting it from the assets.
         val bhfstName = "${locale.toLanguageTag()}.bhfst"
         val bhfstFile = File(context.cacheDir, bhfstName)
 
@@ -41,7 +42,7 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
             }
         }
 
-        if (bhfstFile.exists()) {
+        if (!bhfstFile.exists()) {
             try {
                 spellerArchiveWatcher?.archive = ThfstChunkedBoxSpellerArchive.open(bhfstFile.path)
                 return spellerArchiveWatcher?.archive?.speller()
