@@ -5,16 +5,17 @@ import android.util.AttributeSet
 import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import com.android.inputmethod.latin.R
+import com.android.inputmethod.latin.databinding.DictionaryItemBinding
 import com.android.inputmethod.ui.components.recycleradapter.ItemEventEmitter
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
-import kotlinx.android.synthetic.main.dictionary_item.view.*
 
 class DictionaryWordView(context: Context, attr: AttributeSet?, style: Int) : ConstraintLayout(context, attr, style), ItemEventEmitter<DictionaryWordEvent> {
     constructor(context: Context, attr: AttributeSet) : this(context, attr, 0)
     constructor(context: Context) : this(context, null, 0)
 
     private lateinit var viewState: DictionaryWordViewState
+    private val binding = DictionaryItemBinding.inflate(LayoutInflater.from(context), this)
 
     init {
         LayoutInflater.from(context).inflate(R.layout.dictionary_item, this)
@@ -23,11 +24,11 @@ class DictionaryWordView(context: Context, attr: AttributeSet?, style: Int) : Co
 
     fun update(viewState: DictionaryWordViewState) {
         this.viewState = viewState
-        tv_dictitem_word.text = viewState.word
+        binding.tvDictitemWord.text = viewState.word
     }
 
 
     override fun events(): Observable<DictionaryWordEvent> {
-        return tv_dictitem_word.clicks().map { DictionaryWordEvent.PressEvent(viewState.wordId, viewState.word) }
+        return binding.tvDictitemWord.clicks().map { DictionaryWordEvent.PressEvent(viewState.wordId, viewState.word) }
     }
 }

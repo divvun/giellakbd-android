@@ -6,11 +6,9 @@ import android.view.LayoutInflater
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.text.bold
 import androidx.core.text.buildSpannedString
-import com.android.inputmethod.latin.R
+import com.android.inputmethod.latin.databinding.DictionaryItemContextBinding
 import com.android.inputmethod.ui.components.recycleradapter.ItemEventEmitter
-import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
-import kotlinx.android.synthetic.main.dictionary_item_context.view.*
 
 class WordContextView(context: Context, attr: AttributeSet?, style: Int) : ConstraintLayout(context, attr, style), ItemEventEmitter<WordContextEvent> {
     constructor(context: Context, attr: AttributeSet) : this(context, attr, 0)
@@ -18,8 +16,9 @@ class WordContextView(context: Context, attr: AttributeSet?, style: Int) : Const
 
     private lateinit var viewState: WordContextViewState
 
+    private val binding = DictionaryItemContextBinding.inflate(LayoutInflater.from(context))
+
     init {
-        LayoutInflater.from(context).inflate(R.layout.dictionary_item_context, this)
         layoutParams = LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT)
     }
 
@@ -32,7 +31,7 @@ class WordContextView(context: Context, attr: AttributeSet?, style: Int) : Const
             }
             append(viewState.nextWords.joinToString(" "))
         }
-        tv_contextitem_text.text = text
+        binding.tvContextitemText.text = text
     }
 
 

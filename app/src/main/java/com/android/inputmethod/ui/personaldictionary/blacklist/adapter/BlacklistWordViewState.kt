@@ -7,7 +7,7 @@ data class BlacklistWordViewState(
         val word: String
 ) : Diffable {
     override fun isSameAs(other: Diffable): Boolean {
-        if(other is BlacklistWordViewState){
+        if (other is BlacklistWordViewState) {
             return other.wordId == wordId
         }
         return false

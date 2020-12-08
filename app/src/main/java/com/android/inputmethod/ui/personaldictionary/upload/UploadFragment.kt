@@ -10,12 +10,12 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import com.android.inputmethod.latin.R
+import com.android.inputmethod.latin.databinding.FragmentPersonalUploadBinding
 import com.android.inputmethod.usecases.UploadUseCase
 import com.jakewharton.rxbinding3.view.clicks
 import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
-import kotlinx.android.synthetic.main.fragment_personal_upload.*
 import no.divvun.dictionary.personal.PersonalDictionaryDatabase
 import no.divvun.service.DivvunDictionaryUploadService
 import retrofit2.Retrofit
@@ -28,6 +28,9 @@ class UploadFragment : Fragment(), UploadView {
     private lateinit var database: PersonalDictionaryDatabase
     private lateinit var uploadUseCase: UploadUseCase
     private lateinit var presenter: UploadPresenter
+
+    private lateinit var binding: FragmentPersonalUploadBinding
+
     private val retrofit = Retrofit.Builder()
             .baseUrl(DivvunDictionaryUploadService.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create())
@@ -45,9 +48,10 @@ class UploadFragment : Fragment(), UploadView {
         presenter = UploadPresenter(this, uploadUseCase)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_personal_upload, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            FragmentPersonalUploadBinding.inflate(inflater, container, false).also {
+                binding = it
+            }.root
 
     override fun onResume() {
         super.onResume()
@@ -60,15 +64,15 @@ class UploadFragment : Fragment(), UploadView {
     }
 
     override fun render(viewState: UploadViewState) {
-        b_upload_upload.isEnabled = viewState.uploadEnabled
-        tv_upload_error.text = viewState.errorMessage
-        tv_upload_error.isGone = viewState.errorMessage == null
+        binding.bUploadUpload.isEnabled = viewState.uploadEnabled
+        binding.tvUploadError.text = viewState.errorMessage
+        binding.tvUploadError.isGone = viewState.errorMessage == null
 
-        pb_upload_loading.isVisible = viewState.loading
+        binding.pbUploadLoading.isVisible = viewState.loading
     }
 
     override fun events(): Observable<UploadEvent> {
-        return b_upload_upload.clicks().map { UploadEvent.OnUploadPressed }
+        return binding.bUploadUpload.clicks().map { UploadEvent.OnUploadPressed }
     }
 
     override fun navigateToSuccess() {

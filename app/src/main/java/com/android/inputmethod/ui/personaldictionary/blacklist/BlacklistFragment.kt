@@ -11,7 +11,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.android.inputmethod.latin.R
-import com.android.inputmethod.ui.components.recycleradapter.*
+import com.android.inputmethod.latin.databinding.FragmentPersonalBlacklistBinding
+import com.android.inputmethod.ui.components.recycleradapter.EventAdapter
 import com.android.inputmethod.ui.getHtmlSpannedString
 import com.android.inputmethod.ui.personaldictionary.blacklist.adapter.BlacklistWordViewHolder
 import com.android.inputmethod.ui.personaldictionary.blacklistworddialog.BlacklistWordDialogNavArg
@@ -27,7 +28,6 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.fragment_personal_blacklist.*
 import no.divvun.dictionary.personal.PersonalDictionaryDatabase
 
 
@@ -46,6 +46,8 @@ class BlacklistFragment : Fragment(), BlacklistView {
 
     override val events = PublishSubject.create<BlacklistEvent>()
 
+    private lateinit var binding: FragmentPersonalBlacklistBinding
+
     private lateinit var swipes: RecyclerSwipes
     private lateinit var snackbar: Snackbar
 
@@ -59,17 +61,18 @@ class BlacklistFragment : Fragment(), BlacklistView {
         presenter = BlacklistPresenter(this, blacklistUseCase, removeWordUseCase, blacklistWordUseCase)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_personal_blacklist, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
+            FragmentPersonalBlacklistBinding.inflate(inflater, container, false).also {
+                binding = it
+            }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvBlacklist = rv_blacklist_words
+        rvBlacklist = binding.rvBlacklistWords
         rvBlacklist.layoutManager = LinearLayoutManager(context!!)
         rvBlacklist.adapter = adapter
 
-        fab_blacklist_addword.setOnClickListener {
+        binding.fabBlacklistAddword.setOnClickListener {
             navigateToBlacklistWordDialogFragment(languageId)
         }
 
@@ -107,8 +110,8 @@ class BlacklistFragment : Fragment(), BlacklistView {
 
     override fun render(viewState: BlacklistViewState) {
         adapter.update(viewState.blacklist)
-        g_blacklist_empty.isInvisible = viewState.blacklist.isNotEmpty()
-        g_blacklist_empty.requestLayout()
+        binding.gBlacklistEmpty.isInvisible = viewState.blacklist.isNotEmpty()
+        binding.gBlacklistEmpty.requestLayout()
         renderSnackbar(viewState.snackbar)
     }
 

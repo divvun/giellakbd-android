@@ -5,25 +5,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import com.android.inputmethod.latin.R
-import kotlinx.android.synthetic.main.activity_personal_dictionary.*
+import com.android.inputmethod.latin.databinding.ActivityPersonalDictionaryBinding
 
 
 class PersonalDictionaryActivity : AppCompatActivity() {
     private lateinit var host: NavHostFragment
+    private lateinit var binding: ActivityPersonalDictionaryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_personal_dictionary)
-        host = f_dictionary_navhost as NavHostFragment
+        binding = ActivityPersonalDictionaryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        host = binding.fDictionaryNavhost as NavHostFragment
 
         val appBarConfiguration = AppBarConfiguration.Builder().build()
-        setSupportActionBar(tl_dictionary)
+        setSupportActionBar(binding.tlDictionary)
         NavigationUI.setupActionBarWithNavController(this, host.navController, appBarConfiguration)
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return if(host.navController.navigateUp()){
+        return if (host.navController.navigateUp()) {
             true
         } else {
             finish()

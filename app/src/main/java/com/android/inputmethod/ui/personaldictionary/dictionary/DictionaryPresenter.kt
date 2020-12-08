@@ -21,8 +21,8 @@ class DictionaryPresenter(
 
     fun start(): Observable<DictionaryViewState> {
         return Observable.merge(
-                        dictionaryUseCase.execute(view.languageId).map { DictionaryUpdate.Dictionary(it) },
-                        view.events.compose(uiTransformer))
+                dictionaryUseCase.execute(view.languageId).map { DictionaryUpdate.Dictionary(it) },
+                view.events.compose(uiTransformer))
                 .scan(initialViewState, { state: DictionaryViewState, event: DictionaryUpdate ->
                     when (event) {
                         is DictionaryUpdate.Dictionary -> {

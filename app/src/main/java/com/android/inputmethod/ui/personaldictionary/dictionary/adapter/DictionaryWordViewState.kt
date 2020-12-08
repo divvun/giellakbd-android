@@ -8,7 +8,7 @@ data class DictionaryWordViewState(
         val word: String
 ) : Diffable {
     override fun isSameAs(other: Diffable): Boolean {
-        if(other is DictionaryWordViewState){
+        if (other is DictionaryWordViewState) {
             return other.wordId == wordId
         }
         return false

@@ -21,8 +21,8 @@ class BlacklistPresenter(
 
     fun start(): Observable<BlacklistViewState> {
         return Observable.merge(
-                        blacklistUseCase.execute(view.languageId).map { BlacklistUpdate.Blacklist(it) },
-                        view.events.compose(uiTransformer))
+                blacklistUseCase.execute(view.languageId).map { BlacklistUpdate.Blacklist(it) },
+                view.events.compose(uiTransformer))
                 .scan(initialViewState, { state: BlacklistViewState, event: BlacklistUpdate ->
                     when (event) {
                         is BlacklistUpdate.Blacklist -> {

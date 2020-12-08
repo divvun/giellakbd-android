@@ -10,7 +10,7 @@ data class LanguageWordViewState(
         val variant: String?
 ) : Diffable {
     override fun isSameAs(other: Diffable): Boolean {
-        if(other is LanguageWordViewState){
+        if (other is LanguageWordViewState) {
             return other.languageId == languageId
         }
         return false

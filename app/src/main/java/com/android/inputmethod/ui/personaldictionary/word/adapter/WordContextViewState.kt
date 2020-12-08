@@ -9,8 +9,8 @@ data class WordContextViewState(
         val nextWords: List<String>
 ) : Diffable {
     override fun isSameAs(other: Diffable): Boolean {
-        if(other is WordContextViewState){
-            return other.wordContextId== wordContextId
+        if (other is WordContextViewState) {
+            return other.wordContextId == wordContextId
         }
         return false
     }

@@ -7,8 +7,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.android.inputmethod.latin.R
+import com.android.inputmethod.latin.databinding.FragmentPersonalDictionaryBinding
 import com.android.inputmethod.ui.components.recycleradapter.EventAdapter
 import com.android.inputmethod.ui.getHtmlSpannedString
 import com.android.inputmethod.ui.personaldictionary.addworddialog.AddWordDialogNavArg
@@ -29,11 +29,9 @@ import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.subjects.PublishSubject
-import kotlinx.android.synthetic.main.fragment_personal_dictionary.*
 import no.divvun.dictionary.personal.PersonalDictionaryDatabase
 
 class DictionaryFragment : Fragment(), DictionaryView {
-    private lateinit var rvDictionary: RecyclerView
     private lateinit var disposable: Disposable
     private lateinit var viewDisposable: Disposable
 
@@ -44,6 +42,8 @@ class DictionaryFragment : Fragment(), DictionaryView {
 
     private val args by navArgs<DictionaryFragmentArgs>()
     override val languageId by lazy { args.dictionaryNavArg.languageId }
+
+    private lateinit var binding: FragmentPersonalDictionaryBinding
 
     override val events: PublishSubject<DictionaryEvent> = PublishSubject.create()
 
@@ -60,22 +60,22 @@ class DictionaryFragment : Fragment(), DictionaryView {
         presenter = DictionaryPresenter(this, dictionaryUseCase, removeWordUseCase, blacklistWordUseCase)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        return inflater.inflate(R.layout.fragment_personal_dictionary, container, false)
-    }
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View =
+            FragmentPersonalDictionaryBinding.inflate(inflater, container, false).also {
+                binding = it
+            }.root
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        rvDictionary = rv_personaldict_words
-        rvDictionary.layoutManager = LinearLayoutManager(context!!)
-        rvDictionary.adapter = adapter
+        binding.rvPersonaldictWords.layoutManager = LinearLayoutManager(context!!)
+        binding.rvPersonaldictWords.adapter = adapter
 
-        fab_personaldict_addword.setOnClickListener {
+        binding.tvPersonaldictEmpty.setOnClickListener {
             navigateToAddWordDialogFragment(languageId)
         }
 
         swipeCallback = RecyclerSwipes(SwipeDirection.LEFT to R.layout.swipe_left_block, SwipeDirection.RIGHT to R.layout.swipe_right_delete)
-        swipeCallback.attachTo(rvDictionary)
+        swipeCallback.attachTo(binding.rvPersonaldictWords)
 
         snackbar = Snackbar.make(view, "", Snackbar.LENGTH_INDEFINITE)
 
@@ -122,8 +122,8 @@ class DictionaryFragment : Fragment(), DictionaryView {
 
     override fun render(viewState: DictionaryViewState) {
         adapter.update(viewState.dictionary)
-        g_personaldict_empty.isInvisible = viewState.dictionary.isNotEmpty()
-        g_personaldict_empty.requestLayout()
+        binding.gPersonaldictEmpty.isInvisible = viewState.dictionary.isNotEmpty()
+        binding.gPersonaldictEmpty.requestLayout()
         renderSnackbar(viewState.snackbar)
     }
 

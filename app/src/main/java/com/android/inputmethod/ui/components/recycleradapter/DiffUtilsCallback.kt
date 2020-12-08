@@ -3,8 +3,8 @@ package com.android.inputmethod.ui.components.recycleradapter
 import androidx.recyclerview.widget.DiffUtil
 
 class DiffUtilsCallback<Item : Diffable> internal constructor(
-    private val oldList: List<Item>,
-    private val newList: List<Item>
+        private val oldList: List<Item>,
+        private val newList: List<Item>
 ) : DiffUtil.Callback() {
 
     override fun getOldListSize(): Int {

@@ -9,12 +9,12 @@ import io.reactivex.subjects.PublishSubject
 import timber.log.Timber
 
 class EventAdapter<
-    Item : Diffable,
-    VH : BaseViewHolder<Item, ItemView>,
-    ItemView,
-    ItemEvent>
-    (factory: BaseViewHolderFactory<Item, VH, ItemView>) :
-    BaseAdapter<Item, VH, ItemView>(factory) where ItemView : ItemEventEmitter<ItemEvent>, ItemView : View {
+        Item : Diffable,
+        VH : BaseViewHolder<Item, ItemView>,
+        ItemView,
+        ItemEvent>
+(factory: BaseViewHolderFactory<Item, VH, ItemView>) :
+        BaseAdapter<Item, VH, ItemView>(factory) where ItemView : ItemEventEmitter<ItemEvent>, ItemView : View {
 
     private val itemViewEventSubject = PublishSubject.create<ItemEvent>()
 

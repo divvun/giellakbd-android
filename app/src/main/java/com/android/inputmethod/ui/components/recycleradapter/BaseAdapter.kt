@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class BaseAdapter<Item : Diffable, VH : BaseViewHolder<Item, ItemView>, ItemView : View>(protected var factory: BaseViewHolderFactory<Item, VH, ItemView>) :
-    RecyclerView.Adapter<BaseViewHolder<Item, ItemView>>() {
+        RecyclerView.Adapter<BaseViewHolder<Item, ItemView>>() {
 
     val items = mutableListOf<Item>()
 

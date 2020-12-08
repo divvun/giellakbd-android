@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 import timber.log.Timber
 
 abstract class BaseViewHolder<Item, ItemView : View>(val view: ItemView) :
-    RecyclerView.ViewHolder(view) {
+        RecyclerView.ViewHolder(view) {
 
     abstract fun bind(item: Item)
 

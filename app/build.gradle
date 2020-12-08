@@ -8,9 +8,9 @@ if (file('local.gradle').exists()) {
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
+apply plugin: 'kotlin-parcelize'
 
 if (file('local.gradle').exists()) {
     apply plugin: 'com.github.triplet.play'
@@ -71,6 +71,10 @@ android {
         checkReleaseBuilds false
     }
 
+    buildFeatures {
+        viewBinding true
+    }
+
     packagingOptions {
         exclude 'META-INF/DEPENDENCIES'
         exclude 'META-INF/LICENSE'
@@ -94,11 +98,6 @@ android {
         sourceCompatibility '1.8'
     }
 }
-
-androidExtensions {
-    experimental = true
-}
-
 
 dependencies {
     // Pahkat FFI components
