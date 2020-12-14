@@ -145,7 +145,7 @@ class DivvunDictionaryFacilitator : DictionaryFacilitator {
         val suggestionResults = SuggestionResults(divvunSuggestions.size + personalSuggestions.size, ngramContext.isBeginningOfSentenceContext, true)
 
         // Add all our suggestions
-        suggestionResults.addAll(divvunSuggestions)
+        suggestionResults.addAll(divvunSuggestions.take(4))
         suggestionResults.addAll(personalSuggestions)
 
         Timber.d("Personal suggestions: $personalSuggestions")
