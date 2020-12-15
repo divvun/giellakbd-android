@@ -58,20 +58,21 @@ class PersonalDictionary(private val context: Context?, locale: Locale) : Dictio
     }
 
     fun learn(word: String) {
+        Timber.d("Learning word '$word'; languageId = $languageId")
         if (isInDictionary(word)) {
-            Timber.d("$word already in personal dictionary")
+            Timber.d("$word already in personal dictionary; languageId = $languageId")
             val ret = database.dictionaryDao().incWord(languageId, word)
             Timber.d("Return $ret")
             return
         }
 
         if (database.candidatesDao().isCandidate(languageId, word) > 0) {
-            Timber.d("$word was candidate, now in personal dictionary")
+            Timber.d("$word was candidate, now in personal dictionary; languageId = $languageId")
             // Word is already candidate, second time typed. Time to add to personal dictionary.
             database.candidatesDao().removeCandidate(languageId, word)
             database.dictionaryDao().upsertWord(DictionaryWord(word, languageId = languageId)).subscribe()
         } else {
-            Timber.d("$word is new candidate")
+            Timber.d("$word is new candidate; languageId = $languageId")
             database.candidatesDao().insertCandidate(Candidate(word, languageId = languageId))
         }
     }

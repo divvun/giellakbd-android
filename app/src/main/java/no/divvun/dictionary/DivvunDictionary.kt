@@ -38,7 +38,7 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
                 var asset = context.assets.open(bhfstName)
                 asset.copyTo(bhfstFile.outputStream())
             } catch (e: Exception) {
-                Timber.e(e)
+                Timber.w(e)
             }
         }
 
@@ -47,7 +47,7 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
                 spellerArchiveWatcher?.archive = ThfstChunkedBoxSpellerArchive.open(bhfstFile.path)
                 return spellerArchiveWatcher?.archive?.speller()
             } catch (e: Exception) {
-                Timber.e(e)
+                Timber.w(e)
             }
         }
 

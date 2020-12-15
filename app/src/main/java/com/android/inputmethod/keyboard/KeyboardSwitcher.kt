@@ -79,7 +79,7 @@ class KeyboardSwitcher private constructor()// Intentional empty constructor for
         }
 
     val isShowingEmojiPalettes: Boolean
-        get() = mEmojiPalettesView.isShown
+        get() = this::mEmojiPalettesView.isInitialized && mEmojiPalettesView.isShown
 
     val isShowingMoreKeysPanel: Boolean
         get() = if (isShowingEmojiPalettes) {

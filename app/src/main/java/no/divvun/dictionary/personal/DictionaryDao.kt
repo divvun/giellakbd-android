@@ -7,13 +7,13 @@ import io.reactivex.Single
 
 @Dao
 interface DictionaryDao {
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun insertLanguage(language: Language): Long
 
     @Transaction
     fun findCreateLanguage(language: Language): Long {
         val lang = findLanguage(language.language, language.country, language.variant)
-        return if(lang.isEmpty()){
+        return if (lang.isEmpty()) {
             insertLanguage(language)
         } else {
             lang.first().languageId

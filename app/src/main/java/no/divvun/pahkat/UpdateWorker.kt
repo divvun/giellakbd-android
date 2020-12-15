@@ -212,12 +212,12 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                         }
                     })
                 }
-        Timber.d("Active packages existing $activePackages")
+        Timber.d("Active packages existing: $activePackages")
         Timber.d("Packages needing update/install: $packagesToUpdate")
 
         val updateResult = packagesToUpdate.map { packageKey ->
             val result = updatePackage(packageStore, packageKey)
-            if(result !is Result.Success){
+            if (result !is Result.Success) {
                 Timber.e("Failed to install $packageKey, returned: $result")
             }
             packageKey to result
