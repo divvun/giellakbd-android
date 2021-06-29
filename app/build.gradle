@@ -1,3 +1,4 @@
+// Comment this block out during development.
 plugins {
     id 'com.github.triplet.play' version '2.0.0'
 }
@@ -12,6 +13,7 @@ apply plugin: 'kotlin-kapt'
 apply plugin: "androidx.navigation.safeargs.kotlin"
 apply plugin: 'kotlin-parcelize'
 
+// Comment this block out during development.
 if (file('local.gradle').exists()) {
     apply plugin: 'com.github.triplet.play'
 
@@ -39,9 +41,6 @@ android {
 
         minSdkVersion 21
         targetSdkVersion 30
-
-        versionCode app.versionCode
-        versionName app.versionName
     }
 
     kotlinOptions {
