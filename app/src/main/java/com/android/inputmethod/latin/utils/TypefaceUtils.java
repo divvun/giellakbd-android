@@ -184,8 +184,7 @@ public final class TypefaceUtils {
             return i;
         }
 
-        // Assume string length is 1 because otherwise everything is bad.
-        return 1;
+        return Character.codePointCount(string, 0, string.length());
     }
 
     public static float getStringWidth(final String string, final Paint paint) {
