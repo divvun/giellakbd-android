@@ -21,6 +21,7 @@ import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.icu.text.BreakIterator;
 import android.os.Build;
 import android.util.Log;
 import android.util.SparseArray;
@@ -169,9 +170,27 @@ public final class TypefaceUtils {
     // Working variable for the following method.
     private static final Rect sStringWidthBounds = new Rect();
 
+    public static int getGraphemeClusterCount(final String string) {
+        // Try to use the correct way
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            BreakIterator iter = BreakIterator.getCharacterInstance();
+            iter.setText(string);
+            int i = 0;
+            for (int end = iter.next();
+                 end != BreakIterator.DONE;
+                 end = iter.next()) {
+                i++;
+            }
+            return i;
+        }
+
+        // Assume string length is 1 because otherwise everything is bad.
+        return 1;
+    }
+
     public static float getStringWidth(final String string, final Paint paint) {
         synchronized (sStringWidthBounds) {
-            paint.getTextBounds(string, 0, string.length(), sStringWidthBounds);
+            paint.getTextBounds(string, 0, getGraphemeClusterCount(string), sStringWidthBounds);
             return sStringWidthBounds.width();
         }
     }

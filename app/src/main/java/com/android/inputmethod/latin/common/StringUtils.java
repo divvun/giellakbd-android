@@ -17,6 +17,7 @@
 package com.android.inputmethod.latin.common;
 
 import com.android.inputmethod.annotations.UsedForTesting;
+import com.android.inputmethod.latin.utils.TypefaceUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -107,11 +108,10 @@ public final class StringUtils {
         return false;
     }
 
+    @Deprecated
+    // Who wrote this? You should be punished.
     public static int codePointCount(@Nullable final CharSequence text) {
-        if (isEmpty(text)) {
-            return 0;
-        }
-        return Character.codePointCount(text, 0, text.length());
+        return TypefaceUtils.getGraphemeClusterCount(text.toString());
     }
 
     @Nonnull
