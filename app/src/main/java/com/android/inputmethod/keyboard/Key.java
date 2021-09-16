@@ -432,7 +432,7 @@ public class Key implements Comparable<Key> {
         mHashCode = computeHashCode(this);
 
         deadKey = keyAttr.getBoolean(R.styleable.Keyboard_Key_deadKey, false);
-        Log.d("Key", "Key " + mHashCode + " with label " + mLabel + " is deadKey: " + deadKey);
+//        Log.v("Key", "Key " + mHashCode + " with label " + mLabel + " is deadKey: " + deadKey);
     }
 
     /**
