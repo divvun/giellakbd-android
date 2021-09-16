@@ -22,6 +22,7 @@ import android.view.inputmethod.CompletionInfo
 import com.android.inputmethod.annotations.UsedForTesting
 import com.android.inputmethod.latin.common.StringUtils
 import com.android.inputmethod.latin.define.DebugFlags
+import com.android.inputmethod.latin.utils.TypefaceUtils
 
 import java.util.ArrayList
 import java.util.Arrays
@@ -222,7 +223,7 @@ open class SuggestedWords(protected val mSuggestedWordInfoList: ArrayList<Sugges
             mScore = score
             mKindAndFlags = kindAndFlags
             sourceDictionary = sourceDict
-            mCodePointCount = StringUtils.codePointCount(this.word)
+            mCodePointCount = TypefaceUtils.getGraphemeClusterCount(this.word)
             mIndexOfTouchPointOfSecondWord = indexOfTouchPointOfSecondWord
             mAutoCommitFirstWordConfidence = autoCommitFirstWordConfidence
         }
@@ -239,7 +240,7 @@ open class SuggestedWords(protected val mSuggestedWordInfoList: ArrayList<Sugges
             mScore = SuggestedWordInfo.MAX_SCORE
             mKindAndFlags = SuggestedWordInfo.KIND_APP_DEFINED
             sourceDictionary = Dictionary.DICTIONARY_APPLICATION_DEFINED
-            mCodePointCount = StringUtils.codePointCount(word)
+            mCodePointCount = TypefaceUtils.getGraphemeClusterCount(word)
             mIndexOfTouchPointOfSecondWord = SuggestedWordInfo.NOT_AN_INDEX
             mAutoCommitFirstWordConfidence = SuggestedWordInfo.NOT_A_CONFIDENCE
         }

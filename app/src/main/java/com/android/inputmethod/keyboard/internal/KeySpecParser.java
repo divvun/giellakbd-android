@@ -175,7 +175,7 @@ public final class KeySpecParser {
         }
         final String outputText = getOutputTextInternal(keySpec, labelEnd);
         if (outputText != null) {
-            if (StringUtils.codePointCount(outputText) == 1) {
+            if (Character.codePointCount(outputText, 0, outputText.length()) == 1) {
                 // If output text is one code point, it should be treated as a code.
                 // See {@link #getCode(Resources, String)}.
                 return null;
@@ -190,7 +190,7 @@ public final class KeySpecParser {
             throw new KeySpecParserError("Empty label: " + keySpec);
         }
         // Code is automatically generated for one letter label. See {@link getCode()}.
-        return (StringUtils.codePointCount(label) == 1) ? null : label;
+        return (Character.codePointCount(label, 0, label.length()) == 1) ? null : label;
     }
 
     public static int getCode(@Nullable final String keySpec) {
@@ -207,7 +207,7 @@ public final class KeySpecParser {
         if (outputText != null) {
             // If output text is one code point, it should be treated as a code.
             // See {@link #getOutputText(String)}.
-            if (StringUtils.codePointCount(outputText) == 1) {
+            if (Character.codePointCount(outputText, 0, outputText.length()) == 1) {
                 return outputText.codePointAt(0);
             }
             return CODE_OUTPUT_TEXT;
@@ -217,7 +217,7 @@ public final class KeySpecParser {
             throw new KeySpecParserError("Empty label: " + keySpec);
         }
         // Code is automatically generated for one letter label.
-        return (StringUtils.codePointCount(label) == 1) ? label.codePointAt(0) : CODE_OUTPUT_TEXT;
+        return (Character.codePointCount(label, 0, label.length()) == 1) ? label.codePointAt(0) : CODE_OUTPUT_TEXT;
     }
 
     public static int parseCode(@Nullable final String text, final int defaultCode) {

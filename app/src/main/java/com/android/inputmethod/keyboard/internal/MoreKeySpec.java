@@ -116,7 +116,7 @@ public final class MoreKeySpec {
                 : KeyboardIconsSet.PREFIX_ICON + KeyboardIconsSet.getIconName(mIconId));
         final String output = (mCode == Constants.CODE_OUTPUT_TEXT ? mOutputText
                 : Constants.printableCode(mCode));
-        if (StringUtils.codePointCount(label) == 1 && label.codePointAt(0) == mCode) {
+        if (Character.codePointCount(label, 0, label.length()) == 1 && label.codePointAt(0) == mCode) {
             return output;
         }
         return label + "|" + output;
