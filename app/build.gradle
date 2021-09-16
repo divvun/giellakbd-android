@@ -1,6 +1,6 @@
 // Comment this block out during development.
 plugins {
-    id 'com.github.triplet.play' version '2.0.0'
+    id 'com.github.triplet.play' version '3.6.0'
 }
 
 if (file('local.gradle').exists()) {
