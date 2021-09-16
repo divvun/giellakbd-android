@@ -577,10 +577,24 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
         sListener.onCancelBatchInput();
     }
 
+    private KeyboardId lastKeyboardId = null;
+
+    private boolean needsDebounce() {
+        if (mKeyboard == null) {
+            return false;
+        }
+
+        return !mKeyboard.mId.equals(lastKeyboardId);
+    }
+
     public void processMotionEvent(final MotionEvent me, final KeyDetector keyDetector) {
         final int action = me.getActionMasked();
         final long eventTime = me.getEventTime();
         if (action == MotionEvent.ACTION_MOVE) {
+            if (needsDebounce()) {
+                return;
+            }
+
             // When this pointer is the only active pointer and is showing a more keys panel,
             // we should ignore other pointers' motion event.
             final boolean shouldIgnoreOtherPointers =
@@ -618,6 +632,10 @@ public final class PointerTracker implements PointerTrackerQueue.Element,
 
     private void onDownEvent(final int x, final int y, final long eventTime,
                              final KeyDetector keyDetector) {
+        if (mKeyboard != null) {
+            lastKeyboardId = mKeyboard.mId;
+        }
+
         setKeyDetectorInner(keyDetector);
         if (DEBUG_EVENT) {
             printTouchEvent("onDownEvent:", x, y, eventTime);
