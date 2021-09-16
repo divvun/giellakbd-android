@@ -50,8 +50,6 @@ import java.util.Set;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.sentry.event.BreadcrumbBuilder;
-
 /**
  * Enrichment class for InputMethodManager to simplify interaction and add functionality.
  */

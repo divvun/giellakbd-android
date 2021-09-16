@@ -32,7 +32,7 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
             }
         } catch (ex: Exception) {
             Timber.e("Failed to open archive $ex")
-            Sentry.capture(ex)
+            Sentry.captureException(ex)
             null
         }
     }

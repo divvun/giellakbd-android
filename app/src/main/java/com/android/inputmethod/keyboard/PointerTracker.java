@@ -48,10 +48,6 @@ import java.util.ArrayList;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import io.sentry.Sentry;
-import io.sentry.event.BreadcrumbBuilder;
-import io.sentry.event.EventBuilder;
-
 public final class PointerTracker implements PointerTrackerQueue.Element,
         BatchInputArbiterListener {
     private static final String TAG = PointerTracker.class.getSimpleName();

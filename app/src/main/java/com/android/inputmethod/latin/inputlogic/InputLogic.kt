@@ -1506,7 +1506,7 @@ class InputLogic
                     mSuggestionStripViewAccessor.showSuggestionStrip(suggestedWords)
                 }, {
                     Log.wtf(TAG, it)
-                    Sentry.capture(it)
+                    Sentry.captureException(it)
                 })
     }
 

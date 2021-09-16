@@ -88,7 +88,6 @@ import java.util.concurrent.TimeUnit
 class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripView.Listener, SuggestionStripViewAccessor, DictionaryFacilitator.DictionaryInitializationListener, PermissionsManager.PermissionsResultCallback {
 
     internal val mSettings: Settings
-    // TODO(bbqsrc): make this not null later.
     private val mDictionaryFacilitator: DictionaryFacilitator = DivvunDictionaryFacilitator()
     internal lateinit var mInputLogic: InputLogic
     // We expect to have only one decoder in almost all cases, hence the default capacity of 1.

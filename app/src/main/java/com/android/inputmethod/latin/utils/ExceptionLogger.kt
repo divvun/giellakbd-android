@@ -4,7 +4,7 @@ import android.content.Context
 import android.os.Build
 import com.android.inputmethod.latin.R
 import io.sentry.Sentry
-import io.sentry.android.AndroidSentryClientFactory
+import io.sentry.android.core.SentryAndroid
 import java.util.*
 
 /**
@@ -30,14 +30,10 @@ class ExceptionLogger {
                 return
             }
 
-            Sentry.init(sentryDsn, AndroidSentryClientFactory(context.applicationContext))
-
-            val sentry = Sentry.getContext()
-
-            sentry.addTag("locale", currentLocale(context).toString())
+            SentryAndroid.init(context.applicationContext) {
+                it.dsn = sentryDsn
+                it.setTag("locale", currentLocale(context).toString())
+            }
         }
-
-        @JvmStatic
-        val sentry: io.sentry.context.Context get() = Sentry.getContext()
     }
 }

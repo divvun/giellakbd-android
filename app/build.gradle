@@ -26,7 +26,7 @@ if (file('local.gradle').exists()) {
 
 android {
     compileSdkVersion 30
-    buildToolsVersion "30.0.2"
+    buildToolsVersion "30.0.3"
 
     defaultConfig {
         if (file('local.gradle').exists()) {
@@ -113,7 +113,7 @@ dependencies {
     implementation "io.sentry:sentry-android:$sentryVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation "net.java.dev.jna:jna:5.5.0@aar"
+    implementation "net.java.dev.jna:jna:5.6.0@aar"
 
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"
@@ -122,14 +122,14 @@ dependencies {
     implementation "io.reactivex.rxjava2:rxandroid:$rxAndroidVersion"
     implementation "io.reactivex.rxjava2:rxkotlin:$rxKotlinVersion"
 
-    implementation 'com.jakewharton.rxbinding3:rxbinding:3.0.0'
+    implementation 'com.jakewharton.rxbinding3:rxbinding:3.1.0'
 
     // Android Kotlin Extensions
     implementation "androidx.core:core-ktx:$ktxVersion"
 
-    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.3.4'
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0'
 
-    def work_version = "2.5.0-beta02"
+    def work_version = "2.6.0"
     implementation "androidx.work:work-runtime-ktx:$work_version"
     implementation "androidx.work:work-rxjava2:$work_version"
 
@@ -138,9 +138,9 @@ dependencies {
     implementation 'com.jakewharton.timber:timber:4.7.1'
 
     implementation 'com.google.code.gson:gson:2.8.6'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.0.0'
-    implementation 'com.google.android.material:material:1.2.1'
+    implementation 'androidx.appcompat:appcompat:1.3.1'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.0'
+    implementation 'com.google.android.material:material:1.4.0'
 
     implementation("com.squareup.moshi:moshi:1.8.0")
 
@@ -154,7 +154,7 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.6.1'
     implementation 'com.squareup.retrofit2:adapter-rxjava2:2.6.1'
 
-    implementation 'com.google.android.material:material:1.2.0'
+    implementation 'com.google.android.material:material:1.4.0'
 
 
     implementation "io.arrow-kt:arrow-syntax:$arrowVersion"
@@ -164,7 +164,7 @@ dependencies {
     implementation 'com.github.rawa.recycler-swipes:recyclerswipes:0.1.2'
     implementation 'com.github.rawa.recycler-swipes:recyclerswipes-rxbinding:0.1.2'
 
-    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
+//    debugImplementation 'com.amitshekhar.android:debug-db:1.0.6'
 }
 
 repositories {

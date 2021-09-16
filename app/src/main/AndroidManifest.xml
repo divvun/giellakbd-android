@@ -33,6 +33,7 @@
         android:label="@string/english_ime_name"
         android:supportsRtl="true"
         tools:ignore="GoogleAppIndexingWarning">
+        <meta-data android:name="io.sentry.auto-init" android:value="false" />
         <activity
             android:name="com.android.inputmethod.ui.personaldictionary.PersonalDictionaryActivity"
             android:label="@string/title_activity_personal_dictionary"

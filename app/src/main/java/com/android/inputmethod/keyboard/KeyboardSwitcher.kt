@@ -32,7 +32,6 @@ import com.android.inputmethod.latin.define.ProductionFlags
 import com.android.inputmethod.latin.settings.Settings
 import com.android.inputmethod.latin.settings.SettingsValues
 import com.android.inputmethod.latin.utils.*
-import io.sentry.event.BreadcrumbBuilder
 
 class KeyboardSwitcher private constructor()// Intentional empty constructor for singleton.
     : KeyboardState.SwitchActions {
