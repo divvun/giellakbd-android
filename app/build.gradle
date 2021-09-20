@@ -19,8 +19,6 @@ if (file('local.gradle').exists()) {
 
     play {
         track = "alpha"
-        serviceAccountEmail = app.playEmail
-        serviceAccountCredentials = app.playCredentials != "" ? file(app.playCredentials) : file("/dev/null")
     }
 }
 
