@@ -9,7 +9,7 @@ import com.android.inputmethod.latin.databinding.ActivityPersonalDictionaryBindi
 
 
 class PersonalDictionaryActivity : AppCompatActivity() {
-    private lateinit var host: NavHostFragment
+    //    private lateinit var host: NavHostFragment
     private lateinit var binding: ActivityPersonalDictionaryBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -17,20 +17,20 @@ class PersonalDictionaryActivity : AppCompatActivity() {
         binding = ActivityPersonalDictionaryBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        host = binding.fDictionaryNavhost as NavHostFragment
+//        host = binding.fDictionaryNavhost as NavHostFragment
 
         val appBarConfiguration = AppBarConfiguration.Builder().build()
         setSupportActionBar(binding.tlDictionary)
-        NavigationUI.setupActionBarWithNavController(this, host.navController, appBarConfiguration)
+//        NavigationUI.setupActionBarWithNavController(this, host.navController, appBarConfiguration)
     }
 
-    override fun onSupportNavigateUp(): Boolean {
-        return if (host.navController.navigateUp()) {
-            true
-        } else {
-            finish()
-            true
-        }
-    }
+//    override fun onSupportNavigateUp(): Boolean {
+//        return if (host.navController.navigateUp()) {
+//            true
+//        } else {
+//            finish()
+//            true
+//        }
+//    }
 }
 
