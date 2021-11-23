@@ -79,17 +79,19 @@ class DivvunDictionaryFacilitator : DictionaryFacilitator {
 
     // STUB
     override fun resetDictionaries(context: Context?, newLocale: Locale?, useContactsDict: Boolean, usePersonalizedDicts: Boolean, forceReloadMainDictionary: Boolean, account: String?, dictNamePrefix: String?, listener: DictionaryFacilitator.DictionaryInitializationListener?) {
-        Timber.d("resetDictionaries")
+        Timber.d("resetDictionaries: $newLocale")
 
         if (context == null) {
             return
         }
 
         if (dictionary.mLocale != newLocale) {
+            Timber.d("Loading DivvunDictionary")
             dictionary = DivvunDictionary(context, newLocale)
         }
 
         if (newLocale != null && dictionary.mLocale != newLocale) {
+            Timber.d("Loading personal dictionary")
             personalDictionary = PersonalDictionary(context, newLocale)
         }
     }
