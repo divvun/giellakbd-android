@@ -21,13 +21,13 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
     private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(it, locale!!) }
 
     private val speller get(): ThfstChunkedBoxSpeller? {
+        if (context == null || locale == null) {
+            return null
+        }
+
         val speller = spellerArchiveWatcher?.archive?.speller()
         if (speller != null) {
             return speller
-        }
-
-        if (context == null || locale == null) {
-            return null
         }
 
         // If no package, try getting it from the assets.
