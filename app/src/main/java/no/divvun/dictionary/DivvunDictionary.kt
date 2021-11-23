@@ -12,6 +12,7 @@ import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import no.divvun.packageobserver.SpellerArchiveWatcher
 import timber.log.Timber
 import java.io.File
+import java.io.FileNotFoundException
 import java.nio.file.Paths
 import java.util.*
 import kotlin.collections.ArrayList
@@ -35,8 +36,10 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
 
         if (!bhfstFile.exists()) {
             try {
-                var asset = context.assets.open(bhfstName)
+                val asset = context.assets.open(bhfstName)
                 asset.copyTo(bhfstFile.outputStream())
+            } catch (e: FileNotFoundException) {
+                // Ignore this.
             } catch (e: Exception) {
                 Timber.w(e)
             }
@@ -47,7 +50,10 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
                 spellerArchiveWatcher?.archive = ThfstChunkedBoxSpellerArchive.open(bhfstFile.path)
                 return spellerArchiveWatcher?.archive?.speller()
             } catch (e: Exception) {
-                Timber.w(e)
+                // Ignore Rust errors that are just about missing files.
+                if (!e.toString().contains("No such file or directory")) {
+                    Timber.w(e)
+                }
             }
         }
 
@@ -56,7 +62,6 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
 
     init {
         Timber.d("DivvunDictionaryCreated")
-
     }
 
     override fun getSuggestions(

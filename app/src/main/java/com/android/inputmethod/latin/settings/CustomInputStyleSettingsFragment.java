@@ -53,7 +53,7 @@ public final class CustomInputStyleSettingsFragment extends PreferenceFragment
     private static final String TAG = CustomInputStyleSettingsFragment.class.getSimpleName();
     // Note: We would like to turn this debug flag true in order to see what input styles are
     // defined in a bug-report.
-    private static final boolean DEBUG_CUSTOM_INPUT_STYLES = true;
+    private static final boolean DEBUG_CUSTOM_INPUT_STYLES = false;
 
     private RichInputMethodManager mRichImm;
     private SharedPreferences mPrefs;

@@ -104,7 +104,6 @@ class CombinerChain
      */
     fun processEvent(previousEvents: ArrayList<Event>,
                      newEvent: Event): Event {
-        Log.d("CombinerChain", "Event: $newEvent")
         val modifiablePreviousEvents = ArrayList(previousEvents)
         var event = newEvent
         for (combiner in combiners) {
