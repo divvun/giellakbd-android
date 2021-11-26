@@ -19,7 +19,7 @@ class DivvunDictionaryFacilitator : DictionaryFacilitator {
     private var isActive = false
 
     private var dictionary = DivvunDictionary(null, null)
-    private lateinit var personalDictionary: PersonalDictionary
+    private var personalDictionary: PersonalDictionary? = null
 
     // STUB
     override fun setValidSpellingWordReadCache(cache: LruCache<String, Boolean>) {
@@ -90,7 +90,7 @@ class DivvunDictionaryFacilitator : DictionaryFacilitator {
             dictionary = DivvunDictionary(context, newLocale)
         }
 
-        if (newLocale != null && dictionary.mLocale != newLocale) {
+        if (newLocale != null && personalDictionary?.mLocale != newLocale) {
             Timber.d("Loading personal dictionary")
             personalDictionary = PersonalDictionary(context, newLocale)
         }
@@ -133,30 +133,30 @@ class DivvunDictionaryFacilitator : DictionaryFacilitator {
         Timber.d("addToUserHistory")
         if (!dictionary.isInDictionary(word)) {
             Timber.d("Adding non known word: $word")
-            personalDictionary.learn(word)
+            personalDictionary?.learn(word)
         }
 
         val previousWords = ngramContext.extractPrevWordsContextArray().toList().filter { it != NgramContext.BEGINNING_OF_SENTENCE_TAG }.takeLast(2)
-        personalDictionary.processContext(previousWords, word)
+        personalDictionary?.processContext(previousWords, word)
     }
 
     // STUB
     override fun unlearnFromUserHistory(word: String?, ngramContext: NgramContext, timeStampInSeconds: Long, eventType: Int) {
         Timber.d("unlearnFromUserHistory")
         word?.let {
-            personalDictionary.unlearn(word)
+            personalDictionary?.unlearn(word)
         }
     }
 
     override fun getSuggestionResults(composedData: ComposedData, ngramContext: NgramContext, keyboard: Keyboard, settingsValuesForSuggestion: SettingsValuesForSuggestion, sessionId: Int, inputStyle: Int): SuggestionResults {
         val divvunSuggestions = dictionary.getSuggestions(composedData, ngramContext, 0, settingsValuesForSuggestion, sessionId, 0f, FloatArray(0))
-        val personalSuggestions = personalDictionary.getSuggestions(composedData, ngramContext, 0, settingsValuesForSuggestion, sessionId, 0f, FloatArray(0))
+        val personalSuggestions = personalDictionary?.getSuggestions(composedData, ngramContext, 0, settingsValuesForSuggestion, sessionId, 0f, FloatArray(0))
 
-        val suggestionResults = SuggestionResults(divvunSuggestions.size + personalSuggestions.size, ngramContext.isBeginningOfSentenceContext, true)
+        val suggestionResults = SuggestionResults(divvunSuggestions.size + (personalSuggestions?.size ?: 0), ngramContext.isBeginningOfSentenceContext, true)
 
         // Add all our suggestions
         suggestionResults.addAll(divvunSuggestions.take(4))
-        suggestionResults.addAll(personalSuggestions)
+        personalSuggestions?.let { suggestionResults.addAll(it) }
 
         Timber.d("Personal suggestions: $personalSuggestions")
         Timber.d("All suggestions: $suggestionResults")
