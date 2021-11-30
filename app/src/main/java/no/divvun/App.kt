@@ -57,8 +57,8 @@ class App : Application() {
 
         // Init PahkatClient
 
-        ensurePahkatInit(this)
-        PackageObserver.init(this)
+//        ensurePahkatInit(this)
+//        PackageObserver.init(this)
 
         val bugfenderId = getString(R.string.bugfender_id)
         if (bugfenderId != "") {
@@ -70,7 +70,7 @@ class App : Application() {
         // This is enabled to ensure periodic update is ran on each App start
         // workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
 
-        UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath(this))
+//        UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath(this))
     }
 }
 
