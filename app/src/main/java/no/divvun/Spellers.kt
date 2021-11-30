@@ -2,6 +2,7 @@ package no.divvun
 
 import android.content.Context
 import no.divvun.domain.Keyboard
+import no.divvun.domain.Speller
 import no.divvun.domain.loadKeyboardDescriptor
 import no.divvun.pahkat.client.PackageKey
 import no.divvun.pahkat.client.PackageKeyParams
@@ -23,10 +24,7 @@ data class RepoConfiguration(val value: Map<String, RepoRecord>)
 
 
 object Spellers {
-
-    private lateinit var internalSpellers: SpellerConfiguration
-    val config
-        get() = internalSpellers
+    private var config: SpellerConfiguration = SpellerConfiguration(mapOf())
 
     operator fun get(languageTag: String): SpellerPackage? {
         return config.value[languageTag]
@@ -39,7 +37,7 @@ object Spellers {
     private fun initSpellerConf(context: Context) {
         val jsonFiles = context.assets.list("layouts").orEmpty()
 
-        internalSpellers = SpellerConfiguration(jsonFiles.map {
+        config = SpellerConfiguration(jsonFiles.map {
             Timber.d("Processing Layout: $it")
             val languageTag = it.removeSuffix(".json")
             Timber.d("Loading keyboard descriptor $languageTag")
