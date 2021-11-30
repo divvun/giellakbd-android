@@ -24,7 +24,7 @@ data class RepoConfiguration(val value: Map<String, RepoRecord>)
 
 
 object Spellers {
-    private var config: SpellerConfiguration = SpellerConfiguration(mapOf())
+    var config: SpellerConfiguration = SpellerConfiguration(mapOf())
 
     operator fun get(languageTag: String): SpellerPackage? {
         return config.value[languageTag]
