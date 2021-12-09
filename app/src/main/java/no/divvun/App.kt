@@ -60,12 +60,12 @@ class App : Application() {
 //        ensurePahkatInit(this)
 //        PackageObserver.init(this)
 
-        val bugfenderId = getString(R.string.bugfender_id)
-        if (bugfenderId != "") {
-            Bugfender.init(this, bugfenderId, BuildConfig.DEBUG)
-            Bugfender.enableUIEventLogging(this)
-            Bugfender.enableLogcatLogging()
-        }
+//        val bugfenderId = getString(R.string.bugfender_id)
+//        if (bugfenderId != "") {
+//            Bugfender.init(this, bugfenderId, BuildConfig.DEBUG)
+//            Bugfender.enableUIEventLogging(this)
+//            Bugfender.enableLogcatLogging()
+//        }
 
         // This is enabled to ensure periodic update is ran on each App start
         // workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
