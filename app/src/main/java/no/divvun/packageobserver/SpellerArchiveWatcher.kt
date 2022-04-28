@@ -3,15 +3,14 @@ package no.divvun.packageobserver
 import android.content.Context
 import io.sentry.Sentry
 import no.divvun.Spellers
-import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
+import no.divvun.divvunspell.SpellerArchive
 import timber.log.Timber
 import java.io.File
 import java.io.IOException
-import java.nio.file.Files
 import java.util.*
 
 class SpellerArchiveWatcher(private val context: Context, private val locale: Locale) : OnPackageUpdateListener {
-    var archive: ThfstChunkedBoxSpellerArchive? = null
+    var archive: SpellerArchive? = null
     var hasMetadata = true
 
     init {
@@ -55,7 +54,7 @@ class SpellerArchiveWatcher(private val context: Context, private val locale: Lo
 
         archive = try {
             Timber.d("Opening archive")
-            ThfstChunkedBoxSpellerArchive.open(spellerPath)
+            SpellerArchive.open(spellerPath)
         } catch (ex: Exception) {
             Timber.e("Failed to open archive $ex")
             Sentry.captureException(ex)

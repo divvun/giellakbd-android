@@ -6,26 +6,24 @@ import com.android.inputmethod.latin.NgramContext
 import com.android.inputmethod.latin.SuggestedWords.SuggestedWordInfo
 import com.android.inputmethod.latin.common.ComposedData
 import com.android.inputmethod.latin.settings.SettingsValuesForSuggestion
+import no.divvun.divvunspell.SpellerArchive
 import no.divvun.divvunspell.SpellerConfig
-import no.divvun.divvunspell.ThfstChunkedBoxSpeller
-import no.divvun.divvunspell.ThfstChunkedBoxSpellerArchive
 import no.divvun.packageobserver.SpellerArchiveWatcher
 import timber.log.Timber
 import java.io.File
 import java.io.FileNotFoundException
-import java.nio.file.Paths
 import java.util.*
 import kotlin.collections.ArrayList
 
 class DivvunDictionary(private val context: Context?, private val locale: Locale?) : Dictionary(TYPE_MAIN, locale) {
     private val spellerArchiveWatcher: SpellerArchiveWatcher? = context?.let { SpellerArchiveWatcher(it, locale!!) }
 
-    private val speller get(): ThfstChunkedBoxSpeller? {
+    private val speller get(): SpellerArchive? {
         if (context == null || locale == null) {
             return null
         }
 
-        val speller = spellerArchiveWatcher?.archive?.speller()
+        val speller = spellerArchiveWatcher?.archive
         if (speller != null) {
             return speller
         }
@@ -47,8 +45,8 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
 
         if (!bhfstFile.exists()) {
             try {
-                spellerArchiveWatcher?.archive = ThfstChunkedBoxSpellerArchive.open(bhfstFile.path)
-                return spellerArchiveWatcher?.archive?.speller()
+                spellerArchiveWatcher?.archive = SpellerArchive.open(bhfstFile.path)
+                return spellerArchiveWatcher?.archive
             } catch (e: Exception) {
                 // Ignore Rust errors that are just about missing files.
                 if (!e.toString().contains("No such file or directory")) {
@@ -86,7 +84,7 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
 
         val suggestions = mutableListOf(composedData.mTypedWord)
         val config = SpellerConfig(nBest = N_BEST_SUGGESTION_SIZE, maxWeight = MAX_WEIGHT)
-        speller.suggest(word, config).forEach {
+        speller.speller().suggest(word, config).forEach {
             suggestions.add(it)
         }
 
@@ -109,7 +107,7 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
 
     override fun isInDictionary(word: String): Boolean {
         val speller = this.speller ?: return false
-        return speller.isCorrect(word)
+        return speller.speller().isCorrect(word)
     }
 
     companion object {

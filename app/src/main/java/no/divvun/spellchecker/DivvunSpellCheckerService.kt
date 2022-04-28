@@ -8,7 +8,6 @@ import android.view.textservice.TextInfo
 import no.divvun.packageobserver.SpellerArchiveWatcher
 import no.divvun.toLocale
 import timber.log.Timber
-import java.util.*
 
 class DivvunSpellCheckerService : SpellCheckerService() {
     override fun onCreate() {
