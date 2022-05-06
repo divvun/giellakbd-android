@@ -84,9 +84,8 @@ class DivvunDictionary(private val context: Context?, private val locale: Locale
 
         val suggestions = mutableListOf(composedData.mTypedWord)
         val config = SpellerConfig(nBest = N_BEST_SUGGESTION_SIZE, maxWeight = MAX_WEIGHT)
-        speller.speller().suggest(word, config).forEach {
-            suggestions.add(it)
-        }
+        val spellerSuggestions = speller.speller().suggest(word, config)
+        suggestions.addAll(spellerSuggestions)
 
         Timber.d("$suggestions")
 
