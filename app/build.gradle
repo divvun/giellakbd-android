@@ -103,7 +103,7 @@ dependencies {
     }
 
     // DivvunSpell FFI components
-    implementation('com.github.divvun:divvunspell-sdk-java:8fc3e7b0fa') {
+    implementation('com.github.divvun:divvunspell-sdk-java:df49bed15b') {
         exclude group: 'net.java.dev.jna'
     }
 
