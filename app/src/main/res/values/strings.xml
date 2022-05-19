@@ -39,7 +39,7 @@
     <string name="settings_screen_preferences">Preferences</string>
     <!-- Settings screen title for accounts and privacy preferences [CHAR LIMIT=33]-->
     <string name="settings_screen_accounts">Accounts &amp; Privacy</string>
-    <!-- Settings screen title for appearance & layouts preferences [CHAR LIMIT=33] -->
+    <!-- Settings screen title for appearance &amp; layouts preferences [CHAR LIMIT=33] -->
     <string name="settings_screen_appearance">Appearance &amp; Layouts</string>
     <!-- Settings screen title for gesture typing preferences [CHAR_LIMIT=33] -->
     <string name="settings_screen_gesture">Gesture Typing</string>
@@ -191,7 +191,7 @@
     <!-- Title for input language selection screen -->
     <string name="language_selection_title">Languages</string>
 
-    <!-- Title for the 'Help & feedback' settings fragment which shows a help page and has a button
+    <!-- Title for the 'Help &amp; feedback' settings fragment which shows a help page and has a button
          for submitting feedback. [CHAR LIMIT=35] -->
     <string name="help_and_feedback">Help &amp; feedback</string>
 
@@ -410,7 +410,7 @@ mobile devices. [CHAR LIMIT=25] -->
     <string name="setup_step1_instruction">"Please check \"<xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>\" in your Languages&#160;&amp; input settings. This will authorize it to run on your device."</string>
     <!-- Detailed instruction of the already finished 1st step in the setup wizard. [CHAR LIMIT=120] -->
     <string name="setup_step1_finished_instruction">"<xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g> is already enabled in your Languages&#160;&amp; input settings, so this step is done. On to the next one!"</string>
-    <!-- The label of the button that triggers the Languages & input settings in order to enable the keyboard. [CHAR_LIMIT=64] -->
+    <!-- The label of the button that triggers the Languages &amp; input settings in order to enable the keyboard. [CHAR_LIMIT=64] -->
     <string name="setup_step1_action">Enable in Settings</string>
     <!-- Ordinal number of the 2nd step in the setup wizard. [CHAR LIMIT=5] -->
     <string name="setup_step2_bullet" translatable="false">2</string>
@@ -493,7 +493,7 @@ mobile devices. [CHAR LIMIT=25] -->
     <!-- Action to delete a dictionary file [CHAR_LIMIT=15] -->
     <string name="delete_dict">Delete</string>
 
-    <!-- Message in the popup informing the user a dictionary is available for their language, and asking for a decision to download over their mobile data plan or not. The reason we ask for this is, the data is large and may be downloaded over a paid-per-megabyte connection but a dictionary is also essential to type comfortably, so we ask the user. This only pops in selected cases, when there is no dictionary at all currently, and the only available network seems to be metered. The "Languages & input" part should be set to the actual name of the option (message ID 5292716747264442359 in the translation console). [CHAR_LIMIT=700] -->
+    <!-- Message in the popup informing the user a dictionary is available for their language, and asking for a decision to download over their mobile data plan or not. The reason we ask for this is, the data is large and may be downloaded over a paid-per-megabyte connection but a dictionary is also essential to type comfortably, so we ask the user. This only pops in selected cases, when there is no dictionary at all currently, and the only available network seems to be metered. The "Languages &amp; input" part should be set to the actual name of the option (message ID 5292716747264442359 in the translation console). [CHAR_LIMIT=700] -->
     <string name="should_download_over_metered_prompt">The selected language on your mobile device has an available dictionary.&lt;br/>
 We recommend &lt;b>downloading&lt;/b> the <xliff:g example="English" id="LANGUAGE_NAME">%1$s</xliff:g> dictionary to improve your typing experience.&lt;br/>
 &lt;br/>
