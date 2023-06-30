@@ -74,6 +74,10 @@ class DictionaryFragment : Fragment(), DictionaryView {
             navigateToAddWordDialogFragment(languageId)
         }
 
+        binding.fabPersonaldictAddword.setOnClickListener {
+            navigateToAddWordDialogFragment(languageId)
+        }
+
         swipeCallback = RecyclerSwipes(SwipeDirection.LEFT to R.layout.swipe_left_block, SwipeDirection.RIGHT to R.layout.swipe_right_delete)
         swipeCallback.attachTo(binding.rvPersonaldictWords)
 
