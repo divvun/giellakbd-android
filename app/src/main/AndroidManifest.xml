@@ -35,6 +35,7 @@
         tools:ignore="GoogleAppIndexingWarning">
         <meta-data android:name="io.sentry.auto-init" android:value="false" />
         <activity
+            android:exported="false"
             android:name="com.android.inputmethod.ui.personaldictionary.PersonalDictionaryActivity"
             android:label="@string/title_activity_personal_dictionary"
             android:theme="@style/AppTheme.NoActionBar">
@@ -44,6 +45,7 @@
         </activity>
         <!-- Services -->
         <service
+            android:exported="false"
             android:name="com.android.inputmethod.latin.LatinIME"
             android:label="@string/english_ime_name"
             android:permission="android.permission.BIND_INPUT_METHOD">
@@ -55,6 +57,7 @@
                 android:resource="@xml/method" />
         </service>
         <service
+            android:exported="false"
             android:name="no.divvun.spellchecker.DivvunSpellCheckerService"
             android:label="@string/spell_checker_service_name"
             android:permission="android.permission.BIND_TEXT_SERVICE">
@@ -72,6 +75,7 @@ service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
         -->
         <!-- Activities -->
         <activity
+            android:exported="true"
             android:name="com.android.inputmethod.latin.setup.SetupActivity"
             android:icon="@drawable/ic_launcher_keyboard"
             android:label="@string/english_ime_name"
@@ -85,12 +89,13 @@ service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
             </intent-filter>
         </activity>
         <activity
-            android:name=".permissions.PermissionsActivity"
             android:exported="false"
+            android:name=".permissions.PermissionsActivity"
             android:taskAffinity=""
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
 
         <activity
+            android:exported="false"
             android:name=".setup.SetupWizardActivity"
             android:clearTaskOnLaunch="true"
             android:label="@string/english_ime_name"
@@ -101,6 +106,7 @@ service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
         </activity>
 
         <activity
+            android:exported="false"
             android:name="com.android.inputmethod.latin.settings.SettingsActivity"
             android:label="@string/english_ime_name"
             android:theme="@style/platformSettingsTheme">
@@ -138,7 +144,10 @@ service android:name="com.android.inputmethod.dictionarypack.DictionaryService"
         <!-- <activity android:name="com.android.inputmethod.latin.settings.TestFragmentActivity" -->
         <!-- android:exported="false" /> -->
         <!-- Broadcast receivers -->
-        <receiver android:name=".SystemBroadcastReceiver">
+          <receiver 
+            android:name=".SystemBroadcastReceiver"
+            android:exported="true"
+            >
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -163,7 +172,10 @@ receiver android:name="com.android.inputmethod.latin.DictionaryPackInstallBroadc
         </receiver
         -->
         <!-- Broadcast receiver for AccountManager#LOGIN_ACCOUNTS_CHANGED_ACTION. -->
-        <receiver android:name=".accounts.AccountsChangedReceiver">
+        <receiver 
+          android:name=".accounts.AccountsChangedReceiver"
+          android:exported="true"
+          >
             <intent-filter>
                 <action android:name="android.accounts.LOGIN_ACCOUNTS_CHANGED" />
             </intent-filter>
