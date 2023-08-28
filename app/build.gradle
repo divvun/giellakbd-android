@@ -23,8 +23,7 @@ if (file('local.gradle').exists()) {
 }
 
 android {
-    compileSdkVersion 31
-    buildToolsVersion "30.0.3"
+    compileSdk 33
 
     defaultConfig {
         if (file('local.gradle').exists()) {
@@ -38,7 +37,7 @@ android {
         }
 
         minSdkVersion 21
-        targetSdkVersion 31
+        targetSdkVersion 33
     }
 
     kotlinOptions {
@@ -94,6 +93,7 @@ android {
         targetCompatibility '1.8'
         sourceCompatibility '1.8'
     }
+    namespace 'com.android.inputmethod.latin'
 }
 
 dependencies {
