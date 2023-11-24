@@ -304,8 +304,8 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             context: Context,
             prefixPath: String
         ): String {
+            // Repet Interval: Min is 15 MINUTES
             val req = PeriodicWorkRequestBuilder<UpdateWorker>(1, TimeUnit.DAYS)
-                .setInitialDelay(1, TimeUnit.MINUTES)
                 .addTag(WORKMANAGER_TAG_UPDATE)
                 .setInputData(prefixPath.workData())
                 .setConstraints(

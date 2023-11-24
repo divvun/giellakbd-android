@@ -25,6 +25,7 @@ import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.work.WorkInfo
 
 import com.android.inputmethod.compat.TextViewCompatUtils
 import com.android.inputmethod.compat.ViewCompatUtils
@@ -32,6 +33,9 @@ import com.android.inputmethod.latin.R
 import com.android.inputmethod.latin.settings.SettingsActivity
 import com.android.inputmethod.latin.utils.LeakGuardHandlerWrapper
 import com.android.inputmethod.latin.utils.UncachedInputMethodManagerUtils
+import no.divvun.pahkat.WORKMANAGER_TAG_UPDATE
+import no.divvun.pahkat.workManager
+import timber.log.Timber
 
 import java.util.ArrayList
 
@@ -270,6 +274,32 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
             return
         }
         updateSetupStepView()
+        observeDownload()
+    }
+
+    private fun observeDownload() {
+        // Get the LiveData for the work with a specific tag
+        this.workManager().getWorkInfosByTagLiveData(WORKMANAGER_TAG_UPDATE)
+            .observeForever { workInfos ->
+                val workInfo = workInfos.firstOrNull() ?: return@observeForever
+                Timber.d("WorkInfo $workInfo")
+
+                if(mActionFinish.visibility == View.VISIBLE) {
+                    if (workInfo.state == WorkInfo.State.RUNNING) {
+                        mActionFinish.text = getString(R.string.dictionary_downloading)
+                        TextViewCompatUtils.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            mActionFinish,
+                            resources.getDrawable(R.drawable.ic_setup_download), null, null, null
+                        )
+                    } else {
+                        mActionFinish.text = getString(R.string.setup_finish_action)
+                        TextViewCompatUtils.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                            mActionFinish,
+                            resources.getDrawable(R.drawable.ic_setup_finish), null, null, null
+                        )
+                    }
+                }
+            }
     }
 
     override fun onBackPressed() {
