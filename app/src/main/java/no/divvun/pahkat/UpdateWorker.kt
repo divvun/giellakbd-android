@@ -35,18 +35,18 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
     private val packageStorePathValue get() = inputData.getString(KEY_PACKAGE_STORE_PATH)
 
     private inner class DownloadDelegate :
-            PackageDownloadDelegate {
+        PackageDownloadDelegate {
         val coroutineScope =
-                CoroutineScope(Dispatchers.IO)
+            CoroutineScope(Dispatchers.IO)
         override var isDownloadCancelled = false
 
         override fun onDownloadCancel(packageKey: PackageKey) {
             Timber.d("cancel: $packageKey")
             coroutineScope.launch {
                 setProgressAsync(
-                        UpdateProgress.Download.Cancelled(
-                                packageKey.toString()
-                        ).toData()
+                    UpdateProgress.Download.Cancelled(
+                        packageKey.toString()
+                    ).toData()
                 ).await()
             }
         }
@@ -55,10 +55,10 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             Timber.d("complete: $packageKey $path")
             coroutineScope.launch {
                 setProgressAsync(
-                        UpdateProgress.Download.Completed(
-                                packageKey.toString(),
-                                path
-                        ).toData()
+                    UpdateProgress.Download.Completed(
+                        packageKey.toString(),
+                        path
+                    ).toData()
                 ).await()
             }
         }
@@ -69,8 +69,8 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             coroutineScope.launch {
                 Timber.d("OH LAWD HE COMIN'")
                 val data = UpdateProgress.Download.Error(
-                        packageKey.toString(),
-                        error
+                    packageKey.toString(),
+                    error
                 ).toData()
                 Timber.d("$data")
                 setProgressAsync(data).await()
@@ -80,15 +80,15 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 
         override fun onDownloadProgress(packageKey: PackageKey, current: Long, maximum: Long) {
             Timber.d(
-                    "progress: $packageKey $current/$maximum"
+                "progress: $packageKey $current/$maximum"
             )
             coroutineScope.launch {
                 setProgressAsync(
-                        UpdateProgress.Download.Downloading(
-                                packageKey.toString(),
-                                current,
-                                maximum
-                        ).toData()
+                    UpdateProgress.Download.Downloading(
+                        packageKey.toString(),
+                        current,
+                        maximum
+                    ).toData()
                 ).await()
             }
         }
@@ -96,9 +96,9 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 
 
     private inner class TransactionDelegate :
-            PackageTransactionDelegate {
+        PackageTransactionDelegate {
         val coroutineScope =
-                CoroutineScope(Dispatchers.IO)
+            CoroutineScope(Dispatchers.IO)
 
         internal var isCancelled = false
 
@@ -117,16 +117,16 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         }
 
         override fun onTransactionError(
-                id: Long,
-                packageKey: PackageKey?,
-                error: java.lang.Exception?
+            id: Long,
+            packageKey: PackageKey?,
+            error: java.lang.Exception?
         ) {
             coroutineScope.launch {
                 setProgressAsync(
-                        UpdateProgress.TransactionProgress.Error(
-                                packageKey,
-                                error
-                        ).toData()
+                    UpdateProgress.TransactionProgress.Error(
+                        packageKey,
+                        error
+                    ).toData()
                 ).await()
             }
         }
@@ -134,9 +134,9 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         override fun onTransactionInstall(id: Long, packageKey: PackageKey?) {
             coroutineScope.launch {
                 setProgressAsync(
-                        UpdateProgress.TransactionProgress.Install(
-                                packageKey!!
-                        ).toData()
+                    UpdateProgress.TransactionProgress.Install(
+                        packageKey!!
+                    ).toData()
                 ).await()
             }
         }
@@ -144,9 +144,9 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         override fun onTransactionUninstall(id: Long, packageKey: PackageKey?) {
             coroutineScope.launch {
                 setProgressAsync(
-                        UpdateProgress.TransactionProgress.Uninstall(
-                                packageKey!!
-                        ).toData()
+                    UpdateProgress.TransactionProgress.Uninstall(
+                        packageKey!!
+                    ).toData()
                 ).await()
             }
         }
@@ -154,9 +154,9 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         override fun onTransactionUnknownEvent(id: Long, event: Long) {
             coroutineScope.launch {
                 setProgressAsync(
-                        UpdateProgress.TransactionProgress.UnknownEvent(
-                                event
-                        ).toData()
+                    UpdateProgress.TransactionProgress.UnknownEvent(
+                        event
+                    ).toData()
                 ).await()
             }
         }
@@ -175,16 +175,16 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
     override fun doWork(): Result {
         Timber.d("Starting work")
         val packageStorePath = packageStorePathValue ?: return Result.failure(
-                IllegalArgumentException("packageStorePath cannot be null").toData()
+            IllegalArgumentException("packageStorePath cannot be null").toData()
         )
 
         App.ensurePahkatInit(applicationContext)
 
         val packageStore =
-                when (val result = PrefixPackageStore.open(packageStorePath)) {
-                    is Either.Left -> return Result.failure(result.a.toData())
-                    is Either.Right -> result.b
-                }
+            when (val result = PrefixPackageStore.open(packageStorePath)) {
+                is Either.Left -> return Result.failure(result.a.toData())
+                is Either.Right -> result.b
+            }
 
         Timber.d("Refreshing repos")
         packageStore.forceRefreshRepos().orThrow()
@@ -193,25 +193,27 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         val activePackages = resolveActivePackageKeys(enabledSubtypes, Spellers.config.value)
 
         val packagesToUpdate = activePackages.map { it to packageStore.status(it) }
-                .filterMap { (key, result) ->
-                    result.fold({
-                        Timber.e("Failed to get package status for $key, $it")
-                        Option.empty<PackageKey>()
-                    }, {
-                        when (it) {
-                            PackageInstallStatus.NotInstalled, PackageInstallStatus.RequiresUpdate -> {
-                                Option.just(key)
-                            }
-                            PackageInstallStatus.UpToDate -> {
-                                Option.empty()
-                            }
-                            else -> {
-                                Timber.d("Status error for package: $key, returned: $it")
-                                Option.empty()
-                            }
+            .filterMap { (key, result) ->
+                result.fold({
+                    Timber.e("Failed to get package status for $key, $it")
+                    Option.empty<PackageKey>()
+                }, {
+                    when (it) {
+                        PackageInstallStatus.NotInstalled, PackageInstallStatus.RequiresUpdate -> {
+                            Option.just(key)
                         }
-                    })
-                }
+
+                        PackageInstallStatus.UpToDate -> {
+                            Option.empty()
+                        }
+
+                        else -> {
+                            Timber.d("Status error for package: $key, returned: $it")
+                            Option.empty()
+                        }
+                    }
+                })
+            }
         Timber.d("Active packages existing: $activePackages")
         Timber.d("Packages needing update/install: $packagesToUpdate")
 
@@ -232,9 +234,9 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 
     private fun updatePackage(packageStore: PrefixPackageStore, packageKey: PackageKey): Result {
         setProgressAsync(
-                UpdateProgress.Download.Starting(
-                        packageKey.toString()
-                ).toData()
+            UpdateProgress.Download.Starting(
+                packageKey.toString()
+            ).toData()
         )
         Timber.d("Starting download")
 
@@ -259,6 +261,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
             is Either.Left -> {
                 return Result.failure()
             }
+
             is Either.Right -> result.b
         }
 
@@ -274,15 +277,21 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         return Result.success()
     }
 
-    private fun resolveActivePackageKeys(enabledSubtypes: Set<String>, activePackages: Map<String, SpellerPackage>): Set<PackageKey> {
-        return activePackages.filterKeys { it in enabledSubtypes }.values.map { it.packageKey }.toSet()
+    private fun resolveActivePackageKeys(
+        enabledSubtypes: Set<String>,
+        activePackages: Map<String, SpellerPackage>
+    ): Set<PackageKey> {
+        return activePackages.filterKeys { it in enabledSubtypes }.values.map { it.packageKey }
+            .toSet()
     }
 
     companion object {
         fun restartUpdateWorkerIfNotRunning(context: Context) {
             val workManager = context.workManager()
 
-            if (workManager.getWorkInfosByTag(WORKMANAGER_TAG_UPDATE).get().all { it.state != WorkInfo.State.RUNNING }) {
+            if (workManager.getWorkInfosByTag(WORKMANAGER_TAG_UPDATE).get()
+                    .all { it.state != WorkInfo.State.RUNNING }
+            ) {
                 Timber.d("Work not currently running restarting worker")
                 workManager.cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
                 ensurePeriodicPackageUpdates(context, prefixPath(context))
@@ -292,22 +301,27 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         }
 
         fun ensurePeriodicPackageUpdates(
-                context: Context,
-                prefixPath: String
+            context: Context,
+            prefixPath: String
         ): String {
             val req = PeriodicWorkRequestBuilder<UpdateWorker>(1, TimeUnit.DAYS)
-                    .addTag(WORKMANAGER_TAG_UPDATE)
-                    .setInputData(prefixPath.workData())
-                    .setConstraints(
-                            Constraints.Builder()
-                                    .setRequiredNetworkType(NetworkType.UNMETERED)
-                                    .setRequiresStorageNotLow(true)
-                                    .setRequiresBatteryNotLow(true)
-                                    .build()
-                    )
-                    .build()
+                .setInitialDelay(1, TimeUnit.MINUTES)
+                .addTag(WORKMANAGER_TAG_UPDATE)
+                .setInputData(prefixPath.workData())
+                .setConstraints(
+                    Constraints.Builder()
+                        .setRequiredNetworkType(NetworkType.UNMETERED)
+                        .setRequiresStorageNotLow(true)
+                        .setRequiresBatteryNotLow(true)
+                        .build()
+                )
+                .build()
 
-            context.workManager().enqueueUniquePeriodicWork(WORKMANAGER_NAME_UPDATE, ExistingPeriodicWorkPolicy.KEEP, req)
+            context.workManager().enqueueUniquePeriodicWork(
+                WORKMANAGER_NAME_UPDATE,
+                ExistingPeriodicWorkPolicy.KEEP,
+                req
+            )
             return prefixPath
         }
     }
@@ -355,6 +369,6 @@ fun Context.activeInputMethodSubtypeLanguageTags(): Set<String> {
 
 fun String.workData(): Data {
     return Data.Builder()
-            .putString(KEY_PACKAGE_STORE_PATH, this)
-            .build()
+        .putString(KEY_PACKAGE_STORE_PATH, this)
+        .build()
 }

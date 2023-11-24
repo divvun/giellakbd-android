@@ -1,16 +1,12 @@
 package no.divvun
 
-import com.android.inputmethod.latin.BuildConfig
 import android.app.Application
 import android.content.Context
 import arrow.core.Either
-import com.android.inputmethod.latin.R
-import com.bugfender.sdk.Bugfender
 import no.divvun.packageobserver.PackageObserver
 import no.divvun.pahkat.UpdateWorker
 import no.divvun.pahkat.client.PahkatClient
 import no.divvun.pahkat.client.PrefixPackageStore
-import no.divvun.pahkat.client.RepoRecord
 import no.divvun.pahkat.client.ffi.orThrow
 import timber.log.Timber
 
@@ -57,8 +53,8 @@ class App : Application() {
 
         // Init PahkatClient
 
-//        ensurePahkatInit(this)
-//        PackageObserver.init(this)
+        ensurePahkatInit(this)
+        PackageObserver.init(this)
 
 //        val bugfenderId = getString(R.string.bugfender_id)
 //        if (bugfenderId != "") {
@@ -70,7 +66,7 @@ class App : Application() {
         // This is enabled to ensure periodic update is ran on each App start
         // workManager().cancelUniqueWork(WORKMANAGER_NAME_UPDATE)
 
-//        UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath(this))
+        UpdateWorker.ensurePeriodicPackageUpdates(this, prefixPath(this))
     }
 }
 

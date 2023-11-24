@@ -51,7 +51,7 @@ object Spellers {
 
     private fun Keyboard.spellerPackage(): SpellerPackage? {
         return speller?.let {
-            SpellerPackage(it.packageUrl.packageKey(), speller.path)
+            SpellerPackage(it.packageUrl.packageKey(), it.path)
         }
     }
 
