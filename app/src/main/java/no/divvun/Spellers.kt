@@ -1,6 +1,8 @@
 package no.divvun
 
 import android.content.Context
+import android.widget.Toast
+import io.sentry.Sentry
 import no.divvun.domain.Keyboard
 import no.divvun.domain.Speller
 import no.divvun.domain.loadKeyboardDescriptor
@@ -43,15 +45,26 @@ object Spellers {
             Timber.d("Loading keyboard descriptor $languageTag")
             val keyboard = loadKeyboardDescriptor(context, languageTag)!!
             Timber.d("Layout loaded: $languageTag with speller: ${keyboard.speller}")
-            languageTag to keyboard.spellerPackage()
+            languageTag to keyboard.spellerPackage { speller ->
+                Toast.makeText(context, "Error in: $it = ($speller)", Toast.LENGTH_SHORT).show()
+            }
         }.mapNotNull { (languageTag, spellerPackage) ->
             spellerPackage?.let { languageTag to spellerPackage }
         }.toMap())
     }
 
-    private fun Keyboard.spellerPackage(): SpellerPackage? {
+    private fun Keyboard.spellerPackage(onErrorDialog: (spellerStr: String) -> Unit): SpellerPackage? {
         return speller?.let {
-            SpellerPackage(it.packageUrl.packageKey(), it.path)
+            if (!it.packageUrl.isNullOrEmpty() && !it.path.isNullOrEmpty()) {
+                SpellerPackage(it.packageUrl.packageKey(), it.path)
+            } else {
+                val message =
+                    "Exception: Speller missing parameter: (path, packageUrl) = (${it.path}, ${it.packageUrl})"
+                Timber.e(message)
+                Sentry.captureException(Exception(message))
+                onErrorDialog.invoke("${it.path}, ${it.packageUrl}")
+                null
+            }
         }
     }
 
