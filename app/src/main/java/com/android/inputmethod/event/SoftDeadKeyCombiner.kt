@@ -83,10 +83,16 @@ class SoftDeadKeyCombiner(private val deadKeyRoot: DeadKeyNode.Parent) : Combine
                 }
             }
         } else {
-            // DeadKeyDeadKeyNode didn't exist use fallback node
+            // DeadKeyDeadKeyNode didn't exist use fallback node.
+            /* When combining the the dead key with non specified characters, such as s - the keyboard crashes. Not sure how this used to be handled. Seeing as how the program explodes, I'm inclined to believe the kbdgen should be generating something more that it isn't right now.
+               The expected output is:
+                - the deadkey, as if a space was typed after the deadkey (ie the output specified in the yaml file for space completion of deadkey combos)
+                - followed by the unspecified key, s in this case
+                https://github.com/divvun/giellakbd-android/issues/17#issuecomment-1873743827
+             */
             val result = currentNode.defaultChild()
             reset()
-            return Event.createSoftDeadResultEvent(result.string, event)
+            return Event.createSoftDeadResultEvent(result.string + inputValue, event)
         }
     }
 
