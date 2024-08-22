@@ -23,7 +23,7 @@ if (file('local.gradle').exists()) {
 }
 
 android {
-    compileSdk 33
+    compileSdk 34
 
     defaultConfig {
         if (file('local.gradle').exists()) {
@@ -37,7 +37,7 @@ android {
         }
 
         minSdkVersion 21
-        targetSdkVersion 33
+        targetSdkVersion 34
     }
 
     kotlinOptions {
