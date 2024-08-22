@@ -538,11 +538,19 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         // Register to receive ringer mode change.
         val filter = IntentFilter()
         filter.addAction(AudioManager.RINGER_MODE_CHANGED_ACTION)
-        registerReceiver(mRingerModeChangeReceiver, filter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mRingerModeChangeReceiver, filter, RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(mRingerModeChangeReceiver, filter)
+        }
 
         val dictDumpFilter = IntentFilter()
         dictDumpFilter.addAction(DictionaryDumpBroadcastReceiver.DICTIONARY_DUMP_INTENT_ACTION)
-        registerReceiver(mDictionaryDumpBroadcastReceiver, dictDumpFilter)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            registerReceiver(mDictionaryDumpBroadcastReceiver, dictDumpFilter, RECEIVER_EXPORTED)
+        } else {
+            registerReceiver(mDictionaryDumpBroadcastReceiver, dictDumpFilter)
+        }
 
         StatsUtils.onCreate(mSettings.current, mRichImm)
     }
