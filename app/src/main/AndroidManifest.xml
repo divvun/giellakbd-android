@@ -48,7 +48,10 @@
             android:exported="false"
             android:name="com.android.inputmethod.latin.LatinIME"
             android:label="@string/english_ime_name"
+            android:foregroundServiceType="specialUse"
             android:permission="android.permission.BIND_INPUT_METHOD">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                      android:value="Listens to keyboard requests and pops up a keyboard"/>
             <intent-filter>
                 <action android:name="android.view.InputMethod" />
             </intent-filter>
@@ -60,7 +63,10 @@
             android:exported="false"
             android:name="no.divvun.spellchecker.DivvunSpellCheckerService"
             android:label="@string/spell_checker_service_name"
+            android:foregroundServiceType="specialUse"
             android:permission="android.permission.BIND_TEXT_SERVICE">
+            <property android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
+                      android:value="Spellchecker service called when text is input"/>
             <intent-filter>
                 <action android:name="android.service.textservice.SpellCheckerService" />
             </intent-filter>
