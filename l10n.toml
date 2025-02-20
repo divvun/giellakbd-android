@@ -1,0 +1,3 @@
+[[paths]]
+    reference = "app/src/main/res/values/strings.xml"
+    l10n = "app/src/main/res/values-{locale}/strings.xml"
