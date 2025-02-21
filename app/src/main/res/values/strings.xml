@@ -1,7 +1,24 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?><!--
+/*
+**
+** Copyright 2008, The Android Open Source Project
+**
+** Licensed under the Apache License, Version 2.0 (the "License");
+** you may not use this file except in compliance with the License.
+** You may obtain a copy of the License at
+**
+**     http://www.apache.org/licenses/LICENSE-2.0
+**
+** Unless required by applicable law or agreed to in writing, software
+** distributed under the License is distributed on an "AS IS" BASIS,
+** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+** See the License for the specific language governing permissions and
+** limitations under the License.
+*/
+-->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
     <!-- Title for Latin keyboard input options dialog [CHAR LIMIT=25] -->
-    <string name="english_ime_input_options">Input options TEST CHANGE</string>
+    <string name="english_ime_input_options">Input options</string>
 
     <!-- Title for the spell checker option to turn on/off contact names lookup [CHAR LIMIT=25] -->
     <string name="use_contacts_for_spellchecking_option_title">Look up contact names</string>
@@ -58,11 +75,8 @@
     <string name="cloud_sync_opt_in_text">Your personal dictionary will be synced and backed up to
         Google servers. The statistical information of word frequency may be collected to help
         improve our products. The collection and usage of all the information will be compliant with
-        <a href="https://www.google.com/policies/privacy">Google\'s Privacy Policy</a>&lt;string name=&quot;cloud_sync_opt_in_text&quot;&gt;Your personal dictionary will be synced and backed up to
-        Google servers. The statistical information of word frequency may be collected to help
-        improve our products. The collection and usage of all the information will be compliant with
-        &lt;a href=&quot;https://www.google.com/policies/privacy&quot;&gt;Google\'s Privacy Policy&lt;/a&gt;.
-    &lt;/string&gt;</string>
+        <a href="https://www.google.com/policies/privacy">Google\'s Privacy Policy</a>.
+    </string>
     <!-- Text to tell the user to add a Google account to the device to enable the cloud sync feature. [CHAR LIMIT=65]-->
     <string name="add_account_to_enable_sync">
         Please add a Google account to this device to enable this feature
@@ -89,7 +103,7 @@
     <string name="key_preview_popup_dismiss_default_delay">Default</string>
 
     <!-- Units abbreviation for the duration (milliseconds) [CHAR LIMIT=10] -->
-    <string name="abbreviation_unit_milliseconds"><xliff:g id="MILLISECONDS">%s</xliff:g>&lt;string name=&quot;abbreviation_unit_milliseconds&quot;&gt;&lt;xliff:g id=&quot;MILLISECONDS&quot;&gt;%s&lt;/xliff:g&gt;ms&lt;/string&gt;</string>
+    <string name="abbreviation_unit_milliseconds"><xliff:g id="MILLISECONDS">%s</xliff:g>ms</string>
     <!-- The text that represents the current settings value is the system default [CHAR LIMIT=25] -->
     <string name="settings_system_default">System default</string>
 
@@ -102,7 +116,7 @@
     <string name="use_personalized_dicts">Personalized suggestions</string>
 
     <!-- Option to enable sending usage statistics -->
-    <string name="enable_metrics_logging">&quot;Improve <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;enable_metrics_logging&quot;&gt;&amp;quot;Improve &lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt;&amp;quot;&lt;/string&gt;</string>
+    <string name="enable_metrics_logging">"Improve <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>"</string>
 
     <!-- Option name for enabling or disabling the double-space period feature that lets double tap on spacebar insert a period followed by a space [CHAR LIMIT=30] -->
     <string name="use_double_space_period">Double-space period</string>
@@ -169,7 +183,7 @@
     <!-- Preferences item for enabling speech input -->
     <string name="voice_input">Voice input key</string>
     <!-- The summary text to describe the reason why the "Voice input key" option is disabled. [CHAR LIMIT=100] -->
-    <string name="voice_input_disabled_summary">No voice input methods enabled. Check Languages &amp; input settings.</string>
+    <string name="voice_input_disabled_summary">No voice input methods enabled. Check Languages&#160;&amp; input settings.</string>
 
     <!-- Title for configuring input method settings [CHAR LIMIT=35] -->
     <string name="configure_input_method">Configure input methods</string>
@@ -229,27 +243,27 @@
     <!-- Description for English (UK) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
          (UK) should be an abbreviation of United Kingdom to fit in the CHAR LIMIT.
          This should be identical to subtype_en_GB aside from the trailing (%s). -->
-    <string name="subtype_with_layout_en_GB">English (UK) (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>&lt;string name=&quot;subtype_with_layout_en_GB&quot;&gt;English (UK) (&lt;xliff:g example=&quot;QWERTY&quot; id=&quot;KEYBOARD_LAYOUT&quot;&gt;%s&lt;/xliff:g&gt;)&lt;/string&gt;</string>
+    <string name="subtype_with_layout_en_GB">English (UK) (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>)</string>
     <!-- Description for English (US) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
          (US) should be an abbreviation of United States to fit in the CHAR LIMIT.
          This should be identical to subtype_en_US aside from the trailing (%s). -->
-    <string name="subtype_with_layout_en_US">English (US) (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>&lt;string name=&quot;subtype_with_layout_en_US&quot;&gt;English (US) (&lt;xliff:g example=&quot;QWERTY&quot; id=&quot;KEYBOARD_LAYOUT&quot;&gt;%s&lt;/xliff:g&gt;)&lt;/string&gt;</string>
+    <string name="subtype_with_layout_en_US">English (US) (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>)</string>
     <!-- Description for Spanish (US) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
          (US) should be an abbreviation of United Statesn to fit in the CHAR LIMIT.
          This should be identical to subtype_es_US aside from the trailing (%s). -->
-    <string name="subtype_with_layout_es_US">Spanish (US) (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>&lt;string name=&quot;subtype_with_layout_es_US&quot;&gt;Spanish (US) (&lt;xliff:g example=&quot;QWERTY&quot; id=&quot;KEYBOARD_LAYOUT&quot;&gt;%s&lt;/xliff:g&gt;)&lt;/string&gt;</string>
+    <string name="subtype_with_layout_es_US">Spanish (US) (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>)</string>
     <!-- Description for Hinglish (https://en.wikipedia.org/wiki/Hinglish) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
          This should be identical to subtype_hi_ZZ aside from the trailing (%s). -->
-    <string name="subtype_with_layout_hi_ZZ">Hinglish (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>&lt;string name=&quot;subtype_with_layout_hi_ZZ&quot;&gt;Hinglish (&lt;xliff:g example=&quot;QWERTY&quot; id=&quot;KEYBOARD_LAYOUT&quot;&gt;%s&lt;/xliff:g&gt;)&lt;/string&gt;</string>
+    <string name="subtype_with_layout_hi_ZZ">Hinglish (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>)</string>
     <!-- Description for Serbian (Latin) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
          This should be identical to subtype_sr_ZZ aside from the trailing (%s). -->
-    <string name="subtype_with_layout_sr_ZZ">Serbian (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>&lt;string name=&quot;subtype_with_layout_sr_ZZ&quot;&gt;Serbian (&lt;xliff:g example=&quot;QWERTY&quot; id=&quot;KEYBOARD_LAYOUT&quot;&gt;%s&lt;/xliff:g&gt;)&lt;/string&gt;</string>
+    <string name="subtype_with_layout_sr_ZZ">Serbian (<xliff:g example="QWERTY" id="KEYBOARD_LAYOUT">%s</xliff:g>)</string>
     <!-- Description for "LANGUAGE_NAME" (Traditional) keyboard subtype [CHAR LIMIT=25]
          (Traditional) can be an abbreviation to fit in the CHAR LIMIT. -->
-    <string name="subtype_generic_traditional"><xliff:g example="Nepali" id="LANGUAGE_NAME">%s</xliff:g>&lt;string name=&quot;subtype_generic_traditional&quot;&gt;&lt;xliff:g example=&quot;Nepali&quot; id=&quot;LANGUAGE_NAME&quot;&gt;%s&lt;/xliff:g&gt; (Traditional)&lt;/string&gt;</string>
+    <string name="subtype_generic_traditional"><xliff:g example="Nepali" id="LANGUAGE_NAME">%s</xliff:g> (Traditional)</string>
     <!-- Description for "LANGUAGE_NAME" (Compact) keyboard subtype [CHAR LIMIT=25]
          (Compact) can be an abbreviation to fit in the CHAR LIMIT. -->
-    <string name="subtype_generic_compact"><xliff:g example="Hindi" id="LANGUAGE_NAME">%s</xliff:g>&lt;string name=&quot;subtype_generic_compact&quot;&gt;&lt;xliff:g example=&quot;Hindi&quot; id=&quot;LANGUAGE_NAME&quot;&gt;%s&lt;/xliff:g&gt; (Compact)&lt;/string&gt;</string>
+    <string name="subtype_generic_compact"><xliff:g example="Hindi" id="LANGUAGE_NAME">%s</xliff:g> (Compact)</string>
     <!-- This string is displayed in a language list that allows to choose a language for
 suggestions in a software keyboard. This setting won't give suggestions in any particular
 language, hence "No language".
@@ -356,13 +370,13 @@ mobile devices. [CHAR LIMIT=25] -->
     <!-- Title of the spinner for choosing a keyboard layout of custom style in the settings dialog [CHAR LIMIT=15] -->
     <string name="keyboard_layout_set">Layout</string>
     <!-- The message of the dialog to note that a custom input style needs to be enabled. [CHAR LIMIT=130] -->
-    <string name="custom_input_style_note_message">&quot;Your custom input style needs to be enabled before you start using it. Do you want to enable it now?&quot;</string>
+    <string name="custom_input_style_note_message">"Your custom input style needs to be enabled before you start using it. Do you want to enable it now?"</string>
     <!-- Title of the button to enable a custom input style entry in the settings dialog [CHAR LIMIT=15] -->
     <string name="enable">Enable</string>
     <!-- Title of the button to postpone enabling a custom input style entry in the settings dialog [CHAR LIMIT=15] -->
     <string name="not_now">Not now</string>
     <!-- Toast text to describe the same input style already exists [CHAR LIMIT=64]-->
-    <string name="custom_input_style_already_exists">&quot;The same input style already exists: <xliff:g example="English (Dvorak)" id="INPUT_STYLE_NAME">%s</xliff:g>&lt;string name=&quot;custom_input_style_already_exists&quot;&gt;&amp;quot;The same input style already exists: &lt;xliff:g example=&quot;English (Dvorak)&quot; id=&quot;INPUT_STYLE_NAME&quot;&gt;%s&lt;/xliff:g&gt;&amp;quot;&lt;/string&gt;</string>
+    <string name="custom_input_style_already_exists">"The same input style already exists: <xliff:g example="English (Dvorak)" id="INPUT_STYLE_NAME">%s</xliff:g>"</string>
 
     <!-- Title of the settings for keypress vibration duration [CHAR LIMIT=35] -->
     <string name="prefs_keypress_vibration_duration_settings">Keypress vibration duration</string>
@@ -379,7 +393,7 @@ mobile devices. [CHAR LIMIT=25] -->
     <string name="button_default">Default</string>
 
     <!-- Title of the setup wizard welcome screen. [CHAR LIMT=40] -->
-    <string name="setup_welcome_title">&quot;Welcome to <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;setup_welcome_title&quot;&gt;&amp;quot;Welcome to &lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt;&amp;quot;&lt;/string&gt;</string>
+    <string name="setup_welcome_title">"Welcome to <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>"</string>
     <!-- Additional title of the setup wizard welcome screen, just below the setup_welcome_title. [CHAR_LIMIT=64] -->
     <string name="setup_welcome_additional_description">with Gesture Typing</string>
     <!-- The label of the button that starts the setup wizard. [CHAR_LIMIT=64] -->
@@ -387,31 +401,31 @@ mobile devices. [CHAR LIMIT=25] -->
     <!-- The label of the button that navigates the user to the next step of the setup wizard. [CHAR_LIMIT=64] -->
     <string name="setup_next_action">Next step</string>
     <!-- Title of the setup wizard. [CHAR LIMT=40] -->
-    <string name="setup_steps_title">&quot;Setting up <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;setup_steps_title&quot;&gt;&amp;quot;Setting up &lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt;&amp;quot;&lt;/string&gt;</string>
+    <string name="setup_steps_title">"Setting up <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>"</string>
     <!-- Ordinal number of the 1st step in the setup wizard. [CHAR LIMIT=5] -->
     <string name="setup_step1_bullet" translatable="false">1</string>
     <!-- Title of the 1st step in the setup wizard. [CHAR LIMIT=64] -->
-    <string name="setup_step1_title">&quot;Enable <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;setup_step1_title&quot;&gt;&amp;quot;Enable &lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt;&amp;quot;&lt;/string&gt;</string>
+    <string name="setup_step1_title">"Enable <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>"</string>
     <!-- Detailed instruction of the 1st step in the setup wizard. [CHAR LIMIT=120] -->
-    <string name="setup_step1_instruction">&quot;Please check \&quot;<xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;setup_step1_instruction&quot;&gt;&amp;quot;Please check \&amp;quot;&lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt;\&amp;quot; in your Languages &amp;amp; input settings. This will authorize it to run on your device.&amp;quot;&lt;/string&gt;</string>
+    <string name="setup_step1_instruction">"Please check \"<xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>\" in your Languages&#160;&amp; input settings. This will authorize it to run on your device."</string>
     <!-- Detailed instruction of the already finished 1st step in the setup wizard. [CHAR LIMIT=120] -->
-    <string name="setup_step1_finished_instruction">&quot;<xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;setup_step1_finished_instruction&quot;&gt;&amp;quot;&lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt; is already enabled in your Languages &amp;amp; input settings, so this step is done. On to the next one!&amp;quot;&lt;/string&gt;</string>
+    <string name="setup_step1_finished_instruction">"<xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g> is already enabled in your Languages&#160;&amp; input settings, so this step is done. On to the next one!"</string>
     <!-- The label of the button that triggers the Languages &amp; input settings in order to enable the keyboard. [CHAR_LIMIT=64] -->
     <string name="setup_step1_action">Enable in Settings</string>
     <!-- Ordinal number of the 2nd step in the setup wizard. [CHAR LIMIT=5] -->
     <string name="setup_step2_bullet" translatable="false">2</string>
     <!-- Title of the 2nd step in the setup wizard. [CHAR LIMIT=64] -->
-    <string name="setup_step2_title">&quot;Switch to <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;setup_step2_title&quot;&gt;&amp;quot;Switch to &lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt;&amp;quot;&lt;/string&gt;</string>
+    <string name="setup_step2_title">"Switch to <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>"</string>
     <!-- Detailed instruction of the 2nd step in the setup wizard. [CHAR LIMIT=120] -->
-    <string name="setup_step2_instruction">&quot;Next, select \&quot;<xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;setup_step2_instruction&quot;&gt;&amp;quot;Next, select \&amp;quot;&lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt;\&amp;quot; as your active text-input method.&amp;quot;&lt;/string&gt;</string>
+    <string name="setup_step2_instruction">"Next, select \"<xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>\" as your active text-input method."</string>
     <!-- The label of the button that triggers the choose input method dialog in order to select the keyboard. [CHAR_LIMIT=64] -->
     <string name="setup_step2_action">Switch input methods</string>
     <!-- Ordinal number of the 3rd step in the setup wizard. [CHAR LIMIT=5] -->
     <string name="setup_step3_bullet" translatable="false">3</string>
     <!-- Title of the 3rd step in the setup wizard. [CHAR LIMIT=64] -->
-    <string name="setup_step3_title">&quot;Congratulations, you\'re all set!&quot;</string>
+    <string name="setup_step3_title">"Congratulations, you're all set!"</string>
     <!-- Detailed instruction of the 3rd step in the setup wizard. [CHAR LIMIT=120] -->
-    <string name="setup_step3_instruction">Now you can type in all your favorite apps with <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>&lt;string name=&quot;setup_step3_instruction&quot;&gt;Now you can type in all your favorite apps with &lt;xliff:g example=&quot;Android Keyboard&quot; id=&quot;APPLICATION_NAME&quot;&gt;%s&lt;/xliff:g&gt;.&lt;/string&gt;</string>
+    <string name="setup_step3_instruction">Now you can type in all your favorite apps with <xliff:g example="Android Keyboard" id="APPLICATION_NAME">%s</xliff:g>.</string>
     <!-- The label of the button that triggers the screen for configuaring additional languages of the keyboard. [CHAR_LIMIT=64] -->
     <string name="setup_step3_action">Configure additional languages</string>
     <!-- The label of the button that finishes the setup wizard. [CHAR_LIMIT=64] -->
@@ -462,7 +476,7 @@ mobile devices. [CHAR LIMIT=25] -->
     <!-- Message to display in a dialog box while we are actively updating the word list [CHAR LIMIT=60] -->
     <string name="message_updating">Checking for updates</string>
     <!-- Message to display while the add-on dictionary list is updating [no space constraints on this, there is plenty of space but shorter is better because it's only on the screen for a second] -->
-    <string name="message_loading">Loading…</string>
+    <string name="message_loading">Loading&#x2026;</string>
 
     <!-- String to explain this dictionary is the main dictionary for this language [CHAR_LIMIT=30] -->
     <string name="main_dict_description">Main dictionary</string>
@@ -480,15 +494,14 @@ mobile devices. [CHAR LIMIT=25] -->
     <string name="delete_dict">Delete</string>
 
     <!-- Message in the popup informing the user a dictionary is available for their language, and asking for a decision to download over their mobile data plan or not. The reason we ask for this is, the data is large and may be downloaded over a paid-per-megabyte connection but a dictionary is also essential to type comfortably, so we ask the user. This only pops in selected cases, when there is no dictionary at all currently, and the only available network seems to be metered. The "Languages &amp; input" part should be set to the actual name of the option (message ID 5292716747264442359 in the translation console). [CHAR_LIMIT=700] -->
-    <string name="should_download_over_metered_prompt">The selected language on your mobile device has an available dictionary.&lt;br/&gt;
-We recommend &lt;b&gt;downloading&lt;/b&gt; the <xliff:g example="English" id="LANGUAGE_NAME">%1$s</xliff:g>&lt;string name=&quot;should_download_over_metered_prompt&quot;&gt;The selected language on your mobile device has an available dictionary.&amp;lt;br/&amp;gt;
-We recommend &amp;lt;b&amp;gt;downloading&amp;lt;/b&amp;gt; the &lt;xliff:g example=&quot;English&quot; id=&quot;LANGUAGE_NAME&quot;&gt;%1$s&lt;/xliff:g&gt; dictionary to improve your typing experience.&amp;lt;br/&amp;gt;
-&amp;lt;br/&amp;gt;
-The download could take a minute or two over 3G. Charges may apply if you don\'t have an &amp;lt;b&amp;gt;unlimited data plan&amp;lt;/b&amp;gt;.&amp;lt;br/&amp;gt;
-If you are not sure which data plan you have, we recommend finding a Wi-Fi connection to start the download automatically.&amp;lt;br/&amp;gt;
-&amp;lt;br/&amp;gt;
-Tip: You can download and remove dictionaries by going to &amp;lt;b&amp;gt;Languages &amp;amp; input&amp;lt;/b&amp;gt; in the &amp;lt;b&amp;gt;Settings&amp;lt;/b&amp;gt; menu of your mobile device.&lt;/string&gt;</string>
-    <string name="download_over_metered">Download now (<xliff:g example="0.7" id="SIZE_IN_MEGABYTES">%1$.1f</xliff:g>&lt;string name=&quot;download_over_metered&quot;&gt;Download now (&lt;xliff:g example=&quot;0.7&quot; id=&quot;SIZE_IN_MEGABYTES&quot;&gt;%1$.1f&lt;/xliff:g&gt;MB)&lt;/string&gt;</string>
+    <string name="should_download_over_metered_prompt">The selected language on your mobile device has an available dictionary.&lt;br/>
+We recommend &lt;b>downloading&lt;/b> the <xliff:g example="English" id="LANGUAGE_NAME">%1$s</xliff:g> dictionary to improve your typing experience.&lt;br/>
+&lt;br/>
+The download could take a minute or two over 3G. Charges may apply if you don\'t have an &lt;b>unlimited data plan&lt;/b>.&lt;br/>
+If you are not sure which data plan you have, we recommend finding a Wi-Fi connection to start the download automatically.&lt;br/>
+&lt;br/>
+Tip: You can download and remove dictionaries by going to &lt;b>Languages&#160;&amp; input&lt;/b> in the &lt;b>Settings&lt;/b> menu of your mobile device.</string>
+    <string name="download_over_metered">Download now (<xliff:g example="0.7" id="SIZE_IN_MEGABYTES">%1$.1f</xliff:g>MB)</string>
     <string name="do_not_download_over_metered">Download over Wi-Fi</string>
     <!-- The text of the "dictionary available" notification. -->
     <string name="dict_available_notification_title">A dictionary is available for <xliff:g example="English" id="LANGUAGE_NAME">%1$s</xliff:g></string>
@@ -496,14 +509,14 @@ Tip: You can download and remove dictionaries by going to &amp;lt;b&amp;gt;Langu
     <string name="dict_available_notification_description">Press to review and download</string>
 
     <!-- The text of the toast warning a download is starting automatically to enable suggestions for the selected language [CHAR LIMIT=100] -->
-    <string name="toast_downloading_suggestions">Downloading: suggestions for <xliff:g example="English" id="LANGUAGE_NAME">%1$s</xliff:g>&lt;string name=&quot;toast_downloading_suggestions&quot;&gt;Downloading: suggestions for &lt;xliff:g example=&quot;English&quot; id=&quot;LANGUAGE_NAME&quot;&gt;%1$s&lt;/xliff:g&gt; will be ready soon.&lt;/string&gt;</string>
+    <string name="toast_downloading_suggestions">Downloading: suggestions for <xliff:g example="English" id="LANGUAGE_NAME">%1$s</xliff:g> will be ready soon.</string>
 
     <!-- Version text [CHAR LIMIT=30]-->
     <string name="version_text">Version <xliff:g example="1.0.1864.643521" id="VERSION_NUMBER">%1$s</xliff:g></string>
 
     <!-- User dictionary settings -->
     <!-- User dictionary settings.  The summary of the listem item to go into the User dictionary settings screen. -->
-    <string name="user_dict_settings_summary" translatable="false">&quot;&quot;</string>
+    <string name="user_dict_settings_summary" translatable="false">""</string>
     <!-- User dictionary settings. The title of the menu item to add a new word to the user dictionary. -->
     <!-- This resource is corresponding to  msgid="4056762757149923551" -->
     <string name="user_dict_settings_add_menu_title">Add</string>
@@ -570,7 +583,7 @@ Tip: You can download and remove dictionaries by going to &amp;lt;b&amp;gt;Langu
     <string name="dictionary_upload_success">Dictionary upload successful</string>
     <string name="personaldictionary_empty_hint">Personal dictionary is empty…</string>
     <string name="wordcontexts_empty_hint">No recorded word contexts…</string>
-    <string name="fragment_title_word">Contexts for \&quot;{word}\&quot;</string>
+    <string name="fragment_title_word">Contexts for \"{word}\"</string>
     <string name="addword_dialog_title">Add word</string>
     <string name="addword_word_exists">Word already exists</string>
     <string name="addword_word_blacklisted">Word is blacklisted</string>
