@@ -8,12 +8,14 @@ BASE_PATH = "app/src/main/res"
 def convert_xliff_to_format_specifier(xml_content):
     """
     Converts XLIFF <xliff:g> tags in Android string resources to format specifiers (%n$s).
-    Resets numbering per <string> tag.
+    Resets numbering per <string> tag, keeping msgid intact.
     """
 
     def process_string(match):
         """Handles each <string> tag separately, resetting numbering per string."""
-        string_content = match.group(2)  # Extract text inside the <string> tag
+        string_content = match.group(3)  # Extract text inside the <string> tag
+        # Extract msgid attribute (if present)
+        msgid = match.group(2) if match.group(2) else ""
         counter = 0  # Reset parameter numbering for each string
 
         def replace_xliff_tag(xliff_match):
@@ -28,26 +30,33 @@ def convert_xliff_to_format_specifier(xml_content):
         # Remove unnecessary surrounding quotes (if present)
         updated_content = re.sub(r'^(["\'])(.*)\1$', r'\2', updated_content)
 
-        return f'<string name="{match.group(1)}">{updated_content}</string>'
+        # Rebuild <string> tag with msgid and updated content
+        if msgid:
+            return f'<string name="{match.group(1)}" msgid="{msgid}">{updated_content}</string>'
+        else:
+            return f'<string name="{match.group(1)}">{updated_content}</string>'
 
     # Regex to find <string> tags and process them separately
     updated_content = re.sub(
-        r'<string name="([^"]+)">(.*?)</string>', process_string, xml_content, flags=re.DOTALL)
+        r'<string name="([^"]+)"(?: msgid="([^"]+)")?>(.*?)</string>', process_string, xml_content, flags=re.DOTALL)
 
     return updated_content
 
 
 def process_strings_file(file_path):
     """Reads, converts, and overwrites a strings.xml file."""
-    with open(file_path, "r", encoding="utf-8") as file:
-        xml_data = file.read()
+    try:
+        with open(file_path, "r", encoding="utf-8") as file:
+            xml_data = file.read()
 
-    converted_xml = convert_xliff_to_format_specifier(xml_data)
+        converted_xml = convert_xliff_to_format_specifier(xml_data)
 
-    with open(file_path, "w", encoding="utf-8") as file:
-        file.write(converted_xml)
+        with open(file_path, "w", encoding="utf-8") as file:
+            file.write(converted_xml)
 
-    print(f"✅ Processed: {file_path}")
+        print(f"✅ Processed: {file_path}")
+    except Exception as e:
+        print(f"❌ Error processing {file_path}: {e}")
 
 
 def find_and_process_strings():
