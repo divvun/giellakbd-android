@@ -21,14 +21,24 @@ def convert_xliff_to_format_specifier(xml_content):
         def replace_xliff_tag(xliff_match):
             nonlocal counter
             counter += 1
-            return f"%{counter}$s"
+            return f"%{counter}$s"  # Replace <xliff:g> with format specifiers
+
+        # Check if the original string was surrounded by quotes (we assume it's inside quotes if it starts and ends with them)
+        was_surrounded_by_quotes = string_content.startswith(
+            '"') and string_content.endswith('"')
+
+        # If it was surrounded by quotes, strip the quotes for processing
+        if was_surrounded_by_quotes:
+            # Remove surrounding quotes temporarily
+            string_content = string_content[1:-1]
 
         # Replace all <xliff:g> tags within the current <string>
         updated_content = re.sub(
             r'<xliff:g[^>]*>(.*?)</xliff:g>', replace_xliff_tag, string_content)
 
-        # Remove unnecessary surrounding quotes (if present)
-        updated_content = re.sub(r'^(["\'])(.*)\1$', r'\2', updated_content)
+        # Re-add quotes around the string content if it was originally surrounded by quotes
+        if was_surrounded_by_quotes:
+            updated_content = f'"{updated_content}"'
 
         # Rebuild <string> tag with msgid and updated content
         if msgid:
