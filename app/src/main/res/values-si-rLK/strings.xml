@@ -53,7 +53,7 @@
     <string name="key_preview_popup_dismiss_delay" msgid="6213164897443068248">"යතුරු උත්පතන ඉවත් කිරීමේ ප්‍රමාදය"</string>
     <string name="key_preview_popup_dismiss_no_delay" msgid="2096123151571458064">"ප්‍රමාද නැත"</string>
     <string name="key_preview_popup_dismiss_default_delay" msgid="2166964333903906734">"සුපුරුදු"</string>
-    <string name="abbreviation_unit_milliseconds" msgid="8700286094028323363">"%1$sms"</string>
+    <string name="abbreviation_unit_milliseconds" msgid="8700286094028323363">"%1$s ms"</string>
     <string name="settings_system_default" msgid="6268225104743331821">"පද්ධති සුපුරුදු"</string>
     <string name="use_contacts_dict" msgid="4435317977804180815">"සබඳතා නම් යෝජනා කරන්න"</string>
     <string name="use_contacts_dict_summary" msgid="6599983334507879959">"යෝජනා සහ නිවැරදි කිරීම් සඳහා සබඳතා වෙතින් නම් භාවිතා කරන්න"</string>
