@@ -53,12 +53,12 @@
     <string name="key_preview_popup_dismiss_delay" msgid="6213164897443068248">"යතුරු උත්පතන ඉවත් කිරීමේ ප්‍රමාදය"</string>
     <string name="key_preview_popup_dismiss_no_delay" msgid="2096123151571458064">"ප්‍රමාද නැත"</string>
     <string name="key_preview_popup_dismiss_default_delay" msgid="2166964333903906734">"සුපුරුදු"</string>
-    <string name="abbreviation_unit_milliseconds" msgid="8700286094028323363">"<xliff:g id="MILLISECONDS">%s</xliff:g>ms"</string>
+    <string name="abbreviation_unit_milliseconds" msgid="8700286094028323363">"%1$s ms"</string>
     <string name="settings_system_default" msgid="6268225104743331821">"පද්ධති සුපුරුදු"</string>
     <string name="use_contacts_dict" msgid="4435317977804180815">"සබඳතා නම් යෝජනා කරන්න"</string>
     <string name="use_contacts_dict_summary" msgid="6599983334507879959">"යෝජනා සහ නිවැරදි කිරීම් සඳහා සබඳතා වෙතින් නම් භාවිතා කරන්න"</string>
     <string name="use_personalized_dicts" msgid="5167396352105467626">"පෞද්ගලීකරණය කළ යෝජනා"</string>
-    <string name="enable_metrics_logging" msgid="5506372337118822837">"දියුණු <xliff:g id="APPLICATION_NAME">%s</xliff:g>"</string>
+    <string name="enable_metrics_logging" msgid="5506372337118822837">"දියුණු %1$s"</string>
     <string name="use_double_space_period" msgid="8781529969425082860">"දෙවරක්-ඉඩ නැවතීමේ ලකුණ"</string>
     <string name="use_double_space_period_summary" msgid="6532892187247952799">"ඉඩ යතුර මත දෙවරක් තට්ටු කිරීම හිස් තැනකට අනුගාමිව නැවතීමේ ලකුණක් ඇතුළත් කරයි."</string>
     <string name="auto_cap" msgid="1719746674854628252">"ස්වයං-ලොකු අකුරු කරණය"</string>
@@ -97,7 +97,7 @@
     <string name="keyboard_layout" msgid="8451164783510487501">"යතුරු පුවරු තේමාව"</string>
     <string name="switch_accounts" msgid="3321216593719006162">"ගිණුම් මාරු කරන්න"</string>
     <string name="no_accounts_selected" msgid="2073821619103904330">"ගිණුම් තෝරා නැත"</string>
-    <string name="account_selected" msgid="2846876462199625974">"<xliff:g id="EMAIL_ADDRESS">%1$s</xliff:g> දැනට භාවිතා කරමින්"</string>
+    <string name="account_selected" msgid="2846876462199625974">"%1$s දැනට භාවිතා කරමින්"</string>
     <string name="account_select_ok" msgid="9141195141763227797">"හරි"</string>
     <string name="account_select_cancel" msgid="5181012062618504340">"අවලංගු කරන්න"</string>
     <string name="account_select_sign_out" msgid="3299651159390187933">"වරනය වන්න"</string>
@@ -107,13 +107,13 @@
     <string name="subtype_es_US" msgid="5583145191430180200">"ස්පාඤ්ඤ (US)"</string>
     <string name="subtype_hi_ZZ" msgid="8860448146262798623">"හින්ග්ලිෂ්"</string>
     <string name="subtype_sr_ZZ" msgid="9059219552986034343">"සර්බියානු (ලතින්)"</string>
-    <string name="subtype_with_layout_en_GB" msgid="1931018968641592304">"ඉංග්‍රීසි (එ.රා) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_en_US" msgid="8809311287529805422">"ඉංග්‍රීසි (එ.ජ) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_es_US" msgid="510930471167541338">"ස්පාඤ්ඤ (එ.ජ) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_hi_ZZ" msgid="6827402953860547044">"හින්ග්ලිෂ් (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_sr_ZZ" msgid="2859024772719772407">"සර්බියානු (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_generic_traditional" msgid="8584594350973800586">"<xliff:g id="LANGUAGE_NAME">%s</xliff:g> (සාම්ප්‍රදායික)"</string>
-    <string name="subtype_generic_compact" msgid="3353673321203202922">"<xliff:g id="LANGUAGE_NAME">%s</xliff:g> (සංයුක්ත)"</string>
+    <string name="subtype_with_layout_en_GB" msgid="1931018968641592304">"ඉංග්‍රීසි (එ.රා) (%1$s)"</string>
+    <string name="subtype_with_layout_en_US" msgid="8809311287529805422">"ඉංග්‍රීසි (එ.ජ) (%1$s)"</string>
+    <string name="subtype_with_layout_es_US" msgid="510930471167541338">"ස්පාඤ්ඤ (එ.ජ) (%1$s)"</string>
+    <string name="subtype_with_layout_hi_ZZ" msgid="6827402953860547044">"හින්ග්ලිෂ් (%1$s)"</string>
+    <string name="subtype_with_layout_sr_ZZ" msgid="2859024772719772407">"සර්බියානු (%1$s)"</string>
+    <string name="subtype_generic_traditional" msgid="8584594350973800586">"%1$s (සාම්ප්‍රදායික)"</string>
+    <string name="subtype_generic_compact" msgid="3353673321203202922">"%1$s (සංයුක්ත)"</string>
     <string name="subtype_no_language" msgid="7137390094240139495">"භාෂාවක් නැත (අකාරාදිය)"</string>
     <string name="subtype_no_language_qwerty" msgid="244337630616742604">"අකාරාදිය (QWERTY)"</string>
     <string name="subtype_no_language_qwertz" msgid="443066912507547976">"අකාරාදිය (QWERTZ)"</string>
@@ -133,27 +133,27 @@
     <string name="custom_input_style_note_message" msgid="8826731320846363423">"ඔබ එය භාවිතය ආරම්භ කිරීමට පෙර ඔබගේ අභිරුචි ආදාන විලාසය සබල කිරීමට අවශ්‍යය. ඔබට එය දැන් සබල කිරීමට අවශ්‍යද?"</string>
     <string name="enable" msgid="5031294444630523247">"සබල කරන්න"</string>
     <string name="not_now" msgid="6172462888202790482">"දැන් නොවේ"</string>
-    <string name="custom_input_style_already_exists" msgid="8008728952215449707">"සමාන ආදාන විලාසය දැනටමත් පවතී: <xliff:g id="INPUT_STYLE_NAME">%s</xliff:g>"</string>
+    <string name="custom_input_style_already_exists" msgid="8008728952215449707">"සමාන ආදාන විලාසය දැනටමත් පවතී: %1$s"</string>
     <string name="prefs_keypress_vibration_duration_settings" msgid="7918341459947439226">"යතුරු එබිම් කම්පන කාලපරිච්ඡේදය"</string>
     <string name="prefs_keypress_sound_volume_settings" msgid="6027007337036891623">"යතුරු එබීම් හඬ තීව්‍රතාවය"</string>
     <string name="prefs_key_longpress_timeout_settings" msgid="6102240298932897873">"යතුරු දිගු එබීම් ප්‍රමාදය"</string>
     <string name="prefs_enable_emoji_alt_physical_key" msgid="5963640002335470112">"භෞතික යතුරුපුවරුව සඳහා ඉමොජි"</string>
     <string name="prefs_enable_emoji_alt_physical_key_summary" msgid="5259484820941627827">"භෞතික Alt යතුර ඉමොජි පෙන්වයි"</string>
     <string name="button_default" msgid="3988017840431881491">"සුපුරුදු"</string>
-    <string name="setup_welcome_title" msgid="6112821709832031715">"<xliff:g id="APPLICATION_NAME">%s</xliff:g> වෙත සාදරයෙන් පිළිගනිමු"</string>
+    <string name="setup_welcome_title" msgid="6112821709832031715">"%1$s වෙත සාදරයෙන් පිළිගනිමු"</string>
     <string name="setup_welcome_additional_description" msgid="8150252008545768953">"ඉංගිත ටයිප් කිරීම් සමග"</string>
     <string name="setup_start_action" msgid="8936036460897347708">"අරඹන්න"</string>
     <string name="setup_next_action" msgid="371821437915144603">"ඊළඟ පියවර"</string>
-    <string name="setup_steps_title" msgid="6400373034871816182">"<xliff:g id="APPLICATION_NAME">%s</xliff:g> සැකසෙමින් පවතී"</string>
-    <string name="setup_step1_title" msgid="3147967630253462315">"<xliff:g id="APPLICATION_NAME">%s</xliff:g> සබල කරන්න"</string>
-    <string name="setup_step1_instruction" msgid="4295448056733329661">"කරණාකර ඔබගේ භාෂාව සහ ආදාන සැකසීම් තුළ \"<xliff:g id="APPLICATION_NAME">%s</xliff:g>\" පරීක්ෂා කරන්න. මෙය ඔබගේ උපාංගය මත එයට ධාවනය වීමට අනුමැතිය දෙනු ඇත."</string>
-    <string name="setup_step1_finished_instruction" msgid="8701441895377434947">"<xliff:g id="APPLICATION_NAME">%s</xliff:g> දැනටමත් ඔබගේ භාෂාව සහ ආදාන සැකසීම් තුළ සබල කර ඇත, එම නිසා මෙම පියවර නිමයි. ඊළඟ එක වෙතට!"</string>
+    <string name="setup_steps_title" msgid="6400373034871816182">"%1$s සැකසෙමින් පවතී"</string>
+    <string name="setup_step1_title" msgid="3147967630253462315">"%1$s සබල කරන්න"</string>
+    <string name="setup_step1_instruction" msgid="4295448056733329661">"කරණාකර ඔබගේ භාෂාව සහ ආදාන සැකසීම් තුළ \"%1$s\" පරීක්ෂා කරන්න. මෙය ඔබගේ උපාංගය මත එයට ධාවනය වීමට අනුමැතිය දෙනු ඇත."</string>
+    <string name="setup_step1_finished_instruction" msgid="8701441895377434947">"%1$s දැනටමත් ඔබගේ භාෂාව සහ ආදාන සැකසීම් තුළ සබල කර ඇත, එම නිසා මෙම පියවර නිමයි. ඊළඟ එක වෙතට!"</string>
     <string name="setup_step1_action" msgid="4366513534999901728">"සැකසීම් තුළ සබල කරන්න"</string>
-    <string name="setup_step2_title" msgid="6860725447906690594">"<xliff:g id="APPLICATION_NAME">%s</xliff:g> වෙත මාරුවන්න"</string>
-    <string name="setup_step2_instruction" msgid="9141481964870023336">"ඊළඟට, ඔබගේ සක්‍රිය පෙළ-ආදාන ක්‍රමය ලෙස \"<xliff:g id="APPLICATION_NAME">%s</xliff:g>\" තෝරන්න."</string>
+    <string name="setup_step2_title" msgid="6860725447906690594">"%1$s වෙත මාරුවන්න"</string>
+    <string name="setup_step2_instruction" msgid="9141481964870023336">"ඊළඟට, ඔබගේ සක්‍රිය පෙළ-ආදාන ක්‍රමය ලෙස \"%1$s\" තෝරන්න."</string>
     <string name="setup_step2_action" msgid="1660330307159824337">"ආදාන ක්‍රම මාරු කරන්න"</string>
     <string name="setup_step3_title" msgid="3154757183631490281">"සුබපැතුම්, ඔබ සියල්ල පිහිටුවා ඇත!"</string>
-    <string name="setup_step3_instruction" msgid="8025981829605426000">"දැන් ඔබට <xliff:g id="APPLICATION_NAME">%s</xliff:g> සමගින් ඔබගේ  සියළුම ප්‍රියතම යෙදුම් වලින් ටයිප් කළ හැක."</string>
+    <string name="setup_step3_instruction" msgid="8025981829605426000">"දැන් ඔබට %1$s සමගින් ඔබගේ  සියළුම ප්‍රියතම යෙදුම් වලින් ටයිප් කළ හැක."</string>
     <string name="setup_step3_action" msgid="600879797256942259">"අතිරේක භාෂා වින්‍යාස කරන්න"</string>
     <string name="setup_finish_action" msgid="276559243409465389">"අවසන්"</string>
     <string name="show_setup_wizard_icon" msgid="5008028590593710830">"යෙදුම් නිරූපකය පෙන්වන්න"</string>
@@ -183,13 +183,13 @@
     <string name="install_dict" msgid="180852772562189365">"ස්ථාපනය"</string>
     <string name="cancel_download_dict" msgid="7843340278507019303">"අවලංගු කරන්න"</string>
     <string name="delete_dict" msgid="756853268088330054">"මකන්න"</string>
-    <string name="should_download_over_metered_prompt" msgid="6737084685073734292">"ඔබේ ජංගම දුරකථනය මත ඔබ තෝරන ලද භාෂාවට ලබා ගත හැකි ශබ්ද කෝෂයක් ඇත.&lt;br/&gt; ඔබේ ටයිප් කිරීමේ අත්දැකීම වැඩි දියුණු කර ගැනීමට <xliff:g id="LANGUAGE_NAME">%1$s</xliff:g> ශබ්ද කෝෂය &lt;b&gt;බාගැනීම&lt;/b&gt; කරන ලෙස අපි ඔබට නිර්දේශ කරමු.&lt;br/&gt; &lt;br/&gt; 3G හරහා බාගැනීම විනාඩියක් හෝ දෙකක් ගත හැකිය. ඔබට &lt;b&gt;සීමා රහිත දත්ත සැලසුමක්&lt;/b&gt; නැති නම් දත්ත ගාස්තු අදාළ විය හැකිය.&lt;br/&gt; ඔබට තිබෙන්නේ කුමන දත්ත සැලසුමක්ද යන්න ගැන ඔබට විශ්වාස නැති නම්, බාගැනීම ස්වයංක්‍රියව ඇරඹීමට Wi-Fi සබැඳුමක් භාවිත කරන්න.&lt;br/&gt; &lt;br/&gt; ඉඟිය: ඔබට ඔබේ ජංගම උපාංගයෙහි &lt;b&gt;සැකසීම්&lt;/b&gt; මෙනුව තුළ &lt;b&gt;භාෂා සහ ආදානය&lt;/b&gt; වෙත යාමෙන් ශබ්ද කෝෂ බාගැනීමට සහ ඉවත් කිරීමට හැකිය."</string>
-    <string name="download_over_metered" msgid="1643065851159409546">"දැන් බාගන්න (<xliff:g id="SIZE_IN_MEGABYTES">%1$.1f</xliff:g>MB)"</string>
+    <string name="should_download_over_metered_prompt" msgid="6737084685073734292">"ඔබේ ජංගම දුරකථනය මත ඔබ තෝරන ලද භාෂාවට ලබා ගත හැකි ශබ්ද කෝෂයක් ඇත.&lt;br/&gt; ඔබේ ටයිප් කිරීමේ අත්දැකීම වැඩි දියුණු කර ගැනීමට %1$s ශබ්ද කෝෂය &lt;b&gt;බාගැනීම&lt;/b&gt; කරන ලෙස අපි ඔබට නිර්දේශ කරමු.&lt;br/&gt; &lt;br/&gt; 3G හරහා බාගැනීම විනාඩියක් හෝ දෙකක් ගත හැකිය. ඔබට &lt;b&gt;සීමා රහිත දත්ත සැලසුමක්&lt;/b&gt; නැති නම් දත්ත ගාස්තු අදාළ විය හැකිය.&lt;br/&gt; ඔබට තිබෙන්නේ කුමන දත්ත සැලසුමක්ද යන්න ගැන ඔබට විශ්වාස නැති නම්, බාගැනීම ස්වයංක්‍රියව ඇරඹීමට Wi-Fi සබැඳුමක් භාවිත කරන්න.&lt;br/&gt; &lt;br/&gt; ඉඟිය: ඔබට ඔබේ ජංගම උපාංගයෙහි &lt;b&gt;සැකසීම්&lt;/b&gt; මෙනුව තුළ &lt;b&gt;භාෂා සහ ආදානය&lt;/b&gt; වෙත යාමෙන් ශබ්ද කෝෂ බාගැනීමට සහ ඉවත් කිරීමට හැකිය."</string>
+    <string name="download_over_metered" msgid="1643065851159409546">"දැන් බාගන්න (%1$sMB)"</string>
     <string name="do_not_download_over_metered" msgid="2176209579313941583">"Wi-Fi හරහා බාගන්න"</string>
-    <string name="dict_available_notification_title" msgid="4583842811218581658">"<xliff:g id="LANGUAGE_NAME">%1$s</xliff:g> සඳහා ශබ්දකෝෂයක් නොමැත"</string>
+    <string name="dict_available_notification_title" msgid="4583842811218581658">"%1$s සඳහා ශබ්දකෝෂයක් නොමැත"</string>
     <string name="dict_available_notification_description" msgid="1075194169443163487">"සමාලෝචනය කිරීමට සහ බාගැනීමට ඔබන්න"</string>
-    <string name="toast_downloading_suggestions" msgid="6128155879830851739">"බාගතකරමින්: <xliff:g id="LANGUAGE_NAME">%1$s</xliff:g> සඳහා යෝජනා ඉක්මනින් සුදානම් වනු ඇත."</string>
-    <string name="version_text" msgid="2715354215568469385">"<xliff:g id="VERSION_NUMBER">%1$s</xliff:g> අනුවාදය"</string>
+    <string name="toast_downloading_suggestions" msgid="6128155879830851739">"බාගතකරමින්: %1$s සඳහා යෝජනා ඉක්මනින් සුදානම් වනු ඇත."</string>
+    <string name="version_text" msgid="2715354215568469385">"%1$s අනුවාදය"</string>
     <string name="user_dict_settings_add_menu_title" msgid="1254195365689387076">"එක් කරන්න"</string>
     <string name="user_dict_settings_add_dialog_title" msgid="4096700390211748168">"ශබ්ද කෝෂය වෙත එක් කරන්න"</string>
     <string name="user_dict_settings_add_screen_title" msgid="5818914331629278758">"වාක්‍ය ඛණ්ඩය"</string>

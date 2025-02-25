@@ -1,212 +1,532 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!-- 
-/*
-**
-** Copyright 2008, The Android Open Source Project
-**
-** Licensed under the Apache License, Version 2.0 (the "License");
-** you may not use this file except in compliance with the License.
-** You may obtain a copy of the License at
-**
-**     http://www.apache.org/licenses/LICENSE-2.0
-**
-** Unless required by applicable law or agreed to in writing, software
-** distributed under the License is distributed on an "AS IS" BASIS,
-** WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-** See the License for the specific language governing permissions and
-** limitations under the License.
-*/
- -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title for Latin keyboard input options dialog [CHAR LIMIT=25] -->
+    <string name="english_ime_input_options">&quot;Syöttövalinnat&quot;</string>
 
-<resources xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
-    <string name="english_ime_input_options" msgid="3909945612939668554">"Syöttövalinnat"</string>
-    <string name="use_contacts_for_spellchecking_option_title" msgid="5374120998125353898">"Nimien tarkistus"</string>
-    <string name="use_contacts_for_spellchecking_option_summary" msgid="8754413382543307713">"Yhteystietojesi nimien oikeinkirjoitus tarkistetaan"</string>
-    <string name="vibrate_on_keypress" msgid="5258079494276955460">"Käytä värinää näppäimiä painettaessa"</string>
-    <string name="sound_on_keypress" msgid="6093592297198243644">"Toista ääni näppäimiä painettaessa"</string>
-    <string name="popup_on_keypress" msgid="123894815723512944">"Ponnahdusikkuna painalluksella"</string>
-    <string name="settings_screen_preferences" msgid="2696713156722014624">"Asetukset"</string>
-    <string name="settings_screen_accounts" msgid="2786418968536696670">"Tilit ja tietosuoja"</string>
-    <string name="settings_screen_appearance" msgid="7358046399111611615">"Ulkoasu ja asettelut"</string>
-    <string name="settings_screen_gesture" msgid="8826372746901183556">"Piirtokirjoitus"</string>
-    <string name="settings_screen_correction" msgid="1616818407747682955">"Tekstin korjaus"</string>
-    <string name="settings_screen_advanced" msgid="7472408607625972994">"Lisäasetukset"</string>
-    <string name="settings_screen_theme" msgid="2137262503543943871">"Teema"</string>
-    <string name="enable_split_keyboard" msgid="4177264923999493614">"Ota jaettu näppäimistö käyttöön"</string>
-    <string name="cloud_sync_title" msgid="8579271074443847055">"Google-näppäimistön synkronointi"</string>
-    <string name="cloud_sync_summary" msgid="7684887161145650857">"Synkronointi on käytössä."</string>
-    <string name="cloud_sync_summary_disabled" msgid="4553338970382825796">"Synkronoi oma sanakirjasi eri laitteiden välillä."</string>
-    <string name="sync_now_title" msgid="3088838136743277721">"Synkronoi"</string>
-    <string name="clear_sync_data_title" msgid="8582001557037069154">"Poista tiedot pilvestä"</string>
-    <string name="clear_sync_data_summary" msgid="993477139012576584">"Poistaa synkronoidut tietosi Googlen palveluista"</string>
-    <string name="clear_sync_data_confirmation" msgid="2811931135574727678">"Synkronoidut tiedot poistetaan pilvestä. Oletko varma?"</string>
-    <string name="clear_sync_data_ok" msgid="613104067705915132">"Poista"</string>
-    <string name="cloud_sync_cancel" msgid="5877481252150919037">"Peruuta"</string>
-    <string name="cloud_sync_opt_in_text" msgid="9176039655776298248">"Oma sanakirjasi synkronoidaan ja varmuuskopiodaan Googlen palvelimille. Sanojen yleisyyttä koskevia tilastotietoja voidaan kerätä tuotteidemme parantamiseksi. Tietojen keräämisessä ja käytössä noudatetaan "<a href="https://www.google.com/policies/privacy">"Googlen tietosuojakäytäntöä"</a>"."</string>
-    <string name="add_account_to_enable_sync" msgid="7836932571852055265">"Ota tämä ominaisuus käyttöön lisäämällä Google-tili laitteeseen."</string>
-    <string name="cloud_sync_summary_disabled_work_profile" msgid="1381770407303129164">"Synkronointi ei ole käytettävissä Google Apps for Business -tilejä sisältäville laitteille."</string>
-    <string name="include_other_imes_in_language_switch_list" msgid="4533689960308565519">"Käytä toista syöttötapaa"</string>
-    <string name="include_other_imes_in_language_switch_list_summary" msgid="840637129103317635">"Kielenvaihtonäppäin kattaa myös muut syöttötavat"</string>
-    <string name="show_language_switch_key" msgid="5915478828318774384">"Kielenvaihtonäppäin"</string>
-    <string name="show_language_switch_key_summary" msgid="7343403647474265713">"Näytä, kun käytössä on useita syöttökieliä"</string>
-    <string name="key_preview_popup_dismiss_delay" msgid="6213164897443068248">"Näppäimen hylkäysviive"</string>
-    <string name="key_preview_popup_dismiss_no_delay" msgid="2096123151571458064">"Ei viivettä"</string>
-    <string name="key_preview_popup_dismiss_default_delay" msgid="2166964333903906734">"Oletus"</string>
-    <string name="abbreviation_unit_milliseconds" msgid="8700286094028323363">"<xliff:g id="MILLISECONDS">%s</xliff:g> ms"</string>
-    <string name="settings_system_default" msgid="6268225104743331821">"Järjestelmän oletusarvo"</string>
-    <string name="use_contacts_dict" msgid="4435317977804180815">"Ehdota yht.tietojen nimiä"</string>
-    <string name="use_contacts_dict_summary" msgid="6599983334507879959">"Käytä yhteystietojen nimiä ehdotuksissa ja korjauksissa."</string>
-    <string name="use_personalized_dicts" msgid="5167396352105467626">"Räätälöidyt ehdotukset"</string>
-    <string name="enable_metrics_logging" msgid="5506372337118822837">"<xliff:g id="APPLICATION_NAME">%s</xliff:g> paremmaksi"</string>
-    <string name="use_double_space_period" msgid="8781529969425082860">"Kaksoisvälilyönti = piste"</string>
-    <string name="use_double_space_period_summary" msgid="6532892187247952799">"Välilyönnin kaksoisnapautus lisää tekstiin pisteen ja välilyönnin."</string>
-    <string name="auto_cap" msgid="1719746674854628252">"Automaattiset isot kirjaimet"</string>
-    <string name="auto_cap_summary" msgid="7934452761022946874">"Kirjoita jokaisen lauseen ensimmäinen sana isolla alkukirjaimella."</string>
-    <string name="edit_personal_dictionary" msgid="3996910038952940420">"Oma sanakirja"</string>
-    <string name="configure_dictionaries_title" msgid="4238652338556902049">"Sanakirjalisäosat"</string>
-    <string name="main_dictionary" msgid="4798763781818361168">"Pääsanakirja"</string>
-    <string name="prefs_show_suggestions" msgid="8026799663445531637">"Näytä korjausehdotukset"</string>
-    <string name="prefs_show_suggestions_summary" msgid="1583132279498502825">"Näytä sanaehdotukset kirjoitettaessa."</string>
-    <string name="prefs_block_potentially_offensive_title" msgid="5078480071057408934">"Estä loukkaavat sanat"</string>
-    <string name="prefs_block_potentially_offensive_summary" msgid="2371835479734991364">"Älä ehdota mahd. loukkaavia sanoja."</string>
-    <string name="auto_correction" msgid="7630720885194996950">"Autom. korjaus"</string>
-    <string name="auto_correction_summary" msgid="5625751551134658006">"Välilyönti ja -merkit korjaavat väärinkirjoitetut sanat"</string>
-    <string name="auto_correction_threshold_mode_off" msgid="8470882665417944026">"Ei käytössä"</string>
-    <string name="auto_correction_threshold_mode_modest" msgid="8788366690620799097">"Osittainen"</string>
-    <string name="auto_correction_threshold_mode_aggressive" msgid="7319007299148899623">"Aggressiivinen"</string>
-    <string name="auto_correction_threshold_mode_very_aggressive" msgid="1853309024129480416">"Hyvin aggressiivinen"</string>
-    <string name="bigram_prediction" msgid="1084449187723948550">"Seuraavan sanan ehdotukset"</string>
-    <string name="bigram_prediction_summary" msgid="3896362682751109677">"Käytä edellistä sanaa ehdotuksien perusteena"</string>
-    <string name="gesture_input" msgid="826951152254563827">"Ota piirtokirjoitus käyttöön"</string>
-    <string name="gesture_input_summary" msgid="9180350639305731231">"Syötä sana piirtämällä kirjaimet sormellasi."</string>
-    <string name="gesture_preview_trail" msgid="3802333369335722221">"Näytä eleen jälki"</string>
-    <string name="gesture_floating_preview_text" msgid="4443240334739381053">"Dynaaminen kelluva esikatselu"</string>
-    <string name="gesture_floating_preview_text_summary" msgid="4472696213996203533">"Näytä ehdotettu sana piirron aikana"</string>
-    <string name="gesture_space_aware" msgid="2078291600664682496">"Ilmausele"</string>
-    <string name="gesture_space_aware_summary" msgid="4371385818348528538">"Lisää välilyöntejä eleiden aikana liukumalla välilyöntinäppäimelle"</string>
-    <string name="voice_input" msgid="3583258583521397548">"Äänisyötenäppäin"</string>
-    <string name="voice_input_disabled_summary" msgid="6323489602945135165">"Äänen syöttötapoja ei ole otettu käyttöön. Tarkista Kielet ja syöttötapa ‑asetukset."</string>
-    <string name="configure_input_method" msgid="373356270290742459">"Määritä syöttötavat"</string>
-    <string name="language_selection_title" msgid="3666971864764478269">"Kielet"</string>
-    <string name="help_and_feedback" msgid="5328219371839879161">"Ohje ja palaute"</string>
-    <string name="select_language" msgid="5709487854987078367">"Kielet"</string>
-    <string name="hint_add_to_dictionary" msgid="2645988432867033007">"Tallenna koskettamalla uudelleen."</string>
-    <string name="hint_add_to_dictionary_without_word" msgid="6710206006427574423">"Tallenna koskettamalla tätä."</string>
-    <string name="has_dictionary" msgid="6071847973466625007">"Sanakirja saatavilla"</string>
-    <string name="keyboard_layout" msgid="8451164783510487501">"Näppäimistöteema"</string>
-    <string name="switch_accounts" msgid="3321216593719006162">"Vaihda tiliä"</string>
-    <string name="no_accounts_selected" msgid="2073821619103904330">"Tilejä ei ole valittu"</string>
-    <string name="account_selected" msgid="2846876462199625974">"Tällä hetkellä käytetään tiliä <xliff:g id="EMAIL_ADDRESS">%1$s</xliff:g>"</string>
-    <string name="account_select_ok" msgid="9141195141763227797">"OK"</string>
-    <string name="account_select_cancel" msgid="5181012062618504340">"Peruuta"</string>
-    <string name="account_select_sign_out" msgid="3299651159390187933">"Kirjaudu ulos"</string>
-    <string name="account_select_title" msgid="6279711684772922649">"Valitse käytettävä tili"</string>
-    <string name="subtype_en_GB" msgid="88170601942311355">"englanti (Iso-Britannia)"</string>
-    <string name="subtype_en_US" msgid="6160452336634534239">"englanti (Yhdysvallat)"</string>
-    <string name="subtype_es_US" msgid="5583145191430180200">"espanja (Yhdysvallat)"</string>
-    <string name="subtype_hi_ZZ" msgid="8860448146262798623">"Hindienglanti"</string>
-    <string name="subtype_sr_ZZ" msgid="9059219552986034343">"serbialainen (latinal.)"</string>
-    <string name="subtype_with_layout_en_GB" msgid="1931018968641592304">"englanti (UK) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_en_US" msgid="8809311287529805422">"englanti (US) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_es_US" msgid="510930471167541338">"espanja (US) (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_hi_ZZ" msgid="6827402953860547044">"Hindienglanti (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_with_layout_sr_ZZ" msgid="2859024772719772407">"serbialainen (<xliff:g id="KEYBOARD_LAYOUT">%s</xliff:g>)"</string>
-    <string name="subtype_generic_traditional" msgid="8584594350973800586">"<xliff:g id="LANGUAGE_NAME">%s</xliff:g> (perinteinen)"</string>
-    <string name="subtype_generic_compact" msgid="3353673321203202922">"<xliff:g id="LANGUAGE_NAME">%s</xliff:g> (tiivis)"</string>
-    <string name="subtype_no_language" msgid="7137390094240139495">"Ei kieltä (aakkoset)"</string>
-    <string name="subtype_no_language_qwerty" msgid="244337630616742604">"aakkoset (QWERTY)"</string>
-    <string name="subtype_no_language_qwertz" msgid="443066912507547976">"Aakkoset (QWERTZ)"</string>
-    <string name="subtype_no_language_azerty" msgid="8144348527575640087">"Aakkoset (AZERTY)"</string>
-    <string name="subtype_no_language_dvorak" msgid="1564494667584718094">"Aakkoset (Dvorak)"</string>
-    <string name="subtype_no_language_colemak" msgid="5837418400010302623">"Aakkoset (Colemak)"</string>
-    <string name="subtype_no_language_pcqwerty" msgid="5354918232046200018">"Aakkoset (PC)"</string>
-    <string name="subtype_emoji" msgid="7483586578074549196">"Emoji"</string>
-    <string name="keyboard_theme" msgid="4909551808526178852">"Näppäimistöteema"</string>
-    <string name="custom_input_styles_title" msgid="8429952441821251512">"Muokatut syöttötyylit"</string>
-    <string name="add_style" msgid="6163126614514489951">"Lisää tyyli"</string>
-    <string name="add" msgid="8299699805688017798">"Lisää"</string>
-    <string name="remove" msgid="4486081658752944606">"Poista"</string>
-    <string name="save" msgid="7646738597196767214">"Tallenna"</string>
-    <string name="subtype_locale" msgid="8576443440738143764">"Kieli"</string>
-    <string name="keyboard_layout_set" msgid="4309233698194565609">"Asettelu"</string>
-    <string name="custom_input_style_note_message" msgid="8826731320846363423">"Muokattua syöttötyyliä ei ole otettu käyttöön. Haluatko ottaa sen käyttöön nyt?"</string>
-    <string name="enable" msgid="5031294444630523247">"Ota käyttöön"</string>
-    <string name="not_now" msgid="6172462888202790482">"Ei nyt"</string>
-    <string name="custom_input_style_already_exists" msgid="8008728952215449707">"Syöttötyyli on jo olemassa: <xliff:g id="INPUT_STYLE_NAME">%s</xliff:g>"</string>
-    <string name="prefs_keypress_vibration_duration_settings" msgid="7918341459947439226">"Painalluksen värinän kesto"</string>
-    <string name="prefs_keypress_sound_volume_settings" msgid="6027007337036891623">"Näppäinpainalluksen äänenvoimakkuus"</string>
-    <string name="prefs_key_longpress_timeout_settings" msgid="6102240298932897873">"Pitkän painalluksen viive"</string>
-    <string name="prefs_enable_emoji_alt_physical_key" msgid="5963640002335470112">"Hymiö fyysisellä näppäimistöllä"</string>
-    <string name="prefs_enable_emoji_alt_physical_key_summary" msgid="5259484820941627827">"Fyysinen Alt-näppäin näyttää hymiövalikoiman."</string>
-    <string name="button_default" msgid="3988017840431881491">"Oletusarvot"</string>
-    <string name="setup_welcome_title" msgid="6112821709832031715">"Tervetuloa käyttämään sovellusta <xliff:g id="APPLICATION_NAME">%s</xliff:g>"</string>
-    <string name="setup_welcome_additional_description" msgid="8150252008545768953">"ja piirtokirjoitus"</string>
-    <string name="setup_start_action" msgid="8936036460897347708">"Aloita"</string>
-    <string name="setup_next_action" msgid="371821437915144603">"Seuraava vaihe"</string>
-    <string name="setup_steps_title" msgid="6400373034871816182">"Sovelluksen <xliff:g id="APPLICATION_NAME">%s</xliff:g> asetukset"</string>
-    <string name="setup_step1_title" msgid="3147967630253462315">"Ota <xliff:g id="APPLICATION_NAME">%s</xliff:g> käyttöön"</string>
-    <string name="setup_step1_instruction" msgid="4295448056733329661">"Valitse <xliff:g id="APPLICATION_NAME">%s</xliff:g> Kielet ja syöttötapa ‑asetuksissa. Se antaa sovellukselle luvan toimia laitteellasi."</string>
-    <string name="setup_step1_finished_instruction" msgid="8701441895377434947">"<xliff:g id="APPLICATION_NAME">%s</xliff:g> on jo otettu käyttöön Kielet ja syöttötapa ‑asetuksissa, joten tämä vaihe on valmis. Siirrytään eteenpäin!"</string>
-    <string name="setup_step1_action" msgid="4366513534999901728">"Ota käyttöön asetuksissa"</string>
-    <string name="setup_step2_title" msgid="6860725447906690594">"Siirry sovellukseen <xliff:g id="APPLICATION_NAME">%s</xliff:g>"</string>
-    <string name="setup_step2_instruction" msgid="9141481964870023336">"Valitse <xliff:g id="APPLICATION_NAME">%s</xliff:g> käytössä olevaksi tekstinsyöttötavaksi."</string>
-    <string name="setup_step2_action" msgid="1660330307159824337">"Vaihda syöttötapaa"</string>
-    <string name="setup_step3_title" msgid="3154757183631490281">"Onneksi olkoon, valmista tuli!"</string>
-    <string name="setup_step3_instruction" msgid="8025981829605426000">"Nyt voit kirjoittaa kaikissa lempisovelluksissasi sovelluksen <xliff:g id="APPLICATION_NAME">%s</xliff:g> avulla."</string>
-    <string name="setup_step3_action" msgid="600879797256942259">"Määritä lisää kieliä"</string>
-    <string name="setup_finish_action" msgid="276559243409465389">"Valmis"</string>
-    <string name="show_setup_wizard_icon" msgid="5008028590593710830">"Näytä sovelluskuvake"</string>
-    <string name="show_setup_wizard_icon_summary" msgid="4119998322536880213">"Näytä sovelluskuvake käynnistysohjelmassa."</string>
-    <string name="app_name" msgid="6320102637491234792">"Sanakirjan tarjoaja"</string>
-    <string name="dictionary_provider_name" msgid="3027315045397363079">"Sanakirjan tarjoaja"</string>
-    <string name="dictionary_service_name" msgid="6237472350693511448">"Sanakirjapalvelu"</string>
-    <string name="download_description" msgid="6014835283119198591">"Sanakirjan päivitystiedot"</string>
-    <string name="dictionary_settings_title" msgid="8091417676045693313">"Sanakirjalisäosat"</string>
-    <string name="dictionary_install_over_metered_network_prompt" msgid="3587517870006332980">"Sanakirja saatavilla"</string>
-    <string name="dictionary_settings_summary" msgid="5305694987799824349">"Sanakirjojen asetukset"</string>
-    <string name="user_dictionaries" msgid="3582332055892252845">"Käyttäjän sanakirjat"</string>
-    <string name="default_user_dict_pref_name" msgid="1625055720489280530">"Käyttäjän sanakirja"</string>
-    <string name="dictionary_available" msgid="4728975345815214218">"Sanakirja saatavilla"</string>
-    <string name="dictionary_downloading" msgid="2982650524622620983">"Ladataan"</string>
-    <string name="dictionary_installed" msgid="8081558343559342962">"Asennettu"</string>
-    <string name="dictionary_disabled" msgid="8950383219564621762">"Asennettu, poistettu käytöstä"</string>
-    <string name="cannot_connect_to_dict_service" msgid="9216933695765732398">"Ei yhteyttä sanak."</string>
-    <string name="no_dictionaries_available" msgid="8039920716566132611">"Ei sanak. saatavilla"</string>
-    <string name="check_for_updates_now" msgid="8087688440916388581">"Päivitä"</string>
-    <string name="last_update" msgid="730467549913588780">"Päivitetty viimeksi"</string>
-    <string name="message_updating" msgid="4457761393932375219">"Tarkistetaan päivityksiä"</string>
-    <string name="message_loading" msgid="5638680861387748936">"Ladataan…"</string>
-    <string name="main_dict_description" msgid="3072821352793492143">"Pääsanakirja"</string>
-    <string name="cancel" msgid="6830980399865683324">"Peruuta"</string>
-    <string name="go_to_settings" msgid="3876892339342569259">"Asetukset"</string>
-    <string name="install_dict" msgid="180852772562189365">"Asenna"</string>
-    <string name="cancel_download_dict" msgid="7843340278507019303">"Peruuta"</string>
-    <string name="delete_dict" msgid="756853268088330054">"Poista"</string>
-    <string name="should_download_over_metered_prompt" msgid="6737084685073734292">"Mobiililaitteellasi valittuna olevalle kielelle (<xliff:g id="LANGUAGE_NAME">%1$s</xliff:g>) on saatavilla sanakirja.&lt;br/&gt; Suosittelemme sanakirjan &lt;b&gt;lataamista&lt;/b&gt;, sillä se parantaa kirjoituskokemustasi.&lt;br/&gt; &lt;br/&gt; Lataus 3G-yhteydellä voi kestää pari minuuttia. Operaattorisi saattaa veloittaa sinua tiedonsiirrosta, jos &lt;b&gt;liittymäsi datamäärä ei ole rajoittamaton&lt;/b&gt;.&lt;br/&gt; Jos et ole varma, millainen liittymä sinulla on, muodosta yhteys Wi-Fi-verkkoon. Lataus käynnistyy tällöin automaattisesti.&lt;br/&gt; &lt;br/&gt; Vinkki: Voit ladata ja poistaa sanakirjoja avaamalla &lt;b&gt;Kielet ja syöttötapa ‑asetukset&lt;/b&gt; mobiililaitteesi &lt;b&gt;Asetukset&lt;/b&gt;-valikossa."</string>
-    <string name="download_over_metered" msgid="1643065851159409546">"Lataa nyt (<xliff:g id="SIZE_IN_MEGABYTES">%1$.1f</xliff:g> Mt)"</string>
-    <string name="do_not_download_over_metered" msgid="2176209579313941583">"Lataa Wi-Fi-yhteydellä"</string>
-    <string name="dict_available_notification_title" msgid="4583842811218581658">"Sanakirja on saatavilla kielelle <xliff:g id="LANGUAGE_NAME">%1$s</xliff:g>"</string>
-    <string name="dict_available_notification_description" msgid="1075194169443163487">"Paina tätä, jos haluat tarkastella kohdetta ja ladata sen"</string>
-    <string name="toast_downloading_suggestions" msgid="6128155879830851739">"Ladataan: kielen <xliff:g id="LANGUAGE_NAME">%1$s</xliff:g> ehdotukset ovat pian käytettävissä."</string>
-    <string name="version_text" msgid="2715354215568469385">"Versio <xliff:g id="VERSION_NUMBER">%1$s</xliff:g>"</string>
-    <string name="user_dict_settings_add_menu_title" msgid="1254195365689387076">"Lisää"</string>
-    <string name="user_dict_settings_add_dialog_title" msgid="4096700390211748168">"Lisää sanakirjaan"</string>
-    <string name="user_dict_settings_add_screen_title" msgid="5818914331629278758">"Ilmaus"</string>
-    <string name="user_dict_settings_add_dialog_more_options" msgid="5671682004887093112">"Lisäasetukset"</string>
-    <string name="user_dict_settings_add_dialog_less_options" msgid="2716586567241724126">"Väh. vaihtoeht."</string>
-    <string name="user_dict_settings_add_dialog_confirm" msgid="4703129507388332950">"OK"</string>
-    <string name="user_dict_settings_add_word_option_name" msgid="6665558053408962865">"Sana:"</string>
-    <string name="user_dict_settings_add_shortcut_option_name" msgid="3094731590655523777">"Pikanäppäin:"</string>
-    <string name="user_dict_settings_add_locale_option_name" msgid="4738643440987277705">"Kieli:"</string>
-    <string name="user_dict_settings_add_word_hint" msgid="4902434148985906707">"Kirjoita sana"</string>
-    <string name="user_dict_settings_add_shortcut_hint" msgid="2265453012555060178">"Valinnainen pikanäppäin"</string>
-    <string name="user_dict_settings_edit_dialog_title" msgid="3765774633869590352">"Muokkaa sanaa"</string>
-    <string name="user_dict_settings_context_menu_edit_title" msgid="6812255903472456302">"Muokkaa"</string>
-    <string name="user_dict_settings_context_menu_delete_title" msgid="8142932447689461181">"Poista"</string>
-    <string name="user_dict_settings_empty_text" msgid="6889278304342592383">"Käyttäjän sanakirjassa ei ole sanoja. Lisää sana koskettamalla Lisää (+) ‑painiketta."</string>
-    <string name="user_dict_settings_all_languages" msgid="8276126583216298886">"Kaikille kielille"</string>
-    <string name="user_dict_settings_more_languages" msgid="7131268499685180461">"Lisää kieliä…"</string>
-    <string name="user_dict_settings_delete" msgid="110413335187193859">"Poista"</string>
-    <string name="user_dict_fast_scroll_alphabet" msgid="5431919401558285473">" ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ"</string>
-</resources>
+    <!-- Title for the spell checker option to turn on/off contact names lookup [CHAR LIMIT=25] -->
+    <string name="use_contacts_for_spellchecking_option_title">&quot;Nimien tarkistus&quot;</string>
+
+    <!-- Description for the spell checker option to turn on/off contact names lookup. [CHAR LIMIT=65] -->
+    <string name="use_contacts_for_spellchecking_option_summary">&quot;Yhteystietojesi nimien oikeinkirjoitus tarkistetaan&quot;</string>
+
+    <!-- Option to provide vibrate/haptic feedback on keypress -->
+    <string name="vibrate_on_keypress">&quot;Käytä värinää näppäimiä painettaessa&quot;</string>
+
+    <!-- Option to play back sound on keypress in soft keyboard -->
+    <string name="sound_on_keypress">&quot;Toista ääni näppäimiä painettaessa&quot;</string>
+
+    <!-- Option to control whether or not to show a popup with a larger font on each key press. -->
+    <string name="popup_on_keypress">&quot;Ponnahdusikkuna painalluksella&quot;</string>
+
+    <!-- Settings screen title for preferences [CHAR LIMIT=33]-->
+    <string name="settings_screen_preferences">&quot;Asetukset&quot;</string>
+    <!-- Settings screen title for accounts and privacy preferences [CHAR LIMIT=33]-->
+    <string name="settings_screen_accounts">&quot;Tilit ja tietosuoja&quot;</string>
+    <!-- Settings screen title for appearance &amp; layouts preferences [CHAR LIMIT=33] -->
+    <string name="settings_screen_appearance">&quot;Ulkoasu ja asettelut&quot;</string>
+    <!-- Settings screen title for gesture typing preferences [CHAR_LIMIT=33] -->
+    <string name="settings_screen_gesture">&quot;Piirtokirjoitus&quot;</string>
+    <!-- Settings screen title for text correction options [CHAR_LIMIT=33] -->
+    <string name="settings_screen_correction">&quot;Tekstin korjaus&quot;</string>
+    <!-- Settings screen title for advanced settings [CHAR LIMIT=33] -->
+    <string name="settings_screen_advanced">&quot;Lisäasetukset&quot;</string>
+    <!-- Settings screen title for keyboard theme settings [CHAR LIMIT=33] -->
+    <string name="settings_screen_theme">&quot;Teema&quot;</string>
+
+    <!--  Option for enabling or disabling the split keyboard layout. [CHAR LIMIT=65]-->
+    <string name="enable_split_keyboard">&quot;Ota jaettu näppäimistö käyttöön&quot;</string>
+
+    <!-- Option title for enabling cloud sync feature [CHAR LIMIT=33]-->
+    <string name="cloud_sync_title">&quot;Google-näppäimistön synkronointi&quot;</string>
+    <!-- Option summary when cloud sync feature is enabled  [CHAR LIMIT=65] -->
+    <string name="cloud_sync_summary">&quot;Synkronointi on käytössä.&quot;</string>
+    <!-- Option summary when cloud sync feature is disabled  [CHAR LIMIT=65] -->
+    <string name="cloud_sync_summary_disabled">&quot;Synkronoi oma sanakirjasi eri laitteiden välillä.&quot;</string>
+    <!-- Option title for starting the sync cycle now. [CHAR LIMIT=33]-->
+    <string name="sync_now_title">&quot;Synkronoi&quot;</string>
+    <!-- Option title for letting user delete synced google keyboard data from Google servers.  [CHAR LIMIT=35] -->
+    <string name="clear_sync_data_title">&quot;Poista tiedot pilvestä&quot;</string>
+    <!-- Option summary for letting user delete synced google keyboard data from Google servers. [CHAR LIMIT=65] -->
+    <string name="clear_sync_data_summary">&quot;Poistaa synkronoidut tietosi Googlen palveluista&quot;</string>
+    <!-- Text for confirmation dialog box asking user to confirm deletion of cloud data. [CHAR LIMIT=65] -->
+    <string name="clear_sync_data_confirmation">&quot;Synkronoidut tiedot poistetaan pilvestä. Oletko varma?&quot;</string>
+    <!-- Option to confirm deleting of user data from cloud [CHAR LIMIT=20] -->
+    <string name="clear_sync_data_ok">&quot;Poista&quot;</string>
+    <!-- Option to cancel the deletion of user data from cloud [CHAR LIMIT=20] -->
+    <string name="cloud_sync_cancel">&quot;Peruuta&quot;</string>
+    <!-- Option to agree to terms and conditions for enabling cloud sync feature. -->
+    <string name="cloud_sync_opt_in_text">&lt;string name=&quot;cloud_sync_opt_in_text&quot; msgid=&quot;9176039655776298248&quot;&gt;&amp;quot;Oma sanakirjasi synkronoidaan ja varmuuskopiodaan Googlen palvelimille. Sanojen yleisyyttä koskevia tilastotietoja voidaan kerätä tuotteidemme parantamiseksi. Tietojen keräämisessä ja käytössä noudatetaan &amp;quot;&lt;a href=&quot;https://www.google.com/policies/privacy&quot;&gt;&amp;quot;Googlen tietosuojakäytäntöä&amp;quot;&lt;/a&gt;&amp;quot;.&amp;quot;&lt;/string&gt;</string>
+    <!-- Text to tell the user to add a Google account to the device to enable the cloud sync feature. [CHAR LIMIT=65]-->
+    <string name="add_account_to_enable_sync">&quot;Ota tämä ominaisuus käyttöön lisäämällä Google-tili laitteeseen.&quot;</string>
+    <!-- Text to tell the user that sync feature is disabled because they have Google Apps for Business account(s) on their device. [CHAR LIMIT=80]-->
+    <string name="cloud_sync_summary_disabled_work_profile">&quot;Synkronointi ei ole käytettävissä Google Apps for Business -tilejä sisältäville laitteille.&quot;</string>
+
+    <!-- Option name for including other IMEs in the language switch list [CHAR LIMIT=30] -->
+    <string name="include_other_imes_in_language_switch_list">&quot;Käytä toista syöttötapaa&quot;</string>
+    <!-- Option summary for including other IMEs in the language switch list [CHAR LIMIT=65] -->
+    <string name="include_other_imes_in_language_switch_list_summary">&quot;Kielenvaihtonäppäin kattaa myös muut syöttötavat&quot;</string>
+    <!-- Option to show language switch key [CHAR LIMIT=30] -->
+    <string name="show_language_switch_key">&quot;Kielenvaihtonäppäin&quot;</string>
+    <!-- Option summary for showing language switch key [CHAR LIMIT=65] -->
+    <string name="show_language_switch_key_summary">&quot;Näytä, kun käytössä on useita syöttökieliä&quot;</string>
+
+    <!-- Option for the dismiss delay of the key popup [CHAR LIMIT=25] -->
+    <string name="key_preview_popup_dismiss_delay">&quot;Näppäimen hylkäysviive&quot;</string>
+    <!-- Description for delay for dismissing a popup on keypress: no delay [CHAR LIMIT=15] -->
+    <string name="key_preview_popup_dismiss_no_delay">&quot;Ei viivettä&quot;</string>
+    <!-- Description for delay for dismissing a popup on screen: default value of the delay [CHAR LIMIT=15] -->
+    <string name="key_preview_popup_dismiss_default_delay">&quot;Oletus&quot;</string>
+
+    <!-- Units abbreviation for the duration (milliseconds) [CHAR LIMIT=10] -->
+    <string name="abbreviation_unit_milliseconds">&quot;%1$s ms&quot;</string>
+    <!-- The text that represents the current settings value is the system default [CHAR LIMIT=25] -->
+    <string name="settings_system_default">&quot;Järjestelmän oletusarvo&quot;</string>
+
+    <!-- Option name for enabling or disabling the use of names of people in Contacts for suggestion and correction [CHAR LIMIT=25] -->
+    <string name="use_contacts_dict">&quot;Ehdota yht.tietojen nimiä&quot;</string>
+    <!-- Description for option enabling or disabling the use of names of people in Contacts for suggestion and correction [CHAR LIMIT=65] -->
+    <string name="use_contacts_dict_summary">&quot;Käytä yhteystietojen nimiä ehdotuksissa ja korjauksissa.&quot;</string>
+
+    <!-- Option name for enabling the use by the keyboards of sent/received messages, e-mail and typing history to improve suggestion accuracy [CHAR LIMIT=25] -->
+    <string name="use_personalized_dicts">&quot;Räätälöidyt ehdotukset&quot;</string>
+
+    <!-- Option to enable sending usage statistics -->
+    <string name="enable_metrics_logging">&quot;%1$s paremmaksi&quot;</string>
+
+    <!-- Option name for enabling or disabling the double-space period feature that lets double tap on spacebar insert a period followed by a space [CHAR LIMIT=30] -->
+    <string name="use_double_space_period">&quot;Kaksoisvälilyönti = piste&quot;</string>
+    <!-- Description for option enabling or disabling the double-space period feature that lets double tap on spacebar insert a period followed by a space [CHAR LIMIT=65] -->
+    <string name="use_double_space_period_summary">&quot;Välilyönnin kaksoisnapautus lisää tekstiin pisteen ja välilyönnin.&quot;</string>
+
+    <!-- Option to enable auto capitalization of sentences -->
+    <string name="auto_cap">&quot;Automaattiset isot kirjaimet&quot;</string>
+    <!-- Description for option to enable auto capitalization of sentences -->
+    <string name="auto_cap_summary">&quot;Kirjoita jokaisen lauseen ensimmäinen sana isolla alkukirjaimella.&quot;</string>
+
+    <!-- Option to edit personal dictionary. [CHAR_LIMIT=30]-->
+    <string name="edit_personal_dictionary">&quot;Oma sanakirja&quot;</string>
+
+    <!-- Option to configure dictionaries -->
+    <string name="configure_dictionaries_title">&quot;Sanakirjalisäosat&quot;</string>
+    <!-- Name of the main dictionary, as opposed to auxiliary dictionaries (medical/entertainment/sports...) -->
+    <string name="main_dictionary">&quot;Pääsanakirja&quot;</string>
+
+    <!-- Option to enable showing suggestions -->
+    <string name="prefs_show_suggestions">&quot;Näytä korjausehdotukset&quot;</string>
+    <!-- Description for show suggestions -->
+    <string name="prefs_show_suggestions_summary">&quot;Näytä sanaehdotukset kirjoitettaessa.&quot;</string>
+
+    <!-- Option to block potentially offensive words to be shown [CHAR_LIMIT=30] -->
+    <string name="prefs_block_potentially_offensive_title">&quot;Estä loukkaavat sanat&quot;</string>
+    <!-- Summary for option to block potentially offensive words to be shown [CHAR_LIMIT=80 (two lines) or 40 (fits on one line, preferable)] -->
+    <string name="prefs_block_potentially_offensive_summary">&quot;Älä ehdota mahd. loukkaavia sanoja.&quot;</string>
+
+    <!-- Option to decide the auto correction threshold score -->
+    <!-- Option to enable auto correction [CHAR LIMIT=20]-->
+    <string name="auto_correction">&quot;Autom. korjaus&quot;</string>
+    <!-- Description for auto correction [CHAR LIMIT=65 (two lines) or 30 (fits on one line, preferable)] -->
+    <string name="auto_correction_summary">&quot;Välilyönti ja -merkit korjaavat väärinkirjoitetut sanat&quot;</string>
+    <!-- Option to disable auto correction. [CHAR LIMIT=20] -->
+    <string name="auto_correction_threshold_mode_off">&quot;Ei käytössä&quot;</string>
+    <!-- Option to suggest auto correction suggestions modestly. Auto-corrects only to a word which has small edit distance from typed word. [CHAR LIMIT=20] -->
+    <string name="auto_correction_threshold_mode_modest">&quot;Osittainen&quot;</string>
+    <!-- Option to suggest auto correction suggestions aggressively. Auto-corrects to a word which has even large edit distance from typed word. [CHAR LIMIT=20] -->
+    <string name="auto_correction_threshold_mode_aggressive">&quot;Aggressiivinen&quot;</string>
+    <!-- Option to suggest auto correction suggestions very aggressively. Auto-corrects to a word which has even large edit distance from typed word. [CHAR LIMIT=20] -->
+    <string name="auto_correction_threshold_mode_very_aggressive">&quot;Hyvin aggressiivinen&quot;</string>
+
+    <!-- Option to enable using next word suggestions. After the user types a space, with this option on, the keyboard will try to predict the next word. -->
+    <string name="bigram_prediction">&quot;Seuraavan sanan ehdotukset&quot;</string>
+    <!-- Description for "next word suggestion" option. This displays suggestions even when there is no input, based on the previous word. -->
+    <string name="bigram_prediction_summary">&quot;Käytä edellistä sanaa ehdotuksien perusteena&quot;</string>
+
+    <!-- Option to enable gesture input. The user can input a word by tracing the letters of a word without releasing the finger from the screen. [CHAR LIMIT=30]-->
+    <string name="gesture_input">&quot;Ota piirtokirjoitus käyttöön&quot;</string>
+    <!-- Description for "gesture_input" option. The user can input a word by tracing the letters of a word without releasing the finger from the screen. [CHAR LIMIT=65]-->
+    <string name="gesture_input_summary">&quot;Syötä sana piirtämällä kirjaimet sormellasi.&quot;</string>
+    <!-- Option to enable gesture trail preview. The user can see a trail of the gesture during gesture input. [CHAR LIMIT=30]-->
+    <string name="gesture_preview_trail">&quot;Näytä eleen jälki&quot;</string>
+    <!-- Option to enable gesture floating text preview. The user can see a suggested word floating under the moving finger during a gesture input. [CHAR LIMIT=30]-->
+    <string name="gesture_floating_preview_text">&quot;Dynaaminen kelluva esikatselu&quot;</string>
+    <!-- Description for "gesture_floating_preview_text" option. The user can see a suggested word floating under the moving finger during a gesture input. [CHAR LIMIT=65]-->
+    <string name="gesture_floating_preview_text_summary">&quot;Näytä ehdotettu sana piirron aikana&quot;</string>
+    <!-- Option to enable space aware gesture input. The user can input multiple words by gliding through the space key during a gesture input. [CHAR LIMIT=30]-->
+    <string name="gesture_space_aware">&quot;Ilmausele&quot;</string>
+    <!-- Description for "gesture_space_aware" option. The user can input multiple words by gliding through the space key during a gesture input.[CHAR LIMIT=65]-->
+    <string name="gesture_space_aware_summary">&quot;Lisää välilyöntejä eleiden aikana liukumalla välilyöntinäppäimelle&quot;</string>
+
+    <!-- Preferences item for enabling speech input -->
+    <string name="voice_input">&quot;Äänisyötenäppäin&quot;</string>
+    <!-- The summary text to describe the reason why the "Voice input key" option is disabled. [CHAR LIMIT=100] -->
+    <string name="voice_input_disabled_summary">&quot;Äänen syöttötapoja ei ole otettu käyttöön. Tarkista Kielet ja syöttötapa ‑asetukset.&quot;</string>
+
+    <!-- Title for configuring input method settings [CHAR LIMIT=35] -->
+    <string name="configure_input_method">&quot;Määritä syöttötavat&quot;</string>
+
+    <!-- Title for input language selection screen -->
+    <string name="language_selection_title">&quot;Kielet&quot;</string>
+
+    <!-- Title for the 'Help &amp; feedback' settings fragment which shows a help page and has a button
+         for submitting feedback. [CHAR LIMIT=35] -->
+    <string name="help_and_feedback">&quot;Ohje ja palaute&quot;</string>
+
+    <!-- Preference for input language selection -->
+    <string name="select_language">&quot;Kielet&quot;</string>
+
+    <!-- Add to dictionary hint -->
+    <string name="hint_add_to_dictionary">&quot;Tallenna koskettamalla uudelleen.&quot;</string>
+    <!-- Add to dictionary hint -->
+    <string name="hint_add_to_dictionary_without_word">&quot;Tallenna koskettamalla tätä.&quot;</string>
+
+    <!-- Inform the user that a particular language has an available dictionary -->
+    <string name="has_dictionary">&quot;Sanakirja saatavilla&quot;</string>
+
+    <!-- Title of the item to change the keyboard theme [CHAR LIMIT=20]-->
+    <string name="keyboard_layout">&quot;Näppäimistöteema&quot;</string>
+
+    <!-- Title of the preference item for switching accounts [CHAR LIMIT=30] -->
+    <string name="switch_accounts">&quot;Vaihda tiliä&quot;</string>
+    <!-- Summary of the preference item for switching accounts when no accounts
+         are selected [CHAR LIMIT=65] -->
+    <string name="no_accounts_selected">&quot;Tilejä ei ole valittu&quot;</string>
+    <!-- Summary of the preference item for switching accounts when an account
+         is selected [CHAR LIMIT=65] -->
+    <string name="account_selected">&quot;Tällä hetkellä käytetään tiliä %1$s&quot;</string>
+    <!-- Positive text for selecting an account -->
+    <string name="account_select_ok">&quot;OK&quot;</string>
+    <!-- Negative text for selecting an account -->
+    <string name="account_select_cancel">&quot;Peruuta&quot;</string>
+    <!-- Text for signing out of an account -->
+    <string name="account_select_sign_out">&quot;Kirjaudu ulos&quot;</string>
+    <!-- Title of the account picker dialog for selecting an account [CHAR LIMIT=40] -->
+    <string name="account_select_title">&quot;Valitse käytettävä tili&quot;</string>
+
+    <!-- Description for English (UK) keyboard subtype [CHAR LIMIT=25]
+         (UK) should be an abbreviation of United Kingdom to fit in the CHAR LIMIT. -->
+    <string name="subtype_en_GB">&quot;englanti (Iso-Britannia)&quot;</string>
+    <!-- Description for English (US) keyboard subtype [CHAR LIMIT=25]
+         (US) should be an abbreviation of United States to fit in the CHAR LIMIT. -->
+    <string name="subtype_en_US">&quot;englanti (Yhdysvallat)&quot;</string>
+    <!-- Description for Spanish (US) keyboard subtype [CHAR LIMIT=25]
+         (US) should be an abbreviation of United States to fit in the CHAR LIMIT. -->
+    <string name="subtype_es_US">&quot;espanja (Yhdysvallat)&quot;</string>
+    <!-- Description for Hinglish (https://en.wikipedia.org/wiki/Hinglish) keyboard subtype [CHAR LIMIT=25] -->
+    <string name="subtype_hi_ZZ">&quot;Hindienglanti&quot;</string>
+    <!-- Description for Serbian (Latin) keyboard subtype [CHAR LIMIT=25]
+         (Latin) can be an abbreviation to fit in the CHAR LIMIT. -->
+    <string name="subtype_sr_ZZ">&quot;serbialainen (latinal.)&quot;</string>
+    <!-- Description for English (UK) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
+         (UK) should be an abbreviation of United Kingdom to fit in the CHAR LIMIT.
+         This should be identical to subtype_en_GB aside from the trailing (%s). -->
+    <string name="subtype_with_layout_en_GB">&quot;englanti (UK) (%1$s)&quot;</string>
+    <!-- Description for English (US) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
+         (US) should be an abbreviation of United States to fit in the CHAR LIMIT.
+         This should be identical to subtype_en_US aside from the trailing (%s). -->
+    <string name="subtype_with_layout_en_US">&quot;englanti (US) (%1$s)&quot;</string>
+    <!-- Description for Spanish (US) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
+         (US) should be an abbreviation of United Statesn to fit in the CHAR LIMIT.
+         This should be identical to subtype_es_US aside from the trailing (%s). -->
+    <string name="subtype_with_layout_es_US">&quot;espanja (US) (%1$s)&quot;</string>
+    <!-- Description for Hinglish (https://en.wikipedia.org/wiki/Hinglish) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
+         This should be identical to subtype_hi_ZZ aside from the trailing (%s). -->
+    <string name="subtype_with_layout_hi_ZZ">&quot;Hindienglanti (%1$s)&quot;</string>
+    <!-- Description for Serbian (Latin) keyboard subtype with explicit keyboard layout [CHAR LIMIT=25]
+         This should be identical to subtype_sr_ZZ aside from the trailing (%s). -->
+    <string name="subtype_with_layout_sr_ZZ">&quot;serbialainen (%1$s)&quot;</string>
+    <!-- Description for "LANGUAGE_NAME" (Traditional) keyboard subtype [CHAR LIMIT=25]
+         (Traditional) can be an abbreviation to fit in the CHAR LIMIT. -->
+    <string name="subtype_generic_traditional">&quot;%1$s (perinteinen)&quot;</string>
+    <!-- Description for "LANGUAGE_NAME" (Compact) keyboard subtype [CHAR LIMIT=25]
+         (Compact) can be an abbreviation to fit in the CHAR LIMIT. -->
+    <string name="subtype_generic_compact">&quot;%1$s (tiivis)&quot;</string>
+    <!-- This string is displayed in a language list that allows to choose a language for
+suggestions in a software keyboard. This setting won't give suggestions in any particular
+language, hence "No language".
+As for the "alphabet" mention, it refers specifically to the Latin alphabet, as opposed to
+Cyrillic, Arabic, Hebrew or other scripts. This keyboard offers no suggestions, but it will
+be a QWERTY, or AZERTY, or any other disposition that only offers Latin characters, so
+you wouldn't be able to type, say, Arabic on it. Please translate it in a way that "alphabet"
+would be understood to mean specifically the Latin alphabet, rather than any other
+alphabet. [CHAR LIMIT=29] -->
+    <string name="subtype_no_language">&quot;Ei kieltä (aakkoset)&quot;</string>
+    <!-- This string is displayed in the description for a keyboard type. It refers specifically to
+the Latin alphabet, as opposed to Cyrillic, Arabic, Hebrew or other scripts.
+When the device is configured to use a language using a script other than the Latin alphabet, the
+user still needs a keyboard that can input Latin characters for passwords or login names for
+example, and a way to switch to this Latin alphabet keyboard. This string is the description for
+this keyboard, so users of other scripts should understand when they read this that it represents a
+keyboard that is meant for them to be able to enter Latin characters as opposed to the script they
+are used to. This keyboard does not provide a dictionary, and it is not tied to any specific
+language among those that use the Latin alphabet. This keyboard is laid out in the QWERTY
+disposition rather than other common dispositions for Latin languages. [CHAR LIMIT=25] -->
+    <string name="subtype_no_language_qwerty">&quot;aakkoset (QWERTY)&quot;</string>
+    <!-- This string is displayed in the description for a keyboard type. It refers specifically to
+the Latin alphabet, as opposed to Cyrillic, Arabic, Hebrew or other scripts.
+When the device is configured to use a language using a script other than the Latin alphabet, the
+user still needs a keyboard that can input Latin characters for passwords or login names for
+example, and a way to switch to this Latin alphabet keyboard. This string is the description for
+this keyboard, so users of other scripts should understand when they read this that it represents a
+keyboard that is meant for them to be able to enter Latin characters as opposed to the script they
+are used to. This keyboard does not provide a dictionary, and it is not tied to any specific
+language among those that use the Latin alphabet. This keyboard is laid out in the QWERTZ
+disposition rather than other common dispositions for Latin languages. [CHAR LIMIT=25] -->
+    <string name="subtype_no_language_qwertz">&quot;Aakkoset (QWERTZ)&quot;</string>
+    <!-- This string is displayed in the description for a keyboard type. It refers specifically to
+the Latin alphabet, as opposed to Cyrillic, Arabic, Hebrew or other scripts.
+When the device is configured to use a language using a script other than the Latin alphabet, the
+user still needs a keyboard that can input Latin characters for passwords or login names for
+example, and a way to switch to this Latin alphabet keyboard. This string is the description for
+this keyboard, so users of other scripts should understand when they read this that it represents a
+keyboard that is meant for them to be able to enter Latin characters as opposed to the script they
+are used to. This keyboard does not provide a dictionary, and it is not tied to any specific
+language among those that use the Latin alphabet. This keyboard is laid out in the AZERTY
+disposition rather than other common dispositions for Latin languages. [CHAR LIMIT=25] -->
+    <string name="subtype_no_language_azerty">&quot;Aakkoset (AZERTY)&quot;</string>
+    <!-- This string is displayed in the description for a keyboard type. It refers specifically to
+the Latin alphabet, as opposed to Cyrillic, Arabic, Hebrew or other scripts.
+When the device is configured to use a language using a script other than the Latin alphabet, the
+user still needs a keyboard that can input Latin characters for passwords or login names for
+example, and a way to switch to this Latin alphabet keyboard. This string is the description for
+this keyboard, so users of other scripts should understand when they read this that it represents a
+keyboard that is meant for them to be able to enter Latin characters as opposed to the script they
+are used to. This keyboard does not provide a dictionary, and it is not tied to any specific
+language among those that use the Latin alphabet. This keyboard is laid out in the Dvorak
+disposition rather than other common dispositions for Latin languages. [CHAR LIMIT=25] -->
+    <string name="subtype_no_language_dvorak">&quot;Aakkoset (Dvorak)&quot;</string>
+    <!-- This string is displayed in the description for a keyboard type. It refers specifically to
+the Latin alphabet, as opposed to Cyrillic, Arabic, Hebrew or other scripts.
+When the device is configured to use a language using a script other than the Latin alphabet, the
+user still needs a keyboard that can input Latin characters for passwords or login names for
+example, and a way to switch to this Latin alphabet keyboard. This string is the description for
+this keyboard, so users of other scripts should understand when they read this that it represents a
+keyboard that is meant for them to be able to enter Latin characters as opposed to the script they
+are used to. This keyboard does not provide a dictionary, and it is not tied to any specific
+language among those that use the Latin alphabet. This keyboard is laid out in the Colemak
+disposition rather than other common dispositions for Latin languages. [CHAR LIMIT=25] -->
+    <string name="subtype_no_language_colemak">&quot;Aakkoset (Colemak)&quot;</string>
+    <!-- This string is displayed in the description for a keyboard type. It refers specifically to
+the Latin alphabet, as opposed to Cyrillic, Arabic, Hebrew or other scripts.
+When the device is configured to use a language using a script other than the Latin alphabet, the
+user still needs a keyboard that can input Latin characters for passwords or login names for
+example, and a way to switch to this Latin alphabet keyboard. This string is the description for
+this keyboard, so users of other scripts should understand when they read this that it represents a
+keyboard that is meant for them to be able to enter Latin characters as opposed to the script they
+are used to. This keyboard does not provide a dictionary, and it is not tied to any specific
+language among those that use the Latin alphabet. This keyboard is laid out in the QWERTY PC
+disposition that offers additional keys, but smaller keys compared to other common dispositions for
+mobile devices. [CHAR LIMIT=25] -->
+    <string name="subtype_no_language_pcqwerty">&quot;Aakkoset (PC)&quot;</string>
+    <!-- Description for Emoji keyboard subtype [CHAR LIMIT=25] -->
+    <string name="subtype_emoji">&quot;Emoji&quot;</string>
+
+    <!-- Title of the preference settings for switching keyboard theme [CHAR LIMIT=35] -->
+    <string name="keyboard_theme">&quot;Näppäimistöteema&quot;</string>
+
+    <!-- Title of the preference settings for custom input styles (language and keyboard layout pairs) [CHAR LIMIT=35]-->
+    <string name="custom_input_styles_title">&quot;Muokatut syöttötyylit&quot;</string>
+    <!-- Title of the option menu to add a new style entry in the preference settings [CHAR LIMIT=16] -->
+    <string name="add_style">&quot;Lisää tyyli&quot;</string>
+    <!-- Title of the button to add custom style entry in the settings dialog [CHAR LIMIT=15] -->
+    <string name="add">&quot;Lisää&quot;</string>
+    <!-- Title of the button to remove a custom style entry in the settings dialog [CHAR LIMIT=15] -->
+    <string name="remove">&quot;Poista&quot;</string>
+    <!-- Title of the button to save a custom style entry in the settings dialog [CHAR LIMIT=15] -->
+    <string name="save">&quot;Tallenna&quot;</string>
+    <!-- Title of the spinner for choosing a language of custom style in the settings dialog [CHAR LIMIT=15] -->
+    <string name="subtype_locale">&quot;Kieli&quot;</string>
+    <!-- Title of the spinner for choosing a keyboard layout of custom style in the settings dialog [CHAR LIMIT=15] -->
+    <string name="keyboard_layout_set">&quot;Asettelu&quot;</string>
+    <!-- The message of the dialog to note that a custom input style needs to be enabled. [CHAR LIMIT=130] -->
+    <string name="custom_input_style_note_message">&quot;Muokattua syöttötyyliä ei ole otettu käyttöön. Haluatko ottaa sen käyttöön nyt?&quot;</string>
+    <!-- Title of the button to enable a custom input style entry in the settings dialog [CHAR LIMIT=15] -->
+    <string name="enable">&quot;Ota käyttöön&quot;</string>
+    <!-- Title of the button to postpone enabling a custom input style entry in the settings dialog [CHAR LIMIT=15] -->
+    <string name="not_now">&quot;Ei nyt&quot;</string>
+    <!-- Toast text to describe the same input style already exists [CHAR LIMIT=64]-->
+    <string name="custom_input_style_already_exists">&quot;Syöttötyyli on jo olemassa: %1$s&quot;</string>
+
+    <!-- Title of the settings for keypress vibration duration [CHAR LIMIT=35] -->
+    <string name="prefs_keypress_vibration_duration_settings">&quot;Painalluksen värinän kesto&quot;</string>
+    <!-- Title of the settings for keypress sound volume [CHAR LIMIT=35] -->
+    <string name="prefs_keypress_sound_volume_settings">&quot;Näppäinpainalluksen äänenvoimakkuus&quot;</string>
+    <!-- Title of the settings for key long press delay [CHAR LIMIT=35] -->
+    <string name="prefs_key_longpress_timeout_settings">&quot;Pitkän painalluksen viive&quot;</string>
+    <!-- Title of the settings for enabling Emoji palette triggered by the Alt key on physical keyboards [CHAR LIMIT=35] -->
+    <string name="prefs_enable_emoji_alt_physical_key">&quot;Hymiö fyysisellä näppäimistöllä&quot;</string>
+    <!-- Description of the settings for enabling Emoji palette triggered by the Alt key on physical keyboards [CHAR LIMIT=64] -->
+    <string name="prefs_enable_emoji_alt_physical_key_summary">&quot;Fyysinen Alt-näppäin näyttää hymiövalikoiman.&quot;</string>
+
+    <!-- Title of the button to revert to the default value of the device in the settings dialog [CHAR LIMIT=15] -->
+    <string name="button_default">&quot;Oletusarvot&quot;</string>
+
+    <!-- Title of the setup wizard welcome screen. [CHAR LIMT=40] -->
+    <string name="setup_welcome_title">&quot;Tervetuloa käyttämään sovellusta %1$s&quot;</string>
+    <!-- Additional title of the setup wizard welcome screen, just below the setup_welcome_title. [CHAR_LIMIT=64] -->
+    <string name="setup_welcome_additional_description">&quot;ja piirtokirjoitus&quot;</string>
+    <!-- The label of the button that starts the setup wizard. [CHAR_LIMIT=64] -->
+    <string name="setup_start_action">&quot;Aloita&quot;</string>
+    <!-- The label of the button that navigates the user to the next step of the setup wizard. [CHAR_LIMIT=64] -->
+    <string name="setup_next_action">&quot;Seuraava vaihe&quot;</string>
+    <!-- Title of the setup wizard. [CHAR LIMT=40] -->
+    <string name="setup_steps_title">&quot;Sovelluksen %1$s asetukset&quot;</string>
+    <!-- Title of the 1st step in the setup wizard. [CHAR LIMIT=64] -->
+    <string name="setup_step1_title">&quot;Ota %1$s käyttöön&quot;</string>
+    <!-- Detailed instruction of the 1st step in the setup wizard. [CHAR LIMIT=120] -->
+    <string name="setup_step1_instruction">&quot;Valitse %1$s Kielet ja syöttötapa ‑asetuksissa. Se antaa sovellukselle luvan toimia laitteellasi.&quot;</string>
+    <!-- Detailed instruction of the already finished 1st step in the setup wizard. [CHAR LIMIT=120] -->
+    <string name="setup_step1_finished_instruction">&quot;%1$s on jo otettu käyttöön Kielet ja syöttötapa ‑asetuksissa, joten tämä vaihe on valmis. Siirrytään eteenpäin!&quot;</string>
+    <!-- The label of the button that triggers the Languages &amp; input settings in order to enable the keyboard. [CHAR_LIMIT=64] -->
+    <string name="setup_step1_action">&quot;Ota käyttöön asetuksissa&quot;</string>
+    <!-- Title of the 2nd step in the setup wizard. [CHAR LIMIT=64] -->
+    <string name="setup_step2_title">&quot;Siirry sovellukseen %1$s&quot;</string>
+    <!-- Detailed instruction of the 2nd step in the setup wizard. [CHAR LIMIT=120] -->
+    <string name="setup_step2_instruction">&quot;Valitse %1$s käytössä olevaksi tekstinsyöttötavaksi.&quot;</string>
+    <!-- The label of the button that triggers the choose input method dialog in order to select the keyboard. [CHAR_LIMIT=64] -->
+    <string name="setup_step2_action">&quot;Vaihda syöttötapaa&quot;</string>
+    <!-- Title of the 3rd step in the setup wizard. [CHAR LIMIT=64] -->
+    <string name="setup_step3_title">&quot;Onneksi olkoon, valmista tuli!&quot;</string>
+    <!-- Detailed instruction of the 3rd step in the setup wizard. [CHAR LIMIT=120] -->
+    <string name="setup_step3_instruction">&quot;Nyt voit kirjoittaa kaikissa lempisovelluksissasi sovelluksen %1$s avulla.&quot;</string>
+    <!-- The label of the button that triggers the screen for configuaring additional languages of the keyboard. [CHAR_LIMIT=64] -->
+    <string name="setup_step3_action">&quot;Määritä lisää kieliä&quot;</string>
+    <!-- The label of the button that finishes the setup wizard. [CHAR_LIMIT=64] -->
+    <string name="setup_finish_action">&quot;Valmis&quot;</string>
+    <!-- Option to show setup wizard icon. [CHAR LIMIT=30]-->
+    <string name="show_setup_wizard_icon">&quot;Näytä sovelluskuvake&quot;</string>
+    <!-- Description for the option to show setup wizard application icon of this IME in the laucher. [CHAR_LIMIT=65] -->
+    <string name="show_setup_wizard_icon_summary">&quot;Näytä sovelluskuvake käynnistysohjelmassa.&quot;</string>
+
+    <!-- The dictionary provider application name. Visible in Settings/Applications/Manage applications. -->
+    <string name="app_name">&quot;Sanakirjan tarjoaja&quot;</string>
+    <!-- The dictionary provider ContentProvider name. Visible in Settings/Applications/Running services. -->
+    <string name="dictionary_provider_name">&quot;Sanakirjan tarjoaja&quot;</string>
+    <!-- The dictionary provider Service name. Visible in Settings/Applications/Running services. -->
+    <string name="dictionary_service_name">&quot;Sanakirjapalvelu&quot;</string>
+
+    <!-- Downloadable dictionaries will get update information through the network. This describes the associated download. -->
+    <string name="download_description">&quot;Sanakirjan päivitystiedot&quot;</string>
+
+    <!-- Title and summary of the dictionary settings screen -->
+    <string name="dictionary_settings_title">&quot;Sanakirjalisäosat&quot;</string>
+    <!-- Title for the prompt dialog which informs the user that a dictionary is available for the current language and asks to decide whether to download it over 3g -->
+    <string name="dictionary_install_over_metered_network_prompt">&quot;Sanakirja saatavilla&quot;</string>
+    <string name="dictionary_settings_summary">&quot;Sanakirjojen asetukset&quot;</string>
+    <!-- Name of the user dictionaries settings category -->
+    <string name="user_dictionaries">&quot;Käyttäjän sanakirjat&quot;</string>
+    <!-- Name for the "user dictionary" preference item when there is only one -->
+    <string name="default_user_dict_pref_name">&quot;Käyttäjän sanakirja&quot;</string>
+    <!-- Message about some dictionary indicating it can be downloaded, but hasn't been yet -->
+    <string name="dictionary_available">&quot;Sanakirja saatavilla&quot;</string>
+    <!-- Message about some dictionary indicating it is downloading and should be available soon -->
+    <string name="dictionary_downloading">&quot;Ladataan&quot;</string>
+    <!-- Message about some dictionary indicating it is already installed -->
+    <string name="dictionary_installed">&quot;Asennettu&quot;</string>
+    <!-- Message about some dictionary indicating the file is installed, but the dictionary is disabled -->
+    <string name="dictionary_disabled">&quot;Asennettu, poistettu käytöstä&quot;</string>
+
+    <!-- Message to display in the dictionaries setting screen when some error prevented us to list installed dictionaries [CHAR LIMIT=20] -->
+    <string name="cannot_connect_to_dict_service">&quot;Ei yhteyttä sanak.&quot;</string>
+    <!-- Message to display in the dictionaries setting screen when we found that no dictionaries are available [CHAR LIMIT=20]-->
+    <string name="no_dictionaries_available">&quot;Ei sanak. saatavilla&quot;</string>
+
+    <!-- Title of the options to press to refresh the list (as in, check for updates now) [CHAR_LIMIT=50] -->
+    <string name="check_for_updates_now">&quot;Päivitä&quot;</string>
+    <!-- Hint to tell when the data was last updated. Usage : "Last updated [date]", may contain a : or so. [CHAR LIMIT=45] -->
+    <string name="last_update">&quot;Päivitetty viimeksi&quot;</string>
+
+    <!-- Message to display in a dialog box while we are actively updating the word list [CHAR LIMIT=60] -->
+    <string name="message_updating">&quot;Tarkistetaan päivityksiä&quot;</string>
+    <!-- Message to display while the add-on dictionary list is updating [no space constraints on this, there is plenty of space but shorter is better because it's only on the screen for a second] -->
+    <string name="message_loading">&quot;Ladataan…&quot;</string>
+
+    <!-- String to explain this dictionary is the main dictionary for this language [CHAR_LIMIT=30] -->
+    <string name="main_dict_description">&quot;Pääsanakirja&quot;</string>
+
+    <!-- Standard message to dismiss a dialog box -->
+    <string name="cancel">&quot;Peruuta&quot;</string>
+    <!-- Title of the button in a dialog box. The button takes the user to the keyboard settings. [CHAR LIMIT=15] -->
+    <string name="go_to_settings">&quot;Asetukset&quot;</string>
+
+    <!-- Action to download and install a dictionary [CHAR_LIMIT=15] -->
+    <string name="install_dict">&quot;Asenna&quot;</string>
+    <!-- Action to cancel the ongoing download of a dictionary file [CHAR_LIMIT=25] -->
+    <string name="cancel_download_dict">&quot;Peruuta&quot;</string>
+    <!-- Action to delete a dictionary file [CHAR_LIMIT=15] -->
+    <string name="delete_dict">&quot;Poista&quot;</string>
+
+    <!-- Message in the popup informing the user a dictionary is available for their language, and asking for a decision to download over their mobile data plan or not. The reason we ask for this is, the data is large and may be downloaded over a paid-per-megabyte connection but a dictionary is also essential to type comfortably, so we ask the user. This only pops in selected cases, when there is no dictionary at all currently, and the only available network seems to be metered. The "Languages &amp; input" part should be set to the actual name of the option (message ID 5292716747264442359 in the translation console). [CHAR_LIMIT=700] -->
+    <string name="should_download_over_metered_prompt">&quot;Mobiililaitteellasi valittuna olevalle kielelle (%1$s) on saatavilla sanakirja.&lt;br/&gt; Suosittelemme sanakirjan &lt;b&gt;lataamista&lt;/b&gt;, sillä se parantaa kirjoituskokemustasi.&lt;br/&gt; &lt;br/&gt; Lataus 3G-yhteydellä voi kestää pari minuuttia. Operaattorisi saattaa veloittaa sinua tiedonsiirrosta, jos &lt;b&gt;liittymäsi datamäärä ei ole rajoittamaton&lt;/b&gt;.&lt;br/&gt; Jos et ole varma, millainen liittymä sinulla on, muodosta yhteys Wi-Fi-verkkoon. Lataus käynnistyy tällöin automaattisesti.&lt;br/&gt; &lt;br/&gt; Vinkki: Voit ladata ja poistaa sanakirjoja avaamalla &lt;b&gt;Kielet ja syöttötapa ‑asetukset&lt;/b&gt; mobiililaitteesi &lt;b&gt;Asetukset&lt;/b&gt;-valikossa.&quot;</string>
+    <string name="download_over_metered">&quot;Lataa nyt (%1$s Mt)&quot;</string>
+    <string name="do_not_download_over_metered">&quot;Lataa Wi-Fi-yhteydellä&quot;</string>
+    <!-- The text of the "dictionary available" notification. -->
+    <string name="dict_available_notification_title">&quot;Sanakirja on saatavilla kielelle %1$s&quot;</string>
+    <!-- The small subtext in the "dictionary available" notification. -->
+    <string name="dict_available_notification_description">&quot;Paina tätä, jos haluat tarkastella kohdetta ja ladata sen&quot;</string>
+
+    <!-- The text of the toast warning a download is starting automatically to enable suggestions for the selected language [CHAR LIMIT=100] -->
+    <string name="toast_downloading_suggestions">&quot;Ladataan: kielen %1$s ehdotukset ovat pian käytettävissä.&quot;</string>
+
+    <!-- Version text [CHAR LIMIT=30]-->
+    <string name="version_text">&quot;Versio %1$s&quot;</string>
+
+    <!-- User dictionary settings. The title of the menu item to add a new word to the user dictionary. -->
+    <!-- This resource is corresponding to  msgid="4056762757149923551" -->
+    <string name="user_dict_settings_add_menu_title">&quot;Lisää&quot;</string>
+    <!-- User dictionary settings. The title of the dialog to add a new word to the user dictionary. [CHAR LIMIT=25] -->
+    <!-- This resource is corresponding to msgid="4702613990174126482" -->
+    <string name="user_dict_settings_add_dialog_title">&quot;Lisää sanakirjaan&quot;</string>
+    <!-- User dictionary settings. The title of the screen to add/edit a new word to the user dictionary; it describes the phrase that will be added to the user dictionary. [CHAR LIMIT=25] -->
+    <!-- This resource is corresponding to msgid="742580720124344291" -->
+    <string name="user_dict_settings_add_screen_title">&quot;Ilmaus&quot;</string>
+    <!-- User dictionary settings. Text on the dialog button to pop more options for adding a word. [CHAR LIMIT=16] -->
+    <!-- This resource is corresponding to msgid="8848798370746019825" -->
+    <string name="user_dict_settings_add_dialog_more_options">&quot;Lisäasetukset&quot;</string>
+    <!-- User dictionary settings. Text on the dialog button mask advanced options. [CHAR LIMIT=15] -->
+    <!-- This resource is corresponding to msgid="2441785268726036101" -->
+    <string name="user_dict_settings_add_dialog_less_options">&quot;Väh. vaihtoeht.&quot;</string>
+    <!-- User dictionary settings. Text on the dialog button to confirm adding a word. [CHAR LIMIT=15] -->
+    <!-- This resource is corresponding to msgid="6225823625332416144" -->
+    <string name="user_dict_settings_add_dialog_confirm">&quot;OK&quot;</string>
+    <!-- User dictionary settings. Label to put before the word field (that's the word that will actually be added to the user dictionary when OK is pressed). [CHAR LIMIT=20] -->
+    <!-- This resource is corresponding to msgid="7868879174905963135" -->
+    <string name="user_dict_settings_add_word_option_name">&quot;Sana:&quot;</string>
+    <!-- User dictionary settings. Label to put before the shortcut field (once a shortcut is registered, the user can type the shortcut and get the word it points to in the suggestions). [CHAR LIMIT=20] -->
+    <!-- This resource is corresponding to msgid="660089258866063925" -->
+    <string name="user_dict_settings_add_shortcut_option_name">&quot;Pikanäppäin:&quot;</string>
+    <!-- User dictionary settings. Label to put before the language field. [CHAR LIMIT=20] -->
+    <!-- This resource is corresponding to msgid="5696358317061318532" -->
+    <string name="user_dict_settings_add_locale_option_name">&quot;Kieli:&quot;</string>
+    <!-- User dictionary settings. Hint for the text field to type the word to add to the user dictionary. [CHAR LIMIT=35] -->
+    <!-- This resource is corresponding to msgid="5725254076556821247" -->
+    <string name="user_dict_settings_add_word_hint">&quot;Kirjoita sana&quot;</string>
+    <!-- User dictionary settings. Hint for the text field to type the optional shortcut to add to the user dictionary. [CHAR LIMIT=35] -->
+    <!-- This resource is corresponding to msgid="7333763456561873445" -->
+    <string name="user_dict_settings_add_shortcut_hint">&quot;Valinnainen pikanäppäin&quot;</string>
+    <!-- User dictionary settings. The title of the dialog to edit an existing word in the user dictionary. -->
+    <!-- This resource is corresponding to msgid="8967476444840548674" -->
+    <string name="user_dict_settings_edit_dialog_title">&quot;Muokkaa sanaa&quot;</string>
+    <!-- User dictionary settings. The title of the context menu item to edit the current word -->
+    <!-- This resource is corresponding to msgid="2210564879320004837" -->
+    <string name="user_dict_settings_context_menu_edit_title">&quot;Muokkaa&quot;</string>
+    <!-- User dictionary settings. The title of the context menu item to delete the current word -->
+    <!-- This resource is corresponding to msgid="9140703913776549054" -->
+    <string name="user_dict_settings_context_menu_delete_title">&quot;Poista&quot;</string>
+    <!-- User dictionary settings. The text to show when there are no user-defined words in the dictionary  [CHAR LIMIT=200] -->
+    <!-- This resource is corresponding to msgid="8165273379942105271" -->
+    <string name="user_dict_settings_empty_text">&quot;Käyttäjän sanakirjassa ei ole sanoja. Lisää sana koskettamalla Lisää (+) ‑painiketta.&quot;</string>
+    <!-- User dictionary settings. The list item to choose to insert a word into the user dictionary for all languages -->
+    <!-- This resource is corresponding to msgid="6742000040975959247" -->
+    <string name="user_dict_settings_all_languages">&quot;Kaikille kielille&quot;</string>
+    <!-- User dictionary settings. The text to show for the option that shows the entire list of supported locales to choose one [CHAR LIMIT=30] -->
+    <!-- This resource is corresponding to msgid="7316375944684977910" -->
+    <string name="user_dict_settings_more_languages">&quot;Lisää kieliä…&quot;</string>
+    <!-- User dictionary settings. Label to delete an entry in the user dictionary [CHAR LIMIT=30]
+         This resource is copied from packages/apps/Settings/res/values/strings.xml -->
+    <!-- This resource is corresponding to msgid="4219243412325163003" -->
+    <string name="user_dict_settings_delete">&quot;Poista&quot;</string>
+    <!-- User dictionary settings. Index of the user dictionary [CHAR LIMIT=30]
+         This resource is copied from packages/apps/Settings/res/values/strings.xml -->
+    <!-- This resource is corresponding to msgid="5433275485499039199" -->
+    <string name="user_dict_fast_scroll_alphabet">&quot; ABCDEFGHIJKLMNOPQRSTUVWXYZÅÄÖ&quot;</string>
+
+    </resources>
