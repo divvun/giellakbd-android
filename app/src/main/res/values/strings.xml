@@ -75,7 +75,7 @@
     <string name="cloud_sync_opt_in_text">Your personal dictionary will be synced and backed up to
         Google servers. The statistical information of word frequency may be collected to help
         improve our products. The collection and usage of all the information will be compliant with
-        <a href="https://www.google.com/policies/privacy">Google\'s Privacy Policy</a>.
+        Google\'s Privacy Policy.
     </string>
     <!-- Text to tell the user to add a Google account to the device to enable the cloud sync feature. [CHAR LIMIT=65]-->
     <string name="add_account_to_enable_sync">
