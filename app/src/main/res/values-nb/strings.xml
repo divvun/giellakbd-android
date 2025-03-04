@@ -322,6 +322,15 @@ mobile devices. [CHAR LIMIT=25] -->
     <!-- Title of the preference settings for switching keyboard theme [CHAR LIMIT=35] -->
     <string name="keyboard_theme">&quot;Tastaturtema&quot;</string>
 
+    <!-- The keyboard theme name, Holo White. This is marked as translatable="false" because this is a proper name of system-wide UI Theme. -->
+    <string name="keyboard_theme_holo_white" translatable="false">Holo White</string>
+    <!-- The keyboard theme name, Holo Blue. This is marked as translatable="false" because this is a proper name of system-wide UI Theme.  -->
+    <string name="keyboard_theme_holo_blue" translatable="false">Holo Blue</string>
+    <!-- The keyboard theme name, Material Dark. This is marked as translatable="false" because this is a proper name of system-wide UI Theme.  -->
+    <string name="keyboard_theme_material_dark" translatable="false">Material Dark</string>
+    <!-- The keyboard theme name, Material Light. This is marked as translatable="false" because this is a proper name of system-wide UI Theme.  -->
+    <string name="keyboard_theme_material_light" translatable="false">Material Light</string>
+
     <!-- Title of the preference settings for custom input styles (language and keyboard layout pairs) [CHAR LIMIT=35]-->
     <string name="custom_input_styles_title">&quot;Egendefinerte inndata&quot;</string>
     <!-- Title of the option menu to add a new style entry in the preference settings [CHAR LIMIT=16] -->
@@ -369,6 +378,8 @@ mobile devices. [CHAR LIMIT=25] -->
     <string name="setup_next_action">&quot;Neste trinn&quot;</string>
     <!-- Title of the setup wizard. [CHAR LIMT=40] -->
     <string name="setup_steps_title">&quot;Konfigurerer %1$s&quot;</string>
+    <!-- Ordinal number of the 1st step in the setup wizard. [CHAR LIMIT=5] -->
+    <string name="setup_step1_bullet" translatable="false">1</string>
     <!-- Title of the 1st step in the setup wizard. [CHAR LIMIT=64] -->
     <string name="setup_step1_title">&quot;Slå på %1$s&quot;</string>
     <!-- Detailed instruction of the 1st step in the setup wizard. [CHAR LIMIT=120] -->
@@ -377,12 +388,16 @@ mobile devices. [CHAR LIMIT=25] -->
     <string name="setup_step1_finished_instruction">&quot;%1$s er allerede slått på i Språk og inndata-innstillingene dine, så dette trinnet er fullført. Gå til neste trinn!&quot;</string>
     <!-- The label of the button that triggers the Languages &amp; input settings in order to enable the keyboard. [CHAR_LIMIT=64] -->
     <string name="setup_step1_action">&quot;Aktiver i Innstillinger&quot;</string>
+    <!-- Ordinal number of the 2nd step in the setup wizard. [CHAR LIMIT=5] -->
+    <string name="setup_step2_bullet" translatable="false">2</string>
     <!-- Title of the 2nd step in the setup wizard. [CHAR LIMIT=64] -->
     <string name="setup_step2_title">&quot;Bytt til %1$s&quot;</string>
     <!-- Detailed instruction of the 2nd step in the setup wizard. [CHAR LIMIT=120] -->
     <string name="setup_step2_instruction">&quot;Deretter velger du  «%1$s» som den aktive inndatametoden for tekst.&quot;</string>
     <!-- The label of the button that triggers the choose input method dialog in order to select the keyboard. [CHAR_LIMIT=64] -->
     <string name="setup_step2_action">&quot;Bytt inndatametode&quot;</string>
+    <!-- Ordinal number of the 3rd step in the setup wizard. [CHAR LIMIT=5] -->
+    <string name="setup_step3_bullet" translatable="false">3</string>
     <!-- Title of the 3rd step in the setup wizard. [CHAR LIMIT=64] -->
     <string name="setup_step3_title">&quot;Gratulerer, du er klar!&quot;</string>
     <!-- Detailed instruction of the 3rd step in the setup wizard. [CHAR LIMIT=120] -->
@@ -469,6 +484,7 @@ mobile devices. [CHAR LIMIT=25] -->
     <!-- Version text [CHAR LIMIT=30]-->
     <string name="version_text">&quot;Versjon %1$s&quot;</string>
 
+    <!-- User dictionary settings -->
     <!-- User dictionary settings. The title of the menu item to add a new word to the user dictionary. -->
     <!-- This resource is corresponding to  msgid="4056762757149923551" -->
     <string name="user_dict_settings_add_menu_title">&quot;Legg til&quot;</string>
@@ -529,4 +545,39 @@ mobile devices. [CHAR LIMIT=25] -->
     <!-- This resource is corresponding to msgid="5433275485499039199" -->
     <string name="user_dict_fast_scroll_alphabet">&quot; ABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ&quot;</string>
 
-    </resources>
+    <string name="personal_dictionary_title">Personlige ordlister</string>
+    <string name="title_activity_personal_dictionary">Personlige ordlister</string>
+    <string name="fragment_title_personal_dictionary">Ordbøker</string>
+    <string name="delete_word">Slett</string>
+    <string name="dictionary_upload_success">Det gikk bra å laste opp ordboka</string>
+    <string name="personaldictionary_empty_hint">Personlig ordliste er tom…</string>
+    <string name="wordcontexts_empty_hint">Ingen kontekst registrert for ordet…</string>
+    <string name="fragment_title_word">Kontekster for \&quot;{word}\&quot;</string>
+    <string name="addword_dialog_title">Legg til ord</string>
+    <string name="addword_word_exists">Ordet finnes allerede</string>
+    <string name="addword_word_blacklisted">Ordet er svartelista</string>
+    <string name="word_error_contains_space">Ordet inneholder mellomrom</string>
+    <string name="word_error_empty">Ordet er tomt</string>
+    <string name="addword_hint">Ord</string>
+    <string name="personallangionary_empty_hint">Ingen personlige språkordlister har blitt laga ennå</string>
+    <string name="blacklist_empty_hint">Ingen svartelista ord</string>
+    <string name="blacklistword_dialog_title">Svartelista ord</string>
+    <string name="blacklistword_hint">Ord</string>
+    <string name="fragment_title_blacklist">Svartelista ord</string>
+    <string name="block_word">Sperr</string>
+    <string name="allow_word">Tillat</string>
+    <string name="snackbar_undo">Angre</string>
+    <string name="swipe_delete">Slett</string>
+    <string name="swipe_block">Sperr</string>
+    <string name="swipe_allow">Tillat</string>
+
+    <string name="snackbar_delete_word"><![CDATA[<b>%1$s</b> fjerna]]></string>
+    <string name="snackbar_delete_word_failed">Kunne ikke slette ord, %1$s</string>
+    <string name="snackbar_block_word"><![CDATA[<b>%1$s</b> sperra]]></string>
+    <string name="snackbar_block_word_failed">Kunne ikke sperre ord, %1$s</string>
+    <string name="snackbar_allow_word"><![CDATA[<b>%1$s</b> tillatt]]></string>
+    <string name="snackbar_allow_word_failed">Kunne ikke tillate ord, %1$s</string>
+    <string name="settings_screen_about">Om tastaturappen</string>
+    <string name="prefs_about_version_name">Versjonsnavn</string>
+    <string name="prefs_about_version_code">Versjonskode</string>
+</resources>
