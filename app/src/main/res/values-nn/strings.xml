@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title for Latin keyboard input options dialog [CHAR LIMIT=25] -->
+    <string name="english_ime_input_options">Inndataalternativ</string>
+
+    <!-- Title for the spell checker option to turn on/off contact names lookup [CHAR LIMIT=25] -->
+    <string name="use_contacts_for_spellchecking_option_title">Slå opp kontaktnavn</string>
+
+    <!-- Description for the spell checker option to turn on/off contact names lookup. [CHAR LIMIT=65] -->
+    <string name="use_contacts_for_spellchecking_option_summary">Stavekontrollen bruker oppføringar frå kontaktlista di</string>
+
+    <!-- Option to provide vibrate/haptic feedback on keypress -->
+    <string name="vibrate_on_keypress">Vibrer ved tastetrykk</string>
+
+    <!-- Option to play back sound on keypress in soft keyboard -->
+    <string name="sound_on_keypress">Lyd ved tastetrykk</string>
+
+    <!-- Option to control whether or not to show a popup with a larger font on each key press. -->
+    <string name="popup_on_keypress">Større bokstav ved tastetrykk</string>
+
+    <!-- Settings screen title for preferences [CHAR LIMIT=33]-->
+    <string name="settings_screen_preferences">Innstillingar</string>
+    <!-- Settings screen title for accounts and privacy preferences [CHAR LIMIT=33]-->
+    <string name="settings_screen_accounts">Kontoar og personvern</string>
+    <!-- Settings screen title for appearance &amp; layouts preferences [CHAR LIMIT=33] -->
+    <string name="settings_screen_appearance">Utsjånad og utforming</string>
+    <!-- Settings screen title for gesture typing preferences [CHAR_LIMIT=33] -->
+    <string name="settings_screen_gesture">Sveipeskriving</string>
+
+    </resources>
