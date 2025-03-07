@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
+    <!-- Option to provide vibrate/haptic feedback on keypress -->
+    <string name="vibrate_on_keypress">Doarggis boaluid coahkalettiin</string>
+
+    <!-- Option to play back sound on keypress in soft keyboard -->
+    <string name="sound_on_keypress">Jiena boaluid coahkalettiin</string>
+
+    <!-- Settings screen title for preferences [CHAR LIMIT=33]-->
+    <string name="settings_screen_preferences">Heivehusat</string>
+    <!-- Settings screen title for keyboard theme settings [CHAR LIMIT=33] -->
+    <string name="settings_screen_theme">Fáddá</string>
+
+    <!-- Option to confirm deleting of user data from cloud [CHAR LIMIT=20] -->
+    <string name="clear_sync_data_ok">Sihko</string>
+    <!-- Option to cancel the deletion of user data from cloud [CHAR LIMIT=20] -->
+    <string name="cloud_sync_cancel">Gaskkalduhte</string>
+
+    <!-- Description for delay for dismissing a popup on screen: default value of the delay [CHAR LIMIT=15] -->
+    <string name="key_preview_popup_dismiss_default_delay">Standárda</string>
+
+    <!-- Title for input language selection screen -->
+    <string name="language_selection_title">Gielat</string>
+
+    <!-- Preference for input language selection -->
+    <string name="select_language">Gielat</string>
+
+    <!-- Positive text for selecting an account -->
+    <string name="account_select_ok">OK</string>
+    <!-- Negative text for selecting an account -->
+    <string name="account_select_cancel">Gaskkalduhte</string>
+
+    <!-- Title of the button to add custom style entry in the settings dialog [CHAR LIMIT=15] -->
+    <string name="add">Lasit</string>
+    <!-- Title of the button to save a custom style entry in the settings dialog [CHAR LIMIT=15] -->
+    <string name="save">Vurke</string>
+    <!-- Title of the spinner for choosing a language of custom style in the settings dialog [CHAR LIMIT=15] -->
+    <string name="subtype_locale">Giella</string>
+    <!-- Title of the button to postpone enabling a custom input style entry in the settings dialog [CHAR LIMIT=15] -->
+    <string name="not_now">Ii dál</string>
+
+    <!-- Title of the button to revert to the default value of the device in the settings dialog [CHAR LIMIT=15] -->
+    <string name="button_default">Standárda</string>
+
+    <!-- The label of the button that finishes the setup wizard. [CHAR_LIMIT=64] -->
+    <string name="setup_finish_action">Geargan</string>
+
+    <!-- Message to display while the add-on dictionary list is updating [no space constraints on this, there is plenty of space but shorter is better because it's only on the screen for a second] -->
+    <string name="message_loading">Viežžamin …</string>
+
+    <!-- Standard message to dismiss a dialog box -->
+    <string name="cancel">Gaskkalduhte</string>
+    <!-- Title of the button in a dialog box. The button takes the user to the keyboard settings. [CHAR LIMIT=15] -->
+    <string name="go_to_settings">Heivehusat</string>
+
+    <!-- Action to download and install a dictionary [CHAR_LIMIT=15] -->
+    <string name="install_dict">Sajáiduhte</string>
+    <!-- Action to cancel the ongoing download of a dictionary file [CHAR_LIMIT=25] -->
+    <string name="cancel_download_dict">Gaskkalduhte</string>
+    <!-- Action to delete a dictionary file [CHAR_LIMIT=15] -->
+    <string name="delete_dict">Sihko</string>
+
+    <!-- User dictionary settings -->
+    <!-- User dictionary settings. The title of the menu item to add a new word to the user dictionary. -->
+    <!-- This resource is corresponding to  msgid="4056762757149923551" -->
+    <string name="user_dict_settings_add_menu_title">Lasit</string>
+    <!-- User dictionary settings. Text on the dialog button to confirm adding a word. [CHAR LIMIT=15] -->
+    <!-- This resource is corresponding to msgid="6225823625332416144" -->
+    <string name="user_dict_settings_add_dialog_confirm">OK</string>
+    <!-- User dictionary settings. The title of the context menu item to delete the current word -->
+    <!-- This resource is corresponding to msgid="9140703913776549054" -->
+    <string name="user_dict_settings_context_menu_delete_title">Sihko</string>
+    <!-- User dictionary settings. Label to delete an entry in the user dictionary [CHAR LIMIT=30]
+         This resource is copied from packages/apps/Settings/res/values/strings.xml -->
+    <!-- This resource is corresponding to msgid="4219243412325163003" -->
+    <string name="user_dict_settings_delete">Sihko</string>
+    <string name="fragment_title_personal_dictionary">Sátnegirjjit</string>
+    <string name="delete_word">Sihko</string>
+    <string name="addword_dialog_title">Lasit sáni</string>
+
+    </resources>
