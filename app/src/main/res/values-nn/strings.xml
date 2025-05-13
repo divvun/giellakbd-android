@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- Title for Latin keyboard input options dialog [CHAR LIMIT=25] -->
+    <string name="english_ime_input_options">Inndataalternativ</string>
+
+    <!-- Title for the spell checker option to turn on/off contact names lookup [CHAR LIMIT=25] -->
+    <string name="use_contacts_for_spellchecking_option_title">Slå opp kontaktnamn</string>
+
+    <!-- Description for the spell checker option to turn on/off contact names lookup. [CHAR LIMIT=65] -->
+    <string name="use_contacts_for_spellchecking_option_summary">Stavekontrollen bruker oppføringar frå kontaktlista di</string>
+
+    <!-- Option to provide vibrate/haptic feedback on keypress -->
+    <string name="vibrate_on_keypress">Vibrer ved tastetrykk</string>
+
+    <!-- Option to play back sound on keypress in soft keyboard -->
+    <string name="sound_on_keypress">Lyd ved tastetrykk</string>
+
+    <!-- Option to control whether or not to show a popup with a larger font on each key press. -->
+    <string name="popup_on_keypress">Større bokstav ved tastetrykk</string>
+
+    <!-- Settings screen title for preferences [CHAR LIMIT=33]-->
+    <string name="settings_screen_preferences">Innstillingar</string>
+    <!-- Settings screen title for accounts and privacy preferences [CHAR LIMIT=33]-->
+    <string name="settings_screen_accounts">Kontoar og personvern</string>
+    <!-- Settings screen title for appearance &amp; layouts preferences [CHAR LIMIT=33] -->
+    <string name="settings_screen_appearance">Utsjånad og utforming</string>
+    <!-- Settings screen title for gesture typing preferences [CHAR_LIMIT=33] -->
+    <string name="settings_screen_gesture">Sveipeskriving</string>
+    <!-- Settings screen title for text correction options [CHAR_LIMIT=33] -->
+    <string name="settings_screen_correction">Tekstrettingar</string>
+    <!-- Settings screen title for advanced settings [CHAR LIMIT=33] -->
+    <string name="settings_screen_advanced">Avansert</string>
+    <!-- Settings screen title for keyboard theme settings [CHAR LIMIT=33] -->
+    <string name="settings_screen_theme">Tema</string>
+
+    <!--  Option for enabling or disabling the split keyboard layout. [CHAR LIMIT=65]-->
+    <string name="enable_split_keyboard">Slå på splitta tastatur</string>
+
+    <!-- Option title for enabling cloud sync feature [CHAR LIMIT=33]-->
+    <string name="cloud_sync_title">Google Keyboard-synkronisering</string>
+    <!-- Option summary when cloud sync feature is enabled  [CHAR LIMIT=65] -->
+    <string name="cloud_sync_summary">Synkronisering er slått på</string>
+    <!-- Option summary when cloud sync feature is disabled  [CHAR LIMIT=65] -->
+    <string name="cloud_sync_summary_disabled">Synkroniser dine eigne ordlister på tvers av einingane dine</string>
+    <!-- Option title for starting the sync cycle now. [CHAR LIMIT=33]-->
+    <string name="sync_now_title">Synkroniser no</string>
+    <!-- Option title for letting user delete synced google keyboard data from Google servers.  [CHAR LIMIT=35] -->
+    <string name="clear_sync_data_title">Slett skydata</string>
+    <!-- Option summary for letting user delete synced google keyboard data from Google servers. [CHAR LIMIT=65] -->
+    <string name="clear_sync_data_summary">Slettar synkroniserte data hjå Google</string>
+    <!-- Text for confirmation dialog box asking user to confirm deletion of cloud data. [CHAR LIMIT=65] -->
+    <string name="clear_sync_data_confirmation">Alle synkroniserte data vil bli sletta frå skya. Er du viss?</string>
+    <!-- Option to confirm deleting of user data from cloud [CHAR LIMIT=20] -->
+    <string name="clear_sync_data_ok">Slett</string>
+    <!-- Option to cancel the deletion of user data from cloud [CHAR LIMIT=20] -->
+    <string name="cloud_sync_cancel">Avbryt</string>
+    <!-- Option to agree to terms and conditions for enabling cloud sync feature. -->
+    <string name="cloud_sync_opt_in_text">Den personlege ordlista di blir synkronisert og tryggleiksskopiert til Google-tjenere. For å bidra til å gjera produkta våre betre kan det henda vi samlar inn informasjon om ordfrekvens. Innsamling og bruk av all informasjon skjer i samsvar med &lt;a href=&quot;https://www.google.com/policies/privacy&quot;&gt;«Googles personvernregler»&lt;/a&gt;.</string>
+    <!-- Text to tell the user to add a Google account to the device to enable the cloud sync feature. [CHAR LIMIT=65]-->
+    <string name="add_account_to_enable_sync">Legg til ein Google-konto til eininga for å aktivera denne funksjonen</string>
+    <!-- Text to tell the user that sync feature is disabled because they have Google Apps for Business account(s) on their device. [CHAR LIMIT=80]-->
+    <string name="cloud_sync_summary_disabled_work_profile">Synkronisering er ikkje tilgjengeleg for einingar med Google Apps for Business-kontoar</string>
+
+    <!-- Option name for including other IMEs in the language switch list [CHAR LIMIT=30] -->
+    <string name="include_other_imes_in_language_switch_list">Bytt inndatametode</string>
+    <!-- Option summary for including other IMEs in the language switch list [CHAR LIMIT=65] -->
+    <string name="include_other_imes_in_language_switch_list_summary">Tasten for språkbyte dekkjer òg andre inndatametodar</string>
+    <!-- Option to show language switch key [CHAR LIMIT=30] -->
+    <string name="show_language_switch_key">Tast for språkbyte</string>
+    <!-- Option summary for showing language switch key [CHAR LIMIT=65] -->
+    <string name="show_language_switch_key_summary">Vis når fleire inndataspråk er aktiverte</string>
+
+    <!-- Option for the dismiss delay of the key popup [CHAR LIMIT=25] -->
+    <string name="key_preview_popup_dismiss_delay">Forseinking ved avvising av tastevindu</string>
+    <!-- Description for delay for dismissing a popup on keypress: no delay [CHAR LIMIT=15] -->
+    <string name="key_preview_popup_dismiss_no_delay">Inga forseinking</string>
+    <!-- Description for delay for dismissing a popup on screen: default value of the delay [CHAR LIMIT=15] -->
+    <string name="key_preview_popup_dismiss_default_delay">Standard</string>
+
+    <!-- Units abbreviation for the duration (milliseconds) [CHAR LIMIT=10] -->
+    <string name="abbreviation_unit_milliseconds">%1$s ms</string>
+    <!-- The text that represents the current settings value is the system default [CHAR LIMIT=25] -->
+    <string name="settings_system_default">Systemstandard</string>
+
+    <!-- Option name for enabling or disabling the use of names of people in Contacts for suggestion and correction [CHAR LIMIT=25] -->
+    <string name="use_contacts_dict">Foreslå kontaktnavn</string>
+    <!-- Description for option enabling or disabling the use of names of people in Contacts for suggestion and correction [CHAR LIMIT=65] -->
+    <string name="use_contacts_dict_summary">Bruk namn frå Kontaktar til forslag og korrigeringar</string>
+
+    </resources>
