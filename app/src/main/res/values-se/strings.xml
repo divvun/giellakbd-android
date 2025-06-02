@@ -12,6 +12,20 @@
     <!-- Settings screen title for keyboard theme settings [CHAR LIMIT=33] -->
     <string name="settings_screen_theme">Fáddá</string>
 
+    <!-- Option title for enabling cloud sync feature [CHAR LIMIT=33]-->
+    <string name="cloud_sync_title">Synkronisere Google-boallobevddiid</string>
+    <!-- Option summary when cloud sync feature is enabled  [CHAR LIMIT=65] -->
+    <string name="cloud_sync_summary">Synkroniseren lea jođus</string>
+    <!-- Option summary when cloud sync feature is disabled  [CHAR LIMIT=65] -->
+    <string name="cloud_sync_summary_disabled">Synkronisere du sátnegirjji ovttadagaid gaskkas</string>
+    <!-- Option title for starting the sync cycle now. [CHAR LIMIT=33]-->
+    <string name="sync_now_title">Synkronisere dál</string>
+    <!-- Option title for letting user delete synced google keyboard data from Google servers.  [CHAR LIMIT=35] -->
+    <string name="clear_sync_data_title">Sihko balvadáhtaid</string>
+    <!-- Option summary for letting user delete synced google keyboard data from Google servers. [CHAR LIMIT=65] -->
+    <string name="clear_sync_data_summary">Sihko synkroniserejuvvon dáhtaid Googles</string>
+    <!-- Text for confirmation dialog box asking user to confirm deletion of cloud data. [CHAR LIMIT=65] -->
+    <string name="clear_sync_data_confirmation">Du synkroniserejuvvon dáhtaid sihkojuvvo balvvas. Háliidat go bargat dan?</string>
     <!-- Option to confirm deleting of user data from cloud [CHAR LIMIT=20] -->
     <string name="clear_sync_data_ok">Sihko</string>
     <!-- Option to cancel the deletion of user data from cloud [CHAR LIMIT=20] -->
@@ -43,11 +57,61 @@
     <!-- Title of the button to revert to the default value of the device in the settings dialog [CHAR LIMIT=15] -->
     <string name="button_default">Standárda</string>
 
+    <!-- Title of the 3rd step in the setup wizard. [CHAR LIMIT=64] -->
+    <string name="setup_step3_title">Ollu lihkku, dál visot lea ortnegis!</string>
+    <!-- The label of the button that triggers the screen for configuaring additional languages of the keyboard. [CHAR_LIMIT=64] -->
+    <string name="setup_step3_action">Heivet lasi gielaid</string>
     <!-- The label of the button that finishes the setup wizard. [CHAR_LIMIT=64] -->
     <string name="setup_finish_action">Geargan</string>
 
+    <!-- Option to show setup wizard icon. [CHAR LIMIT=30]-->
+    <string name="show_setup_wizard_icon">Čájet app-govaža</string>
+    <!-- Description for the option to show setup wizard application icon of this IME in the laucher. [CHAR_LIMIT=65] -->
+    <string name="show_setup_wizard_icon_summary">Čájet app-govaža appválljejeaddjis</string>
+
+    <!-- The dictionary provider application name. Visible in Settings/Applications/Manage applications. -->
+    <string name="app_name">Sátnegirjebuvttadeaddji</string>
+    <!-- The dictionary provider ContentProvider name. Visible in Settings/Applications/Running services. -->
+    <string name="dictionary_provider_name">Sátnegirjebuvttadeaddji</string>
+    <!-- The dictionary provider Service name. Visible in Settings/Applications/Running services. -->
+    <string name="dictionary_service_name">Sátnegirjebálvalus</string>
+
+    <!-- Downloadable dictionaries will get update information through the network. This describes the associated download. -->
+    <string name="download_description">Sátnegirjji ođastandieđuid</string>
+
+    <!-- Title and summary of the dictionary settings screen -->
+    <string name="dictionary_settings_title">Lasi sátnelisttut</string>
+    <!-- Title for the prompt dialog which informs the user that a dictionary is available for the current language and asks to decide whether to download it over 3g -->
+    <string name="dictionary_install_over_metered_network_prompt">Sátnegirji olámuttus</string>
+    <string name="dictionary_settings_summary">Sátnegirjjiid heivehusat</string>
+    <!-- Name of the user dictionaries settings category -->
+    <string name="user_dictionaries">Geavaheaddjisátnelisttut</string>
+    <!-- Name for the "user dictionary" preference item when there is only one -->
+    <string name="default_user_dict_pref_name">Geavaheaddjisátnelistu</string>
+    <!-- Message about some dictionary indicating it can be downloaded, but hasn't been yet -->
+    <string name="dictionary_available">Sátnegirji olámuttus</string>
+    <!-- Message about some dictionary indicating it is downloading and should be available soon -->
+    <string name="dictionary_downloading">Viežžamin dál</string>
+    <!-- Message about some dictionary indicating it is already installed -->
+    <string name="dictionary_installed">Sajáiduhtton</string>
+    <!-- Message about some dictionary indicating the file is installed, but the dictionary is disabled -->
+    <string name="dictionary_disabled">Sajáiduhtton, ii geavahusas</string>
+
+    <!-- Message to display in the dictionaries setting screen when we found that no dictionaries are available [CHAR LIMIT=20]-->
+    <string name="no_dictionaries_available">Eai leat sátnegirjjit olámuttus</string>
+
+    <!-- Title of the options to press to refresh the list (as in, check for updates now) [CHAR_LIMIT=50] -->
+    <string name="check_for_updates_now">Ođasmahte</string>
+    <!-- Hint to tell when the data was last updated. Usage : "Last updated [date]", may contain a : or so. [CHAR LIMIT=45] -->
+    <string name="last_update">Maŋemuš beaiváduvvon</string>
+
+    <!-- Message to display in a dialog box while we are actively updating the word list [CHAR LIMIT=60] -->
+    <string name="message_updating">Iskamin jus leat ođastusat</string>
     <!-- Message to display while the add-on dictionary list is updating [no space constraints on this, there is plenty of space but shorter is better because it's only on the screen for a second] -->
     <string name="message_loading">Viežžamin …</string>
+
+    <!-- String to explain this dictionary is the main dictionary for this language [CHAR_LIMIT=30] -->
+    <string name="main_dict_description">Váldosátnelistu</string>
 
     <!-- Standard message to dismiss a dialog box -->
     <string name="cancel">Gaskkalduhte</string>
@@ -65,12 +129,48 @@
     <!-- User dictionary settings. The title of the menu item to add a new word to the user dictionary. -->
     <!-- This resource is corresponding to  msgid="4056762757149923551" -->
     <string name="user_dict_settings_add_menu_title">Lasit</string>
+    <!-- User dictionary settings. The title of the dialog to add a new word to the user dictionary. [CHAR LIMIT=25] -->
+    <!-- This resource is corresponding to msgid="4702613990174126482" -->
+    <string name="user_dict_settings_add_dialog_title">Lasit sátnelistui</string>
+    <!-- User dictionary settings. The title of the screen to add/edit a new word to the user dictionary; it describes the phrase that will be added to the user dictionary. [CHAR LIMIT=25] -->
+    <!-- This resource is corresponding to msgid="742580720124344291" -->
+    <string name="user_dict_settings_add_screen_title">Frása</string>
+    <!-- User dictionary settings. Text on the dialog button to pop more options for adding a word. [CHAR LIMIT=16] -->
+    <!-- This resource is corresponding to msgid="8848798370746019825" -->
+    <string name="user_dict_settings_add_dialog_more_options">Eanet eavttut</string>
+    <!-- User dictionary settings. Text on the dialog button mask advanced options. [CHAR LIMIT=15] -->
+    <!-- This resource is corresponding to msgid="2441785268726036101" -->
+    <string name="user_dict_settings_add_dialog_less_options">Uhcit eavttut</string>
     <!-- User dictionary settings. Text on the dialog button to confirm adding a word. [CHAR LIMIT=15] -->
     <!-- This resource is corresponding to msgid="6225823625332416144" -->
     <string name="user_dict_settings_add_dialog_confirm">OK</string>
+    <!-- User dictionary settings. Label to put before the word field (that's the word that will actually be added to the user dictionary when OK is pressed). [CHAR LIMIT=20] -->
+    <!-- This resource is corresponding to msgid="7868879174905963135" -->
+    <string name="user_dict_settings_add_word_option_name">Sátni:</string>
+    <!-- User dictionary settings. Label to put before the language field. [CHAR LIMIT=20] -->
+    <!-- This resource is corresponding to msgid="5696358317061318532" -->
+    <string name="user_dict_settings_add_locale_option_name">Giella:</string>
+    <!-- User dictionary settings. Hint for the text field to type the word to add to the user dictionary. [CHAR LIMIT=35] -->
+    <!-- This resource is corresponding to msgid="5725254076556821247" -->
+    <string name="user_dict_settings_add_word_hint">Čális sáni</string>
+    <!-- User dictionary settings. The title of the dialog to edit an existing word in the user dictionary. -->
+    <!-- This resource is corresponding to msgid="8967476444840548674" -->
+    <string name="user_dict_settings_edit_dialog_title">Doaimmat sáni</string>
+    <!-- User dictionary settings. The title of the context menu item to edit the current word -->
+    <!-- This resource is corresponding to msgid="2210564879320004837" -->
+    <string name="user_dict_settings_context_menu_edit_title">Doaimmat</string>
     <!-- User dictionary settings. The title of the context menu item to delete the current word -->
     <!-- This resource is corresponding to msgid="9140703913776549054" -->
     <string name="user_dict_settings_context_menu_delete_title">Sihko</string>
+    <!-- User dictionary settings. The text to show when there are no user-defined words in the dictionary  [CHAR LIMIT=200] -->
+    <!-- This resource is corresponding to msgid="8165273379942105271" -->
+    <string name="user_dict_settings_empty_text">Dus eai leat sánit geavaheaddjisátnelisttus. Jus háliidat lasihit sániid, coahkkal Lasit-boalu (+).</string>
+    <!-- User dictionary settings. The list item to choose to insert a word into the user dictionary for all languages -->
+    <!-- This resource is corresponding to msgid="6742000040975959247" -->
+    <string name="user_dict_settings_all_languages">Buot gielaid várás</string>
+    <!-- User dictionary settings. The text to show for the option that shows the entire list of supported locales to choose one [CHAR LIMIT=30] -->
+    <!-- This resource is corresponding to msgid="7316375944684977910" -->
+    <string name="user_dict_settings_more_languages">Lasi gielat …</string>
     <!-- User dictionary settings. Label to delete an entry in the user dictionary [CHAR LIMIT=30]
          This resource is copied from packages/apps/Settings/res/values/strings.xml -->
     <!-- This resource is corresponding to msgid="4219243412325163003" -->
@@ -78,5 +178,14 @@
     <string name="fragment_title_personal_dictionary">Sátnegirjjit</string>
     <string name="delete_word">Sihko</string>
     <string name="addword_dialog_title">Lasit sáni</string>
+
+    <string name="addword_word_exists">Sátni gávdno juo</string>
+    <string name="word_error_contains_space">Sánis leat gaskamearkkat</string>
+    <string name="word_error_empty">Sátni lea guorus</string>
+    <string name="addword_hint">Sátni</string>
+    <string name="blacklistword_hint">Sátni</string>
+    <string name="snackbar_undo">Gáđa</string>
+    <string name="swipe_delete">Sihko</string>
+    <string name="swipe_block">Cakka sáni</string>
 
     </resources>
