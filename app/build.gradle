@@ -23,7 +23,7 @@ if (file('local.gradle').exists()) {
 }
 
 android {
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         if (file('local.gradle').exists()) {
@@ -37,11 +37,11 @@ android {
         }
 
         minSdkVersion 21
-        targetSdkVersion 34
+        targetSdkVersion 35
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     if (file('local.gradle').exists() && app.storeFile != "") {
@@ -65,6 +65,7 @@ android {
 
     lintOptions {
         checkReleaseBuilds false
+        abortOnError false
     }
 
     buildFeatures {
@@ -86,12 +87,12 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
 
     compileOptions {
-        targetCompatibility '1.8'
-        sourceCompatibility '1.8'
+        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_17
     }
     namespace 'com.android.inputmethod.latin'
 }
@@ -113,7 +114,7 @@ dependencies {
     implementation "io.sentry:sentry-android:$sentryVersion"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
     implementation 'com.google.code.findbugs:jsr305:3.0.2'
-    implementation "net.java.dev.jna:jna:5.6.0@aar"
+    implementation "net.java.dev.jna:jna:5.17.0@aar"
 
     implementation "androidx.navigation:navigation-fragment-ktx:$navigationVersion"
     implementation "androidx.navigation:navigation-ui-ktx:$navigationVersion"

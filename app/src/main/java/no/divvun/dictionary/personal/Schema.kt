@@ -64,14 +64,18 @@ data class DictionaryWord(
 )
 @TypeConverters(ListOfStringsTypeConverters::class)
 data class WordContext(
-        val prevWords: List<String> = emptyList(),
-        val nextWords: List<String> = emptyList(),
+        val prevWords: List<String>,
+        val nextWords: List<String>,
         @ColumnInfo(name = "word_id")
-        val wordId: Long = 0,
+        val wordId: Long,
         @PrimaryKey(autoGenerate = true)
         @ColumnInfo(name = "word_context_id")
         val wordContextId: Long = 0
-)
+) {
+    @Ignore
+    constructor(prevWords: List<String>, nextWords: List<String>, wordId: Long) :
+        this(prevWords, nextWords, wordId, 0)
+}
 
 
 data class WordWithContext(
