@@ -44,6 +44,18 @@ echo 'export PATH="/opt/homebrew/opt/imagemagick@6/bin:$PATH"' >> ~/.zshrc
 
 If you got this right, you can open `~/source/divvun/android_keyboard` in Android Studio and work on your project. If you make any code-changes, make sure to upload them in this repo and this repo alone. Don't upload all the files kbdgen put in this directory for you.
 
+## DivvunSpell and Pahkat
+
+If you're building locally without `kbdgen`, you'll need the `DivvunSpell` and `Pahkat` libraries.
+
+You can build these libraries from source by:
+
+1. Installing NDK 28 (29 works too) via Android studio
+2. Selecting it in Android Studio > File > Project Structure
+3. Installing `cargo-ndk` with `cargo install cargo-ndk`
+4. Checking out <https://github.com/divvun/divvunspell> and then inside that dir, running `cargo ndk -t armeabi-v7a -t arm64-v8a -o ./lib build -vv --lib --release --features internal_ffi`
+5. Checking out <https://github.com/divvun/pahkat> and going to the `pahkat-client-core` dir and running `cargo ndk -t armeabi-v7a -t arm64-v8a -o ./lib build -vv --features ffi,prefix --release`
+6. Moving the output of the above commands to the `jniLibs` dir in this `giellakbd-android` project
 
 ## License
 
