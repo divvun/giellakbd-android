@@ -243,6 +243,9 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
         // This blocks to completion.
         when (packageStore.download(packageKey, downloadDelegate)) {
             is Either.Left -> return Result.retry()
+            is Either.Right -> {
+                // Download completed successfully
+            }
         }
 
         // Do we need this sleep?

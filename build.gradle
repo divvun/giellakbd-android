@@ -1,8 +1,8 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        kotlinVersion = '1.6.21'
-        sentryVersion = '5.3.0'
+        kotlinVersion = '1.8.22'
+        sentryVersion = '8.0.0'
         constraintLayoutVersion = '2.3.0'
         legacySupportVersion = '1.0.0'
         rxJavaVersion = '2.2.3'
@@ -21,7 +21,7 @@ buildscript {
     }
 
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.1.1'
+        classpath 'com.android.tools.build:gradle:8.12.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:$navigationVersion"
     }
