@@ -19,12 +19,15 @@ package com.android.inputmethod.latin.setup
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.os.Message
 import android.provider.Settings
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.TextView
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.work.WorkInfo
 
 import com.android.inputmethod.compat.TextViewCompatUtils
@@ -99,6 +102,11 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
 
         setContentView(R.layout.setup_wizard)
         mSetupWizard = findViewById(R.id.setup_wizard)
+        
+        // Handle edge-to-edge display for Android 15+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            handleEdgeToEdge()
+        }
 
         mStepNumber = savedInstanceState?.getInt(STATE_STEP) ?: determineSetupStepNumberFromLauncher()
 
@@ -152,6 +160,24 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
         TextViewCompatUtils.setCompoundDrawablesRelativeWithIntrinsicBounds(mActionFinish,
                 resources.getDrawable(R.drawable.ic_setup_finish), null, null, null)
         mActionFinish.setOnClickListener(this)
+    }
+
+    private fun handleEdgeToEdge() {
+        ViewCompat.setOnApplyWindowInsetsListener(mSetupWizard) { view, insets ->
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            
+            // Apply insets as padding to the root view to avoid content being obscured
+            view.setPadding(
+                systemBars.left,
+                systemBars.top,
+                systemBars.right,
+                systemBars.bottom
+            )
+            
+            insets
+        }
     }
 
     override fun onClick(v: View) {

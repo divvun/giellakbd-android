@@ -28,7 +28,7 @@ class DictionaryPresenter(
                         is DictionaryUpdate.Dictionary -> {
                             state.copy(dictionary = event.words.map {
                                 DictionaryWordViewState(it.wordId, it.typeCount, it.word)
-                            }.sortedBy { it.word.toLowerCase(Locale.getDefault()) })
+                            }.sortedBy { it.word.lowercase(Locale.getDefault()) })
                         }
                         is DictionaryUpdate.WordRemoved ->
                             state.copy(

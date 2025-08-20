@@ -23,11 +23,15 @@ import com.android.inputmethod.latin.utils.StatsUtilsManager;
 
 import android.app.ActionBar;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceActivity;
 import android.view.MenuItem;
+import android.view.View;
 
 import androidx.core.app.ActivityCompat;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 public final class SettingsActivity extends PreferenceActivity
         implements ActivityCompat.OnRequestPermissionsResultCallback {
@@ -55,6 +59,11 @@ public final class SettingsActivity extends PreferenceActivity
         StatsUtils.onSettingsActivity(
                 intent.hasExtra(EXTRA_ENTRY_KEY) ? intent.getStringExtra(EXTRA_ENTRY_KEY)
                         : EXTRA_ENTRY_VALUE_SYSTEM_SETTINGS);
+        
+        // Handle edge-to-edge display for Android 15+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            handleEdgeToEdge();
+        }
     }
 
     @Override
@@ -80,6 +89,30 @@ public final class SettingsActivity extends PreferenceActivity
     @Override
     public boolean isValidFragment(final String fragmentName) {
         return FragmentUtils.isValidFragment(fragmentName);
+    }
+
+    private void handleEdgeToEdge() {
+        // For PreferenceActivity, we need to handle insets differently
+        View decorView = getWindow().getDecorView();
+        ViewCompat.setOnApplyWindowInsetsListener(decorView, (view, insets) -> {
+            // Get the preference content view (added by PreferenceActivity)
+            View listView = findViewById(android.R.id.list);
+            if (listView != null) {
+                final androidx.core.graphics.Insets systemBars = insets.getInsets(
+                    WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout()
+                );
+                
+                // Apply insets as padding to the list view
+                listView.setPadding(
+                    systemBars.left,
+                    systemBars.top,
+                    systemBars.right,
+                    systemBars.bottom
+                );
+            }
+            
+            return insets;
+        });
     }
 
     @Override

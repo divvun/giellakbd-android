@@ -13,4 +13,12 @@
     <style name="AppTheme.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- Empty style for backwards compatibility with Android 15 edge-to-edge opt-out -->
+    <!-- TODO: Remove once all activities handle insets properly -->
+    <style name="OptOutEdgeToEdgeEnforcement">
+        <!-- android:windowOptOutEdgeToEdgeEnforcement
+             isn't supported before SDK 35. This empty
+             style enables programmatic opting-out. -->
+    </style>
 </resources>
