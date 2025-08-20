@@ -122,13 +122,14 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     private val isImeSuppressedByHardwareKeyboard: Boolean
         get() {
-            // Force keyboard to show for testing
-            return false
+            // Bypass hardware keyboard detection in debug builds
+            if (BuildConfig.DEBUG) {
+                return false
+            }
             
-            // TODO: Restore proper logic once testing is complete
-            // val switcher = KeyboardSwitcher.instance
-            // return !onEvaluateInputViewShown() && switcher.isImeSuppressedByHardwareKeyboard(
-            //         mSettings.current, switcher.keyboardSwitchState)
+            val switcher = KeyboardSwitcher.instance
+            return !onEvaluateInputViewShown() && switcher.isImeSuppressedByHardwareKeyboard(
+                    mSettings.current, switcher.keyboardSwitchState)
         }
 
     internal val currentAutoCapsState: Int
@@ -1148,27 +1149,25 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     override fun onShowInputRequested(flags: Int, configChange: Boolean): Boolean {
-        // Force show keyboard for testing
-        return super.onShowInputRequested(flags, configChange)
+        // Bypass hardware keyboard detection in debug builds
+        if (BuildConfig.DEBUG) {
+            return super.onShowInputRequested(flags, configChange)
+        }
         
-        // TODO: Restore proper logic once testing is complete
-        // // On Android 16+, respect user preference for showing soft keyboard with hardware keyboard
-        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM + 1) {
-        //     return super.onShowInputRequested(flags, configChange)
-        // }
-        // return if (isImeSuppressedByHardwareKeyboard) {
-        //     true
-        // } else super.onShowInputRequested(flags, configChange)
+        return if (isImeSuppressedByHardwareKeyboard) {
+            true
+        } else super.onShowInputRequested(flags, configChange)
     }
 
     override fun onEvaluateInputViewShown(): Boolean {
-        // Force keyboard to show for testing
-        return true
+        // Always show keyboard in debug builds
+        if (BuildConfig.DEBUG) {
+            return true
+        }
         
-        // TODO: Restore proper logic once testing is complete
-        // return if (mIsExecutingStartShowingInputView) {
-        //     true
-        // } else super.onEvaluateInputViewShown()
+        return if (mIsExecutingStartShowingInputView) {
+            true
+        } else super.onEvaluateInputViewShown()
     }
 
     override fun onEvaluateFullscreenMode(): Boolean {
