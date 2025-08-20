@@ -28,7 +28,7 @@ class BlacklistPresenter(
                         is BlacklistUpdate.Blacklist -> {
                             state.copy(blacklist = event.words.map {
                                 BlacklistWordViewState(it.wordId, it.word)
-                            }.sortedBy { it.word.toLowerCase(Locale.getDefault()) })
+                            }.sortedBy { it.word.lowercase(Locale.getDefault()) })
                         }
                         is BlacklistUpdate.WordRemoved ->
                             state.copy(

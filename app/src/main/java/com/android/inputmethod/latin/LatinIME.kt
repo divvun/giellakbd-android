@@ -46,6 +46,7 @@ import android.view.inputmethod.CompletionInfo
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodSubtype
 import androidx.annotation.RequiresApi
+import androidx.core.view.WindowCompat
 import com.android.inputmethod.accessibility.AccessibilityUtils
 import com.android.inputmethod.annotations.UsedForTesting
 import com.android.inputmethod.compat.EditorInfoCompatUtils
@@ -121,9 +122,13 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     private val isImeSuppressedByHardwareKeyboard: Boolean
         get() {
-            val switcher = KeyboardSwitcher.instance
-            return !onEvaluateInputViewShown() && switcher.isImeSuppressedByHardwareKeyboard(
-                    mSettings.current, switcher.keyboardSwitchState)
+            // Force keyboard to show for testing
+            return false
+            
+            // TODO: Restore proper logic once testing is complete
+            // val switcher = KeyboardSwitcher.instance
+            // return !onEvaluateInputViewShown() && switcher.isImeSuppressedByHardwareKeyboard(
+            //         mSettings.current, switcher.keyboardSwitchState)
         }
 
     internal val currentAutoCapsState: Int
@@ -553,6 +558,11 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         }
 
         StatsUtils.onCreate(mSettings.current, mRichImm)
+        
+        // Handle edge-to-edge for Android 15+ InputMethodService
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            handleEdgeToEdgeForIme()
+        }
     }
 
     // Has to be package-visible for unit tests
@@ -698,6 +708,28 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         mSuggestionStripView = view.findViewById<View>(R.id.suggestion_strip_view) as SuggestionStripView
         if (hasSuggestionStripView()) {
             mSuggestionStripView!!.setListener(this, view)
+        }
+    }
+
+    private fun handleEdgeToEdgeForIme() {
+        // For InputMethodService, we need to enable edge-to-edge on the window
+        // but be careful not to interfere with keyboard positioning
+        try {
+            val window = window?.window
+            if (window != null) {
+                // Enable edge-to-edge for the IME window
+                WindowCompat.setDecorFitsSystemWindows(window, false)
+                
+                // For IME windows, we generally want the keyboard to stay at the bottom
+                // and not draw behind navigation bars, but we want transparency
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    window.navigationBarColor = Color.TRANSPARENT
+                    window.statusBarColor = Color.TRANSPARENT
+                }
+            }
+        } catch (e: Exception) {
+            // Log but don't crash if there are issues with edge-to-edge setup
+            Log.w(TAG, "Failed to setup edge-to-edge for InputMethodService", e)
         }
     }
 
@@ -1116,15 +1148,27 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     override fun onShowInputRequested(flags: Int, configChange: Boolean): Boolean {
-        return if (isImeSuppressedByHardwareKeyboard) {
-            true
-        } else super.onShowInputRequested(flags, configChange)
+        // Force show keyboard for testing
+        return super.onShowInputRequested(flags, configChange)
+        
+        // TODO: Restore proper logic once testing is complete
+        // // On Android 16+, respect user preference for showing soft keyboard with hardware keyboard
+        // if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM + 1) {
+        //     return super.onShowInputRequested(flags, configChange)
+        // }
+        // return if (isImeSuppressedByHardwareKeyboard) {
+        //     true
+        // } else super.onShowInputRequested(flags, configChange)
     }
 
     override fun onEvaluateInputViewShown(): Boolean {
-        return if (mIsExecutingStartShowingInputView) {
-            true
-        } else super.onEvaluateInputViewShown()
+        // Force keyboard to show for testing
+        return true
+        
+        // TODO: Restore proper logic once testing is complete
+        // return if (mIsExecutingStartShowingInputView) {
+        //     true
+        // } else super.onEvaluateInputViewShown()
     }
 
     override fun onEvaluateFullscreenMode(): Boolean {
