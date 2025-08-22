@@ -168,12 +168,16 @@ class SetupWizardActivity : Activity(), View.OnClickListener {
                 WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
             )
             
-            // Apply insets as padding to the root view to avoid content being obscured
+            val originalPaddingLeft = resources.getDimensionPixelSize(R.dimen.setup_horizontal_padding)
+            val originalPaddingTop = resources.getDimensionPixelSize(R.dimen.setup_vertical_padding)
+            val originalPaddingRight = resources.getDimensionPixelSize(R.dimen.setup_horizontal_padding)
+            val originalPaddingBottom = resources.getDimensionPixelSize(R.dimen.setup_vertical_padding)
+            
             view.setPadding(
-                systemBars.left,
-                systemBars.top,
-                systemBars.right,
-                systemBars.bottom
+                originalPaddingLeft + systemBars.left,
+                originalPaddingTop + systemBars.top,
+                originalPaddingRight + systemBars.right,
+                originalPaddingBottom + systemBars.bottom
             )
             
             insets
