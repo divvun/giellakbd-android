@@ -47,6 +47,8 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodSubtype
 import androidx.annotation.RequiresApi
 import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.android.inputmethod.accessibility.AccessibilityUtils
 import com.android.inputmethod.annotations.UsedForTesting
 import com.android.inputmethod.compat.EditorInfoCompatUtils
@@ -706,6 +708,12 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         mInputView = view
         mInsetsUpdater = ViewOutlineProviderCompatUtils.setInsetsOutlineProvider(view)
         updateSoftInputWindowLayoutParameters()
+        
+        // Setup insets handling for edge-to-edge on Android 15+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            setupInputViewInsets(view)
+        }
+        
         mSuggestionStripView = view.findViewById<View>(R.id.suggestion_strip_view) as SuggestionStripView
         if (hasSuggestionStripView()) {
             mSuggestionStripView!!.setListener(this, view)
@@ -731,6 +739,51 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         } catch (e: Exception) {
             // Log but don't crash if there are issues with edge-to-edge setup
             Log.w(TAG, "Failed to setup edge-to-edge for InputMethodService", e)
+        }
+    }
+    
+    private fun setupInputViewInsets(view: View) {
+        // Apply system bar insets to the keyboard view to prevent overlapping with navigation buttons
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            
+            // Add a bottom spacer to make the keyboard view taller instead of using padding
+            // Padding shows transparency that looks broken
+            if (systemBars.bottom > 0) {
+                addBottomSpacerToKeyboard(v, systemBars.bottom)
+            }
+            
+            insets
+        }
+    }
+    
+    private fun addBottomSpacerToKeyboard(inputView: View, spacerHeight: Int) {
+        val mainKeyboardFrame = inputView.findViewById<android.view.ViewGroup>(R.id.main_keyboard_frame)
+        mainKeyboardFrame?.let { frameLayout ->
+            val spacerId = android.R.id.background // Use as unique ID for our spacer
+            val existingSpacer = frameLayout.findViewById<View>(spacerId)
+            
+            if (existingSpacer == null) {
+                val keyboardView = frameLayout.findViewById<View>(R.id.keyboard_view)
+                val spacerView = View(this).apply {
+                    id = spacerId
+                    layoutParams = android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                        spacerHeight
+                    )
+                    keyboardView?.background?.let { keyboardBackground ->
+                        background = keyboardBackground.constantState?.newDrawable()
+                    }
+                }
+                
+                frameLayout.addView(spacerView)
+            } else {
+                val layoutParams = existingSpacer.layoutParams
+                layoutParams.height = spacerHeight
+                existingSpacer.layoutParams = layoutParams
+            }
         }
     }
 
