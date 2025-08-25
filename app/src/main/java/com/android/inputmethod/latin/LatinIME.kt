@@ -735,6 +735,16 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                     window.navigationBarColor = Color.TRANSPARENT
                     window.statusBarColor = Color.TRANSPARENT
                 }
+                
+                // Set light navigation bar for proper button contrast
+                // This tells the system to use dark buttons/icons on our light keyboard background
+                // Android 8.0 (API 26) Oreo introduced SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    window.decorView.systemUiVisibility = (
+                        window.decorView.systemUiVisibility or
+                        android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                    )
+                }
             }
         } catch (e: Exception) {
             // Log but don't crash if there are issues with edge-to-edge setup
