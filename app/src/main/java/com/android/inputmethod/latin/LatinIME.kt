@@ -797,6 +797,16 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         }
     }
 
+    private fun getBottomSpacerHeight(): Int {
+        val mainKeyboardFrame = mInputView?.findViewById<android.view.ViewGroup>(R.id.main_keyboard_frame)
+        mainKeyboardFrame?.let { frameLayout ->
+            val spacerId = android.R.id.background
+            val existingSpacer = frameLayout.findViewById<View>(spacerId)
+            return existingSpacer?.layoutParams?.height ?: 0
+        }
+        return 0
+    }
+
     override fun setCandidatesView(view: View) {
         // To ensure that CandidatesView will never be set.
     }
@@ -1178,7 +1188,8 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
             mSuggestionStripView!!.height
         else
             0
-        val visibleTopY = inputHeight - visibleKeyboardView.height - suggestionsHeight
+        val spacerHeight = getBottomSpacerHeight()
+        val visibleTopY = inputHeight - visibleKeyboardView.height - suggestionsHeight - spacerHeight
         mSuggestionStripView!!.setMoreSuggestionsHeight(visibleTopY)
         // Need to set expanded touchable region only if a keyboard view is being shown.
         if (visibleKeyboardView.isShown) {
