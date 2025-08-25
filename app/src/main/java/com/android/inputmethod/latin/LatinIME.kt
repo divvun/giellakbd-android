@@ -101,6 +101,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     private var mInputView: View? = null
     private var mInsetsUpdater: ViewOutlineProviderCompatUtils.InsetsUpdater? = null
     private var mSuggestionStripView: SuggestionStripView? = null
+    private var mSpacerView: View? = null
 
     private var mRichImm: RichInputMethodManager? = null
     @UsedForTesting
@@ -663,6 +664,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         unregisterReceiver(mRingerModeChangeReceiver)
         unregisterReceiver(mDictionaryDumpBroadcastReceiver)
         mStatsUtilsManager.onDestroy(this /* context */)
+        mSpacerView = null
         super.onDestroy()
     }
 
@@ -708,6 +710,9 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         mInputView = view
         mInsetsUpdater = ViewOutlineProviderCompatUtils.setInsetsOutlineProvider(view)
         updateSoftInputWindowLayoutParameters()
+        
+        // Reset spacer view when input view changes
+        mSpacerView = null
         
         // Setup insets handling for edge-to-edge on Android 15+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
@@ -772,13 +777,9 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     private fun addBottomSpacerToKeyboard(inputView: View, spacerHeight: Int) {
         val mainKeyboardFrame = inputView.findViewById<android.view.ViewGroup>(R.id.main_keyboard_frame)
         mainKeyboardFrame?.let { frameLayout ->
-            val spacerId = android.R.id.background // Use as unique ID for our spacer
-            val existingSpacer = frameLayout.findViewById<View>(spacerId)
-            
-            if (existingSpacer == null) {
+            if (mSpacerView == null) {
                 val keyboardView = frameLayout.findViewById<View>(R.id.keyboard_view)
-                val spacerView = View(this).apply {
-                    id = spacerId
+                mSpacerView = View(this).apply {
                     layoutParams = android.widget.LinearLayout.LayoutParams(
                         android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
                         spacerHeight
@@ -788,23 +789,14 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                     }
                 }
                 
-                frameLayout.addView(spacerView)
+                frameLayout.addView(mSpacerView)
             } else {
-                val layoutParams = existingSpacer.layoutParams
-                layoutParams.height = spacerHeight
-                existingSpacer.layoutParams = layoutParams
+                // Update existing spacer height
+                val layoutParams = mSpacerView?.layoutParams
+                layoutParams?.height = spacerHeight
+                mSpacerView?.layoutParams = layoutParams
             }
         }
-    }
-
-    private fun getBottomSpacerHeight(): Int {
-        val mainKeyboardFrame = mInputView?.findViewById<android.view.ViewGroup>(R.id.main_keyboard_frame)
-        mainKeyboardFrame?.let { frameLayout ->
-            val spacerId = android.R.id.background
-            val existingSpacer = frameLayout.findViewById<View>(spacerId)
-            return existingSpacer?.layoutParams?.height ?: 0
-        }
-        return 0
     }
 
     override fun setCandidatesView(view: View) {
@@ -1188,7 +1180,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
             mSuggestionStripView!!.height
         else
             0
-        val spacerHeight = getBottomSpacerHeight()
+        val spacerHeight = mSpacerView?.layoutParams?.height ?: 0
         val visibleTopY = inputHeight - visibleKeyboardView.height - suggestionsHeight - spacerHeight
         mSuggestionStripView!!.setMoreSuggestionsHeight(visibleTopY)
         // Need to set expanded touchable region only if a keyboard view is being shown.
