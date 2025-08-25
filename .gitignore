@@ -1,5 +1,6 @@
 app/local.gradle
 app/src/main/assets/se.zhfst
+app/src/main/jniLibs
 
 # Built application files
 *.apk
@@ -57,3 +58,6 @@ freeline.py
 freeline/
 freeline_project_description.json
 /.idea
+
+# Claude
+.claude
