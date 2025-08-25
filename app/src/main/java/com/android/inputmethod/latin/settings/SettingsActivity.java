@@ -60,8 +60,8 @@ public final class SettingsActivity extends PreferenceActivity
                 intent.hasExtra(EXTRA_ENTRY_KEY) ? intent.getStringExtra(EXTRA_ENTRY_KEY)
                         : EXTRA_ENTRY_VALUE_SYSTEM_SETTINGS);
         
-        // Handle edge-to-edge display for Android 15+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+        // Handle edge-to-edge display for Android 15+ (but skip SDK 35 due to navigation bar issues)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.BAKLAVA) {
             handleEdgeToEdge();
         }
     }
