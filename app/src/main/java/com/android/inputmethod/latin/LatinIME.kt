@@ -734,13 +734,6 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                 // Enable edge-to-edge for the IME window
                 WindowCompat.setDecorFitsSystemWindows(window, false)
                 
-                // For IME windows, we generally want the keyboard to stay at the bottom
-                // and not draw behind navigation bars, but we want transparency
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    window.navigationBarColor = Color.TRANSPARENT
-                    window.statusBarColor = Color.TRANSPARENT
-                }
-                
                 // Set light navigation bar for proper button contrast
                 // This tells the system to use dark buttons/icons on our light keyboard background
                 // Android 8.0 (API 26) Oreo introduced SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
@@ -752,7 +745,6 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                 }
             }
         } catch (e: Exception) {
-            // Log but don't crash if there are issues with edge-to-edge setup
             Log.w(TAG, "Failed to setup edge-to-edge for InputMethodService", e)
         }
     }
