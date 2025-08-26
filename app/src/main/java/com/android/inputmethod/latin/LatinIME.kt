@@ -46,6 +46,9 @@ import android.view.inputmethod.CompletionInfo
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodSubtype
 import androidx.annotation.RequiresApi
+import androidx.core.view.WindowCompat
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import com.android.inputmethod.accessibility.AccessibilityUtils
 import com.android.inputmethod.annotations.UsedForTesting
 import com.android.inputmethod.compat.EditorInfoCompatUtils
@@ -98,6 +101,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     private var mInputView: View? = null
     private var mInsetsUpdater: ViewOutlineProviderCompatUtils.InsetsUpdater? = null
     private var mSuggestionStripView: SuggestionStripView? = null
+    private var mSpacerView: View? = null
 
     private var mRichImm: RichInputMethodManager? = null
     @UsedForTesting
@@ -121,6 +125,11 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     private val isImeSuppressedByHardwareKeyboard: Boolean
         get() {
+            // Bypass hardware keyboard detection in debug builds
+            if (BuildConfig.DEBUG) {
+                return false
+            }
+            
             val switcher = KeyboardSwitcher.instance
             return !onEvaluateInputViewShown() && switcher.isImeSuppressedByHardwareKeyboard(
                     mSettings.current, switcher.keyboardSwitchState)
@@ -553,6 +562,11 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         }
 
         StatsUtils.onCreate(mSettings.current, mRichImm)
+        
+        // Handle edge-to-edge for Android 15+ InputMethodService
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            handleEdgeToEdgeForIme()
+        }
     }
 
     // Has to be package-visible for unit tests
@@ -650,6 +664,7 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         unregisterReceiver(mRingerModeChangeReceiver)
         unregisterReceiver(mDictionaryDumpBroadcastReceiver)
         mStatsUtilsManager.onDestroy(this /* context */)
+        mSpacerView = null
         super.onDestroy()
     }
 
@@ -695,9 +710,87 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
         mInputView = view
         mInsetsUpdater = ViewOutlineProviderCompatUtils.setInsetsOutlineProvider(view)
         updateSoftInputWindowLayoutParameters()
+        
+        // Reset spacer view when input view changes
+        mSpacerView = null
+        
+        // Setup insets handling for edge-to-edge on Android 15+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            setupInputViewInsets(view)
+        }
+        
         mSuggestionStripView = view.findViewById<View>(R.id.suggestion_strip_view) as SuggestionStripView
         if (hasSuggestionStripView()) {
             mSuggestionStripView!!.setListener(this, view)
+        }
+    }
+
+    private fun handleEdgeToEdgeForIme() {
+        try {
+            val window = window?.window
+            if (window != null) {
+                // Enable edge-to-edge for the IME window
+                WindowCompat.setDecorFitsSystemWindows(window, false)
+                
+                // Set light navigation bar for proper button contrast
+                // This tells the system to use dark buttons/icons on our light keyboard background
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    // Use modern WindowInsetsController for Android 11+ (API 30)
+                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+                    insetsController.isAppearanceLightNavigationBars = true
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Fallback to deprecated method for Android 8-10
+                    @Suppress("DEPRECATION")
+                    window.decorView.systemUiVisibility = (
+                        window.decorView.systemUiVisibility or
+                        android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
+                    )
+                }
+            }
+        } catch (e: Exception) {
+            Log.w(TAG, "Failed to setup edge-to-edge for InputMethodService", e)
+        }
+    }
+    
+    private fun setupInputViewInsets(view: View) {
+        // Apply system bar insets to the keyboard view to prevent overlapping with navigation buttons
+        ViewCompat.setOnApplyWindowInsetsListener(view) { v, insets ->
+            val systemBars = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout()
+            )
+            
+            // Add a bottom spacer to make the keyboard view taller instead of using padding
+            // Padding shows transparency that looks broken
+            if (systemBars.bottom > 0) {
+                addBottomSpacerToKeyboard(v, systemBars.bottom)
+            }
+            
+            insets
+        }
+    }
+    
+    private fun addBottomSpacerToKeyboard(inputView: View, spacerHeight: Int) {
+        val mainKeyboardFrame = inputView.findViewById<android.view.ViewGroup>(R.id.main_keyboard_frame)
+        mainKeyboardFrame?.let { frameLayout ->
+            if (mSpacerView == null) {
+                val keyboardView = frameLayout.findViewById<View>(R.id.keyboard_view)
+                mSpacerView = View(this).apply {
+                    layoutParams = android.widget.LinearLayout.LayoutParams(
+                        android.widget.LinearLayout.LayoutParams.MATCH_PARENT,
+                        spacerHeight
+                    )
+                    keyboardView?.background?.let { keyboardBackground ->
+                        background = keyboardBackground.constantState?.newDrawable()
+                    }
+                }
+                
+                frameLayout.addView(mSpacerView)
+            } else {
+                // Update existing spacer height
+                val layoutParams = mSpacerView?.layoutParams
+                layoutParams?.height = spacerHeight
+                mSpacerView?.layoutParams = layoutParams
+            }
         }
     }
 
@@ -1082,7 +1175,8 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
             mSuggestionStripView!!.height
         else
             0
-        val visibleTopY = inputHeight - visibleKeyboardView.height - suggestionsHeight
+        val spacerHeight = mSpacerView?.layoutParams?.height ?: 0
+        val visibleTopY = inputHeight - visibleKeyboardView.height - suggestionsHeight - spacerHeight
         mSuggestionStripView!!.setMoreSuggestionsHeight(visibleTopY)
         // Need to set expanded touchable region only if a keyboard view is being shown.
         if (visibleKeyboardView.isShown) {
@@ -1116,12 +1210,22 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     override fun onShowInputRequested(flags: Int, configChange: Boolean): Boolean {
+        // Bypass hardware keyboard detection in debug builds
+        if (BuildConfig.DEBUG) {
+            return super.onShowInputRequested(flags, configChange)
+        }
+        
         return if (isImeSuppressedByHardwareKeyboard) {
             true
         } else super.onShowInputRequested(flags, configChange)
     }
 
     override fun onEvaluateInputViewShown(): Boolean {
+        // Always show keyboard in debug builds
+        if (BuildConfig.DEBUG) {
+            return true
+        }
+        
         return if (mIsExecutingStartShowingInputView) {
             true
         } else super.onEvaluateInputViewShown()

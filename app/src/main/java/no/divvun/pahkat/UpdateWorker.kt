@@ -47,7 +47,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                     UpdateProgress.Download.Cancelled(
                         packageKey.toString()
                     ).toData()
-                ).await()
+                )
             }
         }
 
@@ -59,7 +59,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                         packageKey.toString(),
                         path
                     ).toData()
-                ).await()
+                )
             }
         }
 
@@ -73,7 +73,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                     error
                 ).toData()
                 Timber.d("$data")
-                setProgressAsync(data).await()
+                setProgressAsync(data)
                 Timber.d("Finished waiting.")
             }
         }
@@ -89,7 +89,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                         current,
                         maximum
                     ).toData()
-                ).await()
+                )
             }
         }
     }
@@ -106,13 +106,13 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
 
         override fun onTransactionCancelled(id: Long) {
             coroutineScope.launch {
-                setProgressAsync(UpdateProgress.TransactionProgress.Cancelled.toData()).await()
+                setProgressAsync(UpdateProgress.TransactionProgress.Cancelled.toData())
             }
         }
 
         override fun onTransactionCompleted(id: Long) {
             coroutineScope.launch {
-                setProgressAsync(UpdateProgress.TransactionProgress.Completed.toData()).await()
+                setProgressAsync(UpdateProgress.TransactionProgress.Completed.toData())
             }
         }
 
@@ -127,7 +127,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                         packageKey,
                         error
                     ).toData()
-                ).await()
+                )
             }
         }
 
@@ -137,7 +137,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                     UpdateProgress.TransactionProgress.Install(
                         packageKey!!
                     ).toData()
-                ).await()
+                )
             }
         }
 
@@ -147,7 +147,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                     UpdateProgress.TransactionProgress.Uninstall(
                         packageKey!!
                     ).toData()
-                ).await()
+                )
             }
         }
 
@@ -157,7 +157,7 @@ class UpdateWorker(context: Context, params: WorkerParameters) : Worker(context,
                     UpdateProgress.TransactionProgress.UnknownEvent(
                         event
                     ).toData()
-                ).await()
+                )
             }
         }
 

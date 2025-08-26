@@ -46,7 +46,7 @@ class LanguagePresenter(
 
                                 Timber.d("Language UPDATE: ${it.language}, ${it.country}, ${it.variant} $locale $displayName")
                                 LanguageWordViewState(it.languageId, displayName, it.language, it.country, it.variant)
-                            }.sortedBy { it.language.toLowerCase(Locale.getDefault()) })
+                            }.sortedBy { it.language.lowercase(Locale.getDefault()) })
                         }
                     }
                 })

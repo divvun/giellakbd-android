@@ -422,7 +422,9 @@ class KeyboardSwitcher private constructor()// Intentional empty constructor for
             it.deallocateMemory()
         }
 
-        mEmojiPalettesView.stopEmojiPalettes()
+        if (::mEmojiPalettesView.isInitialized) {
+            mEmojiPalettesView.stopEmojiPalettes()
+        }
     }
 
     fun onCreateInputView(isHardwareAcceleratedDrawingEnabled: Boolean): View {
