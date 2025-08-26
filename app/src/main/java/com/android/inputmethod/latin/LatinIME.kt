@@ -726,8 +726,6 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     private fun handleEdgeToEdgeForIme() {
-        // For InputMethodService, we need to enable edge-to-edge on the window
-        // but be careful not to interfere with keyboard positioning
         try {
             val window = window?.window
             if (window != null) {
@@ -736,8 +734,13 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
                 
                 // Set light navigation bar for proper button contrast
                 // This tells the system to use dark buttons/icons on our light keyboard background
-                // Android 8.0 (API 26) Oreo introduced SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                    // Use modern WindowInsetsController for Android 11+ (API 30)
+                    val insetsController = WindowCompat.getInsetsController(window, window.decorView)
+                    insetsController.isAppearanceLightNavigationBars = true
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    // Fallback to deprecated method for Android 8-10
+                    @Suppress("DEPRECATION")
                     window.decorView.systemUiVisibility = (
                         window.decorView.systemUiVisibility or
                         android.view.View.SYSTEM_UI_FLAG_LIGHT_NAVIGATION_BAR
