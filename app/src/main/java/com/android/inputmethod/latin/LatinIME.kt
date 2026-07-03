@@ -109,9 +109,6 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     private val mSubtypeState = SubtypeState()
     private var mEmojiAltPhysicalKeyDetector: EmojiAltPhysicalKeyDetector? = null
     private val mStatsUtilsManager: StatsUtilsManager
-    // Working variable for {@link #startShowingInputView()} and
-    // {@link #onEvaluateInputViewShown()}.
-    private var mIsExecutingStartShowingInputView: Boolean = false
 
     private val mDictionaryDumpBroadcastReceiver = DictionaryDumpBroadcastReceiver(this)
 
@@ -123,17 +120,10 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
 
     val mHandler = UIHandler(this)
 
-    private val isImeSuppressedByHardwareKeyboard: Boolean
-        get() {
-            // Bypass hardware keyboard detection in debug builds
-            if (BuildConfig.DEBUG) {
-                return false
-            }
-            
-            val switcher = KeyboardSwitcher.instance
-            return !onEvaluateInputViewShown() && switcher.isImeSuppressedByHardwareKeyboard(
-                    mSettings.current, switcher.keyboardSwitchState)
-        }
+    // Hardware-keyboard suppression is disabled: Configuration.keyboard misreports a
+    // hardware keyboard as present on some devices/emulators (notably Android 16), which
+    // hid the soft keyboard entirely with no way for the user to bring it back.
+    private val isImeSuppressedByHardwareKeyboard = false
 
     internal val currentAutoCapsState: Int
         get() = mInputLogic.getCurrentAutoCapsState(mSettings.current)
@@ -1195,11 +1185,9 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     fun startShowingInputView(needsToLoadKeyboard: Boolean) {
-        mIsExecutingStartShowingInputView = true
         // This {@link #showWindow(boolean)} will eventually call back
         // {@link #onEvaluateInputViewShown()}.
         showWindow(true /* showInput */)
-        mIsExecutingStartShowingInputView = false
         if (needsToLoadKeyboard) {
             loadKeyboard()
         }
@@ -1210,25 +1198,11 @@ class LatinIME : InputMethodService(), KeyboardActionListener, SuggestionStripVi
     }
 
     override fun onShowInputRequested(flags: Int, configChange: Boolean): Boolean {
-        // Bypass hardware keyboard detection in debug builds
-        if (BuildConfig.DEBUG) {
-            return super.onShowInputRequested(flags, configChange)
-        }
-        
-        return if (isImeSuppressedByHardwareKeyboard) {
-            true
-        } else super.onShowInputRequested(flags, configChange)
+        return super.onShowInputRequested(flags, configChange)
     }
 
     override fun onEvaluateInputViewShown(): Boolean {
-        // Always show keyboard in debug builds
-        if (BuildConfig.DEBUG) {
-            return true
-        }
-        
-        return if (mIsExecutingStartShowingInputView) {
-            true
-        } else super.onEvaluateInputViewShown()
+        return true
     }
 
     override fun onEvaluateFullscreenMode(): Boolean {
